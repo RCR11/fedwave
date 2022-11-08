@@ -1,0 +1,18 @@
+{
+  "name": "fedwave",
+  "version": "1.0.0",
+  "description": "A Federated streaming site in a box, designed with minimal infrastructure requirements.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "streaming",
+    "webrtc",
+    "socketio",
+    "chat",
+    "federation"
+  ],
+  "author": "Mark",
+  "license": "ISC"
+}
