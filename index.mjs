@@ -46,6 +46,11 @@ let template_config = {
     ICESERVER1:process.env.ICESERVER1,
     ICESERVER2:process.env.ICESERVER2,
     ICESERVER3:process.env.ICESERVER3,
+    SIR:process.env.SIR,
+    HAPPYBLOB:process.env.HAPPYBLOB,
+    SADBLOB:process.env.SADBLOB,
+    ECHOESL:process.env.ECHOESL,
+    ECHOES:process.env.ECHOES,
 }
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -95,7 +100,7 @@ async function securityChecks(){
     // does startup checks for jwt and other security info that we need to run securely 
     //https://github.com/panva/jose/blob/main/docs/functions/key_generate_key_pair.generateKeyPair.md#readme
     // check for public and private key set
-    const keyname = process.env.KEYNAME || "lckey"; // should be configured via .env
+    const keyname = process.env.KEYNAME || "fwkey"; // should be configured via .env
     // check if a .pub and .pri exist, if not generate and save a new key set
     // these need to be excluded from the public release, and need to be configured via the .env file
     const does_key_exist = fs.existsSync(keyname + ".pub" ) && fs.existsSync(keyname + ".pri" );

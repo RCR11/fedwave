@@ -43,9 +43,7 @@ You'll want to adjust the ports based on your config file (.env)
 	
 ### Setup NPM/NodeJS
 
-### Setup PM2
-`npm i pm2@latest -g`
-`pm2 save`
+
 
 ### Setup the production folders
 `mkdir fedwave.git`
@@ -56,6 +54,14 @@ You'll want to adjust the ports based on your config file (.env)
 
 ### Setup your reference to remote production for your local git
 `git remote add production ssh://user@server:/full/path/to/bare.git`
+
+### Setup PM2
+`npm i pm2@latest -g`
+`pm2 startup systemd`
+`sudo systemctl start pm2-fedwave.service`
+
+`pm2 start ./index.mjs`
+`pm2 save`
 
 ### Setup Nginx or some type of reverse proxy/cloudflare
 
