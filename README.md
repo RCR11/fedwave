@@ -64,4 +64,19 @@ You'll want to adjust the ports based on your config file (.env)
 `pm2 save`
 
 ### Setup Nginx or some type of reverse proxy/cloudflare
+Make the following files based on the proxy templates for nginx
+`/etc/nginx/sites-enabled/fedwave.tv`
+`/etc/nginx/sites-enabled/fedwave.tv_signalserver`
 
+
+### Certs via certbot
+`certbot --nginx -d fedwave.tv`
+
+# Manually configure appoved streamers
+`nano approved_streamers.json`
+
+## a sample looks like:
+{"approvedstreamers":[
+    {"username": "MizztourMetokur", "color": "#1A07D8", "num": 83271,"avatar":"https://fedwave.tv/emotes/4of5starshat.png"}
+    
+]}
