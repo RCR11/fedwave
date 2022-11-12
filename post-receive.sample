@@ -1,0 +1,28 @@
+
+#!/bin/bash
+UDIR='fedwave'
+TARGET="/home/$UDIR/fedwave" # deploy-folder
+GIT_DIR="/home/$UDIR/fedwave.git"
+
+BRANCH="master"
+
+while read oldrev newrev ref
+do
+        # only checking out the master (or whatever branch you would like to deploy)
+        if [[ $ref = refs/heads/$BRANCH ]];
+        then
+                echo "[+] Ref $ref received. Deploying ${BRANCH} branch to production..."
+                git --work-tree=$TARGET --git-dir=$GIT_DIR checkout -f
+                echo "[+] Initializing folder .."
+                chown -R fedwave:fedwave $TARGET
+                chmod 755 $TARGET
+                echo "[+] Restarting fedwave service"
+                cd $TARGET
+                npm i
+                pm2 restart index.mjs
+                #cd /var/www/ghost ; ghost restart
+                # should hook and reload the pm2 config stuff for the server service
+        else
+                echo "[-] Ref $ref received. Doing nothing: only the ${BRANCH} branch may be deployed on this server."
+        fi
+done
