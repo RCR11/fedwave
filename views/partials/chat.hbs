@@ -1,0 +1,29 @@
+<link rel="stylesheet" href="/chat.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<script src="/socket.io/socket.io.js"></script>
+<script src="/chat.js"></script>
+<div class="container">
+<div class="alertArea hide"><textarea id="alerts" placeholder="Pay Pig alerts will be here..." cols=40 rows=20 ></textarea></div>
+    <div class="userlist hide" onclick="toggleUserList()"><ol id="thewatchers"> </ol></div>
+    
+    
+    <div class="dmsArea hide"><textarea id="dms" placeholder="Dms and @'s should show here..." cols=40 rows=20 ></textarea></div>
+    <div class="whispersArea hide"><textarea id="whispers" placeholder="Whispers should show here..." cols=40 rows=20 ></textarea></div>
+    
+    <div id="watchcount" class="labelhelper" onclick="toggleUserList()">On Channel: 0</div> <div onclick="toggleDms()" id="ats_count" class="labelhelper">Ats:</div> <div id="whispers_count" class="labelhelper" onclick="toggleWhispers()">Whispers:</div><div id="alerts_count" class="labelhelper" onclick="toggleAlerts()">Alerts:</div> <div id="lc_count" class="labelhelper">LC:</div><div id="trollin" onclick="forceTrollNew()" class="labelhelper">Trolln</div>
+    <input  placeholder="Your username" name="username" type="text" id="userid"></input><div class="labelhelper">Channel:</div> 
+    <div id="chatcontainer">
+        <div id="chat-scroll" class="containment"><!--<div  class="w3-container w3-cell messagesc"> onmouseleave="resumeScroll()"-->
+            <div id="chat-scroll" class="messagesc">
+                <ul onmouseover="pauseScroll()" onmouseleave="resumeScroll()"  id="messageListContainer"> </ul>
+            </div>
+        </div>
+        <textarea  minlength="1" maxlength="300" onkeyup="checkToSend(event)" onmouseover="resumeScroll()" placeholder="Type here to send a message" id="message" cols=40 rows=6 ></textarea> 
+        <input onclick="chat.sendMsg()" value="Send" type="button"></input> <input id="plbatp" onclick="chat.atp()" value="Add" type="button"></input> <input id="plbspl" onclick="chat.spl()" value="Start" type="button"></input>
+        
+    </div>
+    <audio autoplay="false" id="audio2" preload="none" src=""  muted></audio>
+    <audio autoplay="false" id="audio3" preload="none" src=""  muted></audio>
+</div>

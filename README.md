@@ -16,12 +16,46 @@ Techonologies used of note:
 
 ## To get started
 
-	You will need a system with git, npm, pm2, optional but recommend setup steps: cloudflare or use lets encrypt
-	git co 
-	npm i
+You will need a system with git, npm, pm2, optional but recommend setup steps: cloudflare or use lets encrypt
+git co 
+npm i
 
-	setup firewall rules 
+setup firewall rules 
 
-	setup nginx
+setup nginx
 
+
+## To deploy to production
+
+Setup a new user account or lower priv account to use in production.
+`adduser fedwave`
+
+### Firewall rules
+You'll want to adjust the ports based on your config file (.env)
+`ufw app list`
+`ufw allow OpenSSH`
+`ufw enable`
+`sudo ufw allow from 127.0.0.1 proto tcp to any port 8000`
+`sudo ufw allow from 127.0.0.1 proto tcp to any port 5080`
+`sudo ufw allow from 127.0.0.1 proto tcp to any port 5555`
+`sudo ufw allow from 127.0.0.1 proto tcp to any port 9002`
+`sudo ufw allow 9001/tcp`
+	
+### Setup NPM/NodeJS
+
+### Setup PM2
+`npm i pm2@latest -g`
+`pm2 save`
+
+### Setup the production folders
+`mkdir fedwave.git`
+`cd fedwave.git`
+`git init --bare`
+`nano hooks/post-receive`
+`chmod +x hooks/post-receive`
+
+### Setup your reference to remote production for your local git
+`git remote add production ssh://user@server:/full/path/to/bare.git`
+
+### Setup Nginx or some type of reverse proxy/cloudflare
 

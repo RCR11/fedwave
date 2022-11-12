@@ -1,0 +1,666 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>WebRTC p2p data</title>
+    <!-- link to jquery 2.0 <script src="js/jquery-2.0.0.js"></script> -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script
+			  src="https://code.jquery.com/jquery-2.2.4.min.js"
+			  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+			  crossorigin="anonymous"></script>
+    <!-- link to bootstrap 2.3.1 <script src="js/bootstrap.js"></script>  -->
+    <script src="https://cdn.usebootstrap.com/bootstrap/2.3.2/js/bootstrap.min.js"></script>
+    <!--<link href="css/bootstrap.css" rel="stylesheet">-->
+    <link href="https://cdn.usebootstrap.com/bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet">
+    
+    <link href="/bs.css" rel="stylesheet">
+    <style>
+      
+        
+    .labelhelper{
+            
+            color: #789922;
+        }
+       
+    
+
+    
+    body{background-color:#2f2f2f}
+    </style>
+    <!--<link href="css/serverless-webrtc-bootstrap.css" rel="stylesheet">-->
+</head>
+<body>
+
+    <h1 class="labelhelper">
+        Streamer page - don't do anything stupid!
+        <p class="no-mobile">
+        Have you ckecked your VPN status and public ip info today?
+        </p>
+  </h1>
+  <div class="labelhelper" id="ipinfo" onclick="getMyIp()">Check my IP/VPN info...</div>
+    <section class="make-center">
+      <p style="margin: 0; padding: 0; padding-bottom: 20px;">
+          <div class="make-center">
+          <input type="text" id="broadcast-id" value="room-xyz" autocorrect=off autocapitalize=off size=20>
+          <input type="text" id="broadcast-desc" value="Live stream!" autocorrect=off autocapitalize=off size=20>
+          <button id="open-or-join">Start Broadcast</button>
+
+          <div  class="make-center labelhelper" id="broadcast-viewers-counter"></div>
+      </p>
+
+      <video id="video-preview" controls loop></video>
+      
+  </section>
+    <style>
+        video {
+            width: 30%;
+        }
+        button, input, select {
+            font-family: Myriad, Arial, Verdana;
+            font-weight: normal;
+            border-top-left-radius: 3px;
+            border-top-right-radius: 3px;
+            border-bottom-right-radius: 3px;
+            border-bottom-left-radius: 3px;
+            padding: 4px 12px;
+            text-decoration: none;
+            color: rgb(27, 26, 26);
+            display: inline-block;
+            box-shadow: rgb(255, 255, 255) 1px 1px 0px 0px inset;
+            text-shadow: none;
+            background: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(0.05, rgb(241, 241, 241)), to(rgb(230, 230, 230)));
+            font-size: 20px;
+            border: 1px solid red;
+            outline:none;
+        }
+        button:active, input:active, select:active, button:focus, input:focus, select:focus {
+            background: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(5%, rgb(221, 221, 221)), to(rgb(250, 250, 250)));
+            border: 1px solid rgb(142, 142, 142);
+        }
+        button[disabled], iput[disabled], select[disabled] {
+            background: rgb(249, 249, 249);
+            border: 1px solid rgb(218, 207, 207);
+            color: rgb(197, 189, 189);
+        }
+        input, input:focus, input:active {
+            background: white;    
+        }
+    </style>
+
+    <script src="/RTCMultiConnection.js"></script>
+    <script>
+        // https://muazkhan.com:9001/demos/Scalable-Broadcast.html
+        // https://github.com/muaz-khan/WebRTC-Scalable-Broadcast
+        // https://github.com/muaz-khan/WebRTC-Scalable-Broadcast/blob/master/WebRTC-Scalable-Broadcast.js
+        // https://github.com/muaz-khan/WebRTC-Scalable-Broadcast/blob/master/RTCMultiConnection.js
+
+        // server side: https://github.com/muaz-khan/WebRTC-Scalable-Broadcast/blob/master/WebRTC-Scalable-Broadcast.js
+    // recording is disabled because it is resulting for browser-crash
+    // if you enable below line, please also uncomment above "RecordRTC.js"
+    // https://github.com/muaz-khan/RTCMultiConnection/tree/master/demos/SSEConnection
+    let vpn_info_org = "No vpn info yet...";
+    let vpn_info_bound_org = "Will be the vpn that you want to find to, to check for a match";
+    let vpn_info_ip = "no IP set";
+    // this should be hooked to a browser event every time the internet connection goes to online as well
+    function getMyIp(){
+      document.getElementById('ipinfo').innerText = "Error getting ip, check that popup blocker and ad blockers are disabled for this domain/page...";
+      $.get('https://ipinfo.io', (response) => {
+        console.log("ipinfo.io your public ip is:", response.ip);
+        console.log("Full response:",response);
+        vpn_info_org = response.org;
+        vpn_info_ip = response.ip;
+        //"org": "AS62240 Clouvider",
+        // should be locked to the provider identified and warn if they do not match and show the new one
+        document.getElementById('ipinfo').innerText = "Your public IP is: " + vpn_info_ip + " Your provider is detected as: " + vpn_info_org;
+
+        // after we make it this far it should check if you have set a VPN provider string to check and alert if it doesn't match and disable the stream/golive option
+      },'json');
+
+       /*$.getJSON("http://jsonip.com/?callback=?", function (data) {
+        console.log('jsonip.com your public ip is',data);
+        //alert(data.ip);
+        // https://cleantalk.org/blacklists/ip
+        // https://ipinfo.io/AS212238/IP/subnetbits
+        // curl -v https://ipinfo.io
+    });*/
+    }
+
+    // https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_Statistics_API
+
+
+    var enableRecordings = false;
+    
+    let disable_stream_connect = true; // allows it to fire once
+    
+    // this should be used to reannounce the stream when it connects back up again (on server restart)
+    let was_live = false; // used to auto reconnect if the server restarts
+
+    // well this seems to mostly work
+
+    var connection = new RTCMultiConnection();
+
+    if (localStorage.getItem('broadcast-desc')) {
+        document.getElementById('broadcast-desc').value = localStorage.getItem('broadcast-desc');
+    }
+
+    // https://www.rtcmulticonnection.org/docs/iceServers/
+    // use your own TURN-server here! configure these in the .env config
+    connection.iceServers = [];
+    connection.iceServers.push({{{config.ICESERVER1}}});
+    connection.iceServers.push({{{config.ICESERVER2}}});
+    connection.iceServers.push({{{config.ICESERVER3}}});
+
+    // its mandatory in v3
+    connection.enableScalableBroadcast = true;
+
+    // each relaying-user should serve only 1 users
+    connection.maxRelayLimitPerUser = 1;
+
+    // we don't need to keep room-opened
+    // scalable-broadcast.js will handle stuff itself.
+    connection.autoCloseEntireSession = true;
+
+    // by default, socket.io server is assumed to be deployed on your own URL
+    connection.socketURL = "{{config.SIGSERVER}}";
+    //connection.socketURL = 'https://muazkhan.com:9001/';
+
+    // comment-out below line if you do not have your own socket.io server
+    // connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
+
+    connection.socketMessageEvent = 'scalable-media-broadcast-demo';
+
+    // document.getElementById('broadcast-id').value = connection.userid;
+
+    // user need to connect server, so that others can reach him.
+    connection.connectSocket(function(socket) {
+        socket.on('logs', function(log) {
+            document.querySelector('h1').innerHTML = log.replace(/</g, '----').replace(/>/g, '___').replace(/----/g, '(<span style="color:red;">').replace(/___/g, '</span>)');
+        });
+
+        // this event is emitted when a broadcast is already created.
+        socket.on('join-broadcaster', function(hintsToJoinBroadcast) {
+            console.log('join-broadcaster', hintsToJoinBroadcast);
+
+            connection.session = hintsToJoinBroadcast.typeOfStreams;
+            connection.sdpConstraints.mandatory = {
+                OfferToReceiveVideo: !!connection.session.video,
+                OfferToReceiveAudio: !!connection.session.audio
+            };
+            connection.broadcastId = hintsToJoinBroadcast.broadcastId;
+            connection.join(hintsToJoinBroadcast.userid);
+        });
+
+        socket.on('rejoin-broadcast', function(broadcastId) {
+            console.log('rejoin-broadcast', broadcastId);
+
+            connection.attachStreams = [];
+            socket.emit('check-broadcast-presence', broadcastId, function(isBroadcastExists) {
+                if (!isBroadcastExists) {
+                    // the first person (i.e. real-broadcaster) MUST set his user-id
+                    connection.userid = broadcastId;
+                }
+
+                socket.emit('join-broadcast', {
+                    broadcastId: broadcastId,
+                    userid: connection.userid,
+                    typeOfStreams: connection.session
+                });
+            });
+        });
+
+        socket.on('broadcast-stopped', function(broadcastId) {
+            // alert('Broadcast has been stopped.');
+            // location.reload();
+            console.error('broadcast-stopped', broadcastId);
+            alert('This broadcast has been stopped.');
+        });
+
+        // this event is emitted when a broadcast is absent.
+         //This has been ommitted so you don't accidentally start a stream a s a viewer
+        socket.on('start-broadcasting', function(typeOfStreams) {
+            console.log('start-broadcasting', typeOfStreams);
+
+            // host i.e. sender should always use this!
+            connection.sdpConstraints.mandatory = {
+                OfferToReceiveVideo: false,
+                OfferToReceiveAudio: false
+            };
+            connection.session = typeOfStreams;
+
+            // "open" method here will capture media-stream
+            // we can skip this function always; it is totally optional here.
+            // we can use "connection.getUserMediaHandler" instead
+            connection.open(connection.userid);
+        });
+        
+    });
+
+    window.onbeforeunload = function() {
+        // Firefox is ugly.
+        document.getElementById('open-or-join').disabled = false;
+    };
+
+    var videoPreview = document.getElementById('video-preview');
+
+    connection.onstream = function(event) {
+        if (connection.isInitiator && event.type !== 'local') {
+            return;
+        }
+
+        connection.isUpperUserLeft = false;
+        videoPreview.srcObject = event.stream;
+        videoPreview.play();
+
+        videoPreview.userid = event.userid;
+
+        if (event.type === 'local') {
+            videoPreview.muted = true;
+        }
+
+        if (connection.isInitiator == false && event.type === 'remote') {
+            // he is merely relaying the media
+            connection.dontCaptureUserMedia = true;
+            connection.attachStreams = [event.stream];
+            connection.sdpConstraints.mandatory = {
+                OfferToReceiveAudio: false,
+                OfferToReceiveVideo: false
+            };
+
+            connection.getSocket(function(socket) {
+                socket.emit('can-relay-broadcast');
+
+                if (connection.DetectRTC.browser.name === 'Chrome') {
+                    connection.getAllParticipants().forEach(function(p) {
+                        if (p + '' != event.userid + '') {
+                            var peer = connection.peers[p].peer;
+                            peer.getLocalStreams().forEach(function(localStream) {
+                                peer.removeStream(localStream);
+                            });
+                            event.stream.getTracks().forEach(function(track) {
+                                peer.addTrack(track, event.stream);
+                            });
+                            connection.dontAttachStream = true;
+                            connection.renegotiate(p);
+                            connection.dontAttachStream = false;
+                        }
+                    });
+                }
+
+                if (connection.DetectRTC.browser.name === 'Firefox') {
+                    // Firefox is NOT supporting removeStream method
+                    // that's why using alternative hack.
+                    // NOTE: Firefox seems unable to replace-tracks of the remote-media-stream
+                    // need to ask all deeper nodes to rejoin
+                    connection.getAllParticipants().forEach(function(p) {
+                        if (p + '' != event.userid + '') {
+                            connection.replaceTrack(event.stream, p);
+                        }
+                    });
+                }
+
+                // Firefox seems UN_ABLE to record remote MediaStream
+                // WebAudio solution merely records audio
+                // so recording is skipped for Firefox.
+                if (connection.DetectRTC.browser.name === 'Chrome') {
+                    repeatedlyRecordStream(event.stream);
+                }
+            });
+        }
+
+        // to keep room-id in cache
+        localStorage.setItem(connection.socketMessageEvent, connection.sessionid);
+    };
+
+    // ask node.js server to look for a broadcast
+    // if broadcast is available, simply join it. i.e. "join-broadcaster" event should be emitted.
+    // if broadcast is absent, simply create it. i.e. "start-broadcasting" event should be fired.
+    /* This needs to be hooked up to fire using the buttons in the streamer list */
+    document.getElementById('open-or-join').onclick = function() {
+        var broadcastId = document.getElementById('broadcast-id').value;
+        document.getElementById('broadcast-id').disabled = true;
+        if (broadcastId.replace(/^\s+|\s+$/g, '').length <= 0) {
+            alert('Please enter broadcast-id');
+            document.getElementById('broadcast-id').focus();
+            return;
+        }
+
+        document.getElementById('open-or-join').disabled = true;
+
+        connection.extra.broadcastId = broadcastId;
+
+        connection.session = {
+            audio: true,
+            video: true,
+            oneway: true
+        };
+
+        connection.getSocket(function(socket) {
+            socket.emit('check-broadcast-presence', broadcastId, function(isBroadcastExists) {
+                if (!isBroadcastExists) {
+                    // the first person (i.e. real-broadcaster) MUST set his user-id
+                    connection.userid = broadcastId;
+                    let broadcastDesc = document.getElementById('broadcast-desc').value;
+                    // LOCALSTORAGE ADD FEATURE
+                    /*if (localStorage.getItem('broadcast-desc')) {
+                        document.getElementById('broadcast-desc').value = localStorage.getItem('broadcast-desc');
+                    }*/ 
+
+                    // set it as the next defaut stream title
+                    localStorage.setItem('broadcast-desc',broadcastDesc);
+                    socketlc.emit('announcestream',{desc:broadcastDesc,viewers:0});
+                    was_live = true;
+                }
+
+                console.log('check-broadcast-presence', broadcastId, isBroadcastExists);
+
+                socket.emit('join-broadcast', {
+                    broadcastId: broadcastId,
+                    userid: connection.userid,
+                    typeOfStreams: connection.session
+                });
+            });
+        });
+    };
+
+    
+
+    connection.onstreamended = function() {};
+
+    connection.onleave = function(event) {
+        if (event.userid !== videoPreview.userid) return;
+
+        connection.getSocket(function(socket) {
+            socket.emit('can-not-relay-broadcast');
+
+            connection.isUpperUserLeft = true;
+
+            if (allRecordedBlobs.length) {
+                // playing lats recorded blob
+                var lastBlob = allRecordedBlobs[allRecordedBlobs.length - 1];
+                videoPreview.src = URL.createObjectURL(lastBlob);
+                videoPreview.play();
+                allRecordedBlobs = [];
+            } else if (connection.currentRecorder) {
+                var recorder = connection.currentRecorder;
+                connection.currentRecorder = null;
+                recorder.stopRecording(function() {
+                    if (!connection.isUpperUserLeft) return;
+
+                    videoPreview.src = URL.createObjectURL(recorder.getBlob());
+                    videoPreview.play();
+                });
+            }
+
+            if (connection.currentRecorder) {
+                connection.currentRecorder.stopRecording();
+                connection.currentRecorder = null;
+            }
+        });
+    };
+
+    var allRecordedBlobs = [];
+
+    function repeatedlyRecordStream(stream) {
+        if (!enableRecordings) {
+            return;
+        }
+
+        connection.currentRecorder = RecordRTC(stream, {
+            type: 'video'
+        });
+
+        connection.currentRecorder.startRecording();
+
+        setTimeout(function() {
+            if (connection.isUpperUserLeft || !connection.currentRecorder) {
+                return;
+            }
+
+            connection.currentRecorder.stopRecording(function() {
+                allRecordedBlobs.push(connection.currentRecorder.getBlob());
+
+                if (connection.isUpperUserLeft) {
+                    return;
+                }
+
+                connection.currentRecorder = null;
+                repeatedlyRecordStream(stream);
+            });
+        }, 30 * 1000); // 30-seconds
+    };
+
+    function disableInputButtons() {
+        document.getElementById('open-or-join').disabled = true;
+        document.getElementById('broadcast-id').disabled = true;
+    }
+
+    // ......................................................
+    // ......................Handling broadcast-id................
+    // ......................................................
+
+      /*var broadcastId = '';
+    if (localStorage.getItem(connection.socketMessageEvent)) {
+        broadcastId = localStorage.getItem(connection.socketMessageEvent);
+    } else {
+        broadcastId = connection.token();
+    }
+    var txtBroadcastId = document.getElementById('broadcast-id');
+    txtBroadcastId.value = broadcastId;
+    txtBroadcastId.addClass('hide');
+    txtBroadcastId.onkeyup = txtBroadcastId.oninput = txtBroadcastId.onpaste = function() {
+        localStorage.setItem(connection.socketMessageEvent, this.value);
+    };*/
+
+    // below section detects how many users are viewing your broadcast
+
+    connection.onNumberOfBroadcastViewersUpdated = function(event) {
+        if (!connection.isInitiator) return;
+
+        console.log('View count:',event.numberOfBroadcastViewers);
+        document.getElementById('broadcast-viewers-counter').innerHTML = 'Number of broadcast viewers: <b>' + event.numberOfBroadcastViewers + '</b>';
+        let broadcastDesc = document.getElementById('broadcast-desc').value;
+        socketlc.emit('announcestream',{desc:broadcastDesc,viewers:event.numberOfBroadcastViewers});
+    };
+
+    // connect and get live stream list
+    // livestreams needs to be cleared then have the list updated
+    let socketlc = io.connect(window.location.origin, { transports: ['websocket'] });
+    let usertoken = "";
+
+    socketlc.on('connect', () => {
+        load_chatToken();
+        socketlc.emit('new user', {jwt:usertoken});
+        
+        document.getElementById('broadcast-id').disabled = true;
+        
+        //socketlc.emit('getlivestreams');
+        if(was_live){
+          console.log("Said that we were streaming and that we can still be connected to.");
+          //socketlc.emit('announcestream');
+        }
+        
+    });
+
+    socketlc.on('livestreams', (data)=>{
+        console.log("We should have a list stream list to update the UI:",data);
+        //updateStreamList(data.streams);
+    });
+
+    
+
+    function doStreamConnect(streamid){
+        /*var broadcastId = document.getElementById('broadcast-id').value;
+        if (broadcastId.replace(/^\s+|\s+$/g, '').length <= 0) {
+            alert('Please enter broadcast-id');
+            document.getElementById('broadcast-id').focus();
+            return;
+        }*/
+
+        disable_stream_connect = false;
+        document.getElementById("livestreams").disabled = true;
+
+        document.getElementById('open-or-join').disabled = true;
+        let broadcastId = streamid;
+        connection.extra.broadcastId = broadcastId;
+
+        connection.session = {
+            audio: true,
+            video: true,
+            oneway: true
+        };
+
+        connection.getSocket(function(socket) {
+            socket.emit('check-broadcast-presence', broadcastId, function(isBroadcastExists) {
+                if (!isBroadcastExists) {
+                    // the first person (i.e. real-broadcaster) MUST set his user-id
+                    //connection.userid = broadcastId;
+                }
+
+                console.log('check-broadcast-presence', broadcastId, isBroadcastExists);
+                if (isBroadcastExists) {
+                    socket.emit('join-broadcast', {
+                        broadcastId: broadcastId,
+                        userid: connection.userid,
+                        typeOfStreams: connection.session
+                    });
+                }else{
+                    alert("Stream is offline!");
+                    disable_stream_connect = true;
+                }
+            });
+        });
+    }
+
+    function updateStreamList(streams){
+        streams.forEach(stream => {
+        let node = document.createElement("div"); 
+            
+            let textnodeAvatar = document.createElement("avatar");
+                
+                
+                textnodeAvatar.classList.add("avatar");
+            
+                textnodeAvatar.innerHTML = "<img class=\"userav\" src=\"https://bw.rnih.org/emotes/dead_sus_troll_standing.png\" style=\"background: rgb(32, 99, 223);\">";
+                textnodeAvatar.addEventListener('click', function(e){
+                    // do something
+                    /*let atmessage = $("textarea#message").val()
+                        atmessage += "@" + user + " ";
+                        $("textarea#message").val(atmessage)
+                        $("textarea#message").focus();// send focus back to chat
+                    }*/
+                    console.log("Should attempt to connect to stream!",stream.user, stream.desc);
+                    if(disable_stream_connect){
+                        doStreamConnect(stream.user);
+                    }
+                });
+                node.appendChild(textnodeAvatar); 
+
+                let textnodeUserName = document.createElement("username"); // need to add a on click event for the attribute
+                // need to add a onclick for username_click(el.username)
+                textnodeUserName.addEventListener('click', function(e){
+                    // do something
+                    /*let atmessage = $("textarea#message").val()
+                        atmessage = "!w " + user + " " + atmessage;
+                        $("textarea#message").val(atmessage)
+                        $("textarea#message").focus();// send focus back to chat
+                    }*/
+                    console.log("Should attempt to connect to stream!",stream.user, stream.desc);
+                    if(disable_stream_connect){
+                        doStreamConnect(stream.user);
+                    }
+                });
+                
+                textnodeUserName.innerHTML = '<span style=" color: white;">' + stream.user + "-" + stream.desc + '</span>'; 
+                
+                
+                
+                node.appendChild(textnodeUserName);  
+                
+                //let textnode = document.createElement("message");
+                //textnode.innerHTML = "<p>Ignore Toggle</p>"; 
+                
+                //node.appendChild(textnode); 
+
+                document.getElementById("livestreams").appendChild(node);
+                let nodebr = document.createElement("br"); 
+                //document.getElementById("thewatchers").appendChild(nodebr);
+                //document.getElementById("thewatchers").appendChild(nodebr);
+                document.getElementById("livestreams").appendChild(nodebr);
+        }); // end of for each stream/user
+    }
+
+    function parseToken (token) {
+      try{
+          var base64Url = token.split('.')[1];
+          var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+          var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+              return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+          }).join(''));
+      }catch(ex){
+          console.log("failed to parse the token")
+          return {user:{name:'failed'}}
+      }
+      return JSON.parse(jsonPayload);
+  };
+
+    function load_chatToken(){
+        try {
+            if(window.localStorage.chatToken){
+                usertoken = window.localStorage.getItem('chatToken');
+                //const temptoken = JSON.parse(usertoken);
+                //console.log("My token loade:",temptoken);
+
+                const usernametemp = parseToken(usertoken).sub.username;
+                document.getElementById('broadcast-id').value = usernametemp;
+                //username_global = usernametemp;
+                //$("#userid").val(usernametemp);
+                return;
+            }else{
+                if(window.localStorage.trollToken){
+                    load_trollToken();
+                }else{
+                    load_trollToken();
+                }
+            }
+
+        }catch(ex){
+
+        }
+    }
+
+    function load_trollToken(){
+        try {
+            if(window.localStorage.trollToken){
+                usertoken = window.localStorage.getItem('trollToken');
+                const usernametemp = parseToken(usertoken).sub.username;
+                document.getElementById('broadcast-id').value = usernametemp;
+                return;
+            }else{
+                mktroll();
+
+                return;
+            }
+
+        }catch(ex){
+            
+        }
+    }
+
+    function mktroll(){
+        const endpoint = '/mktroll';
+                $.get( endpoint, function(data, status){
+                    
+                    if(status == "success"){
+                        console.log("data:",data);
+                        window.localStorage.setItem('trollToken'  , data  );
+                        //load_chatToken();
+                        load_trollToken();
+                        //window.location.reload();
+                    }
+                });
+    }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+
+<style>
+
+/* Container for flexboxes */
+vid {
+  float: left;
+  background-color:#2f2f2f;
+}
+
+chat {
+    float: right;
+    background-color:#2f2f2f;
+}
+
+/* Clear floats after the columns */
+section::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+
+
+/* Responsive layout - makes the menu and the content (inside the section) sit on top of each other instead of next to each other */
+@media (max-width: 100%) {
+  section {
+    -webkit-flex-direction: column;
+    flex-direction: column;
+  }
+}
+
+</style>
+
+<section>
+
+<vid>
+
+{{>video}}
+
+</vid>
+<chat>
+{{>chat}}
+
+</chat>
+</section>

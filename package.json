@@ -2,9 +2,10 @@
   "name": "fedwave",
   "version": "1.0.0",
   "description": "A Federated streaming site in a box, designed with minimal infrastructure requirements.",
-  "main": "index.js",
+  "main": "index.mjs",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.mjs"
   },
   "keywords": [
     "streaming",
@@ -14,5 +15,17 @@
     "federation"
   ],
   "author": "Mark",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "express-handlebars": "^6.0.6",
+    "jose": "^4.11.0",
+    "marked": "^4.2.2",
+    "rtcmulticonnection-server": "^1.3.3",
+    "sanitize-html": "^2.7.3",
+    "socket.io": "^4.5.3",
+    "toobusy-js": "^0.5.1"
+  }
 }
