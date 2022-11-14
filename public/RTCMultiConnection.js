@@ -3364,7 +3364,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
 
         function setOpusAttributes(sdp, params) {
             params = params || {};
-
+            console.log("Setting Opus to 48k, look at changing this...");
             var sdpLines = sdp.split('\r\n');
 
             // Opus
