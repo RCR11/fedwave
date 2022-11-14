@@ -18,6 +18,43 @@
 //      Fix reconnect so it restarts the stream and announce of stream start/restart
 //      Probably needs gainNode.connect(audioContext.destination); https://www.reddit.com/r/WebRTC/comments/hlr5fc/is_it_possible_to_control_volume_per_audio_track/
 //      Need to find the audio stream/track and set the gain node to 
+// invokeGetUserMedia(null seems to be where we need a constraints suggestion of it being null or defined well enough to actually use to get high quality ouputs
+
+/*
+    let audioConstraints = {
+        echoCancellation:   { ideal: false },
+        autoGainControl: { ideal: false },
+        googAutoGainControl: { ideal: false },
+        googAutoGainControl2: { ideal: false },
+        googExperimentalAutoGainControl: { ideal: false },
+        googEchoCancellation: { ideal: false },
+        googEchoCancellation2: { ideal: false },
+        mozAutoGainControl: { ideal: false },
+
+        channelCount: { ideal:2 },
+        volume:{ ideal: 1.0 }
+    }
+
+
+*/
+
+let audioConstraints = {
+    echoCancellation:   { ideal: false },
+    autoGainControl: { ideal: false },
+    googAutoGainControl: { ideal: false },
+    googAutoGainControl2: { ideal: false },
+    googExperimentalAutoGainControl: { ideal: false },
+    googEchoCancellation: { ideal: false },
+    googEchoCancellation2: { ideal: false },
+    mozAutoGainControl: { ideal: false },
+
+    channelCount: { ideal:2 },
+    volume:{ ideal: 1.0 }
+}
+
+let customConstraints = {
+    audio:audioConstraints
+}
 
 var RTCMultiConnection = function(roomid, forceOptions) {
     var isNegotiating = false;
@@ -4644,7 +4681,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                             mPeer.onGettingLocalMedia(screen);
 
                             if ((session.audio || session.video) && !isAudioPlusTab(connection)) {
-                                connection.invokeGetUserMedia(null, callback);
+                                connection.invokeGetUserMedia(customConstraints, callback);
                             } else {
                                 callback(screen);
                             }
@@ -4656,10 +4693,10 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                             audio: isAudioPlusTab(connection),
                             video: true,
                             isScreen: true
-                        }, (session.audio || session.video) && !isAudioPlusTab(connection) ? connection.invokeGetUserMedia(null, callback) : callback);
+                        }, (session.audio || session.video) && !isAudioPlusTab(connection) ? connection.invokeGetUserMedia(customConstraints, callback) : callback);
                     }
                 } else if (session.audio || session.video) {
-                    connection.invokeGetUserMedia(null, callback, session);
+                    connection.invokeGetUserMedia(customConstraints, callback, session);
                 }
             }
         }
@@ -5146,7 +5183,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                             mPeer.onGettingLocalMedia(screen);
 
                             if ((session.audio || session.video) && !isAudioPlusTab(connection)) {
-                                connection.invokeGetUserMedia(null, function(stream) {
+                                connection.invokeGetUserMedia(customConstraints, function(stream) {
                                     gumCallback(stream);
                                 });
                             } else {
@@ -5162,7 +5199,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                             isScreen: true
                         }, function(stream) {
                             if ((session.audio || session.video) && !isAudioPlusTab(connection)) {
-                                connection.invokeGetUserMedia(null, function(stream) {
+                                connection.invokeGetUserMedia(customConstraints, function(stream) {
                                     gumCallback(stream);
                                 });
                             } else {
@@ -5171,7 +5208,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                         });
                     }
                 } else if (session.audio || session.video) {
-                    connection.invokeGetUserMedia(null, gumCallback);
+                    connection.invokeGetUserMedia(customConstraints, gumCallback);
                 }
             }
 
@@ -5317,7 +5354,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                             mPeer.onGettingLocalMedia(screen);
 
                             if ((session.audio || session.video) && !isAudioPlusTab(connection)) {
-                                connection.invokeGetUserMedia(null, gumCallback);
+                                connection.invokeGetUserMedia(customConstraints, gumCallback);
                             } else {
                                 gumCallback(screen);
                             }
@@ -5329,10 +5366,10 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                             audio: isAudioPlusTab(connection),
                             video: true,
                             isScreen: true
-                        }, (session.audio || session.video) && !isAudioPlusTab(connection) ? connection.invokeGetUserMedia(null, gumCallback) : gumCallback);
+                        }, (session.audio || session.video) && !isAudioPlusTab(connection) ? connection.invokeGetUserMedia(customConstraints, gumCallback) : gumCallback);
                     }
                 } else if (session.audio || session.video) {
-                    connection.invokeGetUserMedia(null, gumCallback);
+                    connection.invokeGetUserMedia(customConstraints, gumCallback);
                 }
             }
 
