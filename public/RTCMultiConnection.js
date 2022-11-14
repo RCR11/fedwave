@@ -4822,6 +4822,8 @@ var RTCMultiConnection = function(roomid, forceOptions) {
         };
 
         connection.processSdp = function(sdp) {
+            // https://stackoverflow.com/questions/57653899/how-to-increase-the-bitrate-of-webrtc
+            console.log("Should Process SDP, this would be a good spot to replace bitrate stuff")
             // ignore SDP modification if unified-pan is supported
             if (isUnifiedPlanSupportedDefault()) {
                 return sdp;
