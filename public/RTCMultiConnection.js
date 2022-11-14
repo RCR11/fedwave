@@ -5222,6 +5222,8 @@ var RTCMultiConnection = function(roomid, forceOptions) {
         };
 
         connection.invokeGetUserMedia = function(localMediaConstraints, callback, session) {
+            console.log("Does the media contraints ever get set or called?");
+            console.log(localMediaConstraints);
             if (!session) {
                 session = connection.session;
             }
