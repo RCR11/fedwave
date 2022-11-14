@@ -4867,9 +4867,9 @@ var RTCMultiConnection = function(roomid, forceOptions) {
             if (connection.bandwidth.audio) {
                 sdp = CodecsHandler.setOpusAttributes(sdp, {
                     //maxaveragebitrate: connection.bandwidth.audio * 8 * 1024,
-                    maxaveragebitrate: connection.bandwidth.audio * 8 * 1024,
+                    maxaveragebitrate: connection.bandwidth.audio * 10 * 8 * 1024,
                     //maxplaybackrate: connection.bandwidth.audio * 8 * 1024,
-                    maxplaybackrate: connection.bandwidth.audio * 8 * 1024,
+                    maxplaybackrate: connection.bandwidth.audio * 10 * 8 * 1024,
                     stereo: 1,
                     maxptime: 3
                 });
