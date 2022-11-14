@@ -181,6 +181,54 @@
         Bump audio quality settings into being for streaming []
         https://stackoverflow.com/questions/46063374/is-it-really-possible-for-webrtc-to-stream-high-quality-audio-without-noise
 
+        So looking at rs webrtc.js is in the webpack and has a bunch of stuff 
+
+        //default video contraints
+    let videoConstraints = {
+        height:     { ideal: 720},
+        width :     { ideal: 1280},
+        facingMode: { ideal: "environment" }
+    }
+
+    //default audio contraints
+    let audioConstraints = {
+        echoCancellation:   { ideal: false },
+        autoGainControl: { ideal: false },
+        googAutoGainControl: { ideal: false },
+        googAutoGainControl2: { ideal: false },
+        googExperimentalAutoGainControl: { ideal: false },
+        googEchoCancellation: { ideal: false },
+        googEchoCancellation2: { ideal: false },
+        mozAutoGainControl: { ideal: false },
+
+        channelCount: { ideal:2 },
+        volume:{ ideal: 1.0 }
+    }
+
+    var localStream                 //local video elem
+    var room;                       //protoo room
+    var codec = 'VP8';              //codec force for better compatability
+
+    //load volume if saved
+    let volSlider = document.getElementById('volume-slider');
+    if (localStorage.getItem("vid_volume") && volSlider) {
+        console.log("loading saved volume from localStorage")
+        var volumeConstraints = localStorage.getItem("vid_volume")/4;
+        if (volumeConstraints > 1){volumeConstraints = 1}
+        localRTCVideo.volume = volumeConstraints; 
+        volSlider.value = volumeConstraints*400;
+    }
+
+    function volumeChange() {
+        var volumeConstraints = this.value/400;
+        if (volumeConstraints > 1){volumeConstraints = 1}
+        localRTCVideo.volume = volumeConstraints; 
+        localStorage.setItem("vid_volume", volumeConstraints * 4); 
+      //because rick is going deaf and set the slider html range to 400%
+        _util_js__WEBPACK_IMPORTED_MODULE_2__["muteState"](false);
+    }
+     Object.assign(audioConstraints, deviceIDinsert)
+
     */
     var enableRecordings = false;
     
@@ -574,7 +622,7 @@
                 
                 textnodeAvatar.classList.add("avatar");
             
-                textnodeAvatar.innerHTML = "<img class=\"userav\" src=\"https://bw.rnih.org/emotes/dead_sus_troll_standing.png\" style=\"background: rgb(32, 99, 223);\">";
+                textnodeAvatar.innerHTML = "<img class=\"userav\" src=\"{{config.TROLLICON}}\" style=\"background: rgb(32, 99, 223);\">";
                 if(stream.avatar){
                     textnodeAvatar.innerHTML = "<img class=\"userav\" src=\"" + stream.avatar + "\" style=\"background: rgb(32, 99, 223);\">";
                 }
