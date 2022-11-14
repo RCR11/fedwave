@@ -3254,6 +3254,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
         }
 
         function setBAS(sdp, bandwidth, isScreen) {
+            console.log("Called setBAS, which means we could set the bandwdith manually");
             if (!bandwidth) {
                 return sdp;
             }
