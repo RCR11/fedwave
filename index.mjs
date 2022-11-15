@@ -844,10 +844,10 @@ socket.on("getlivestreams",(data) => {
     
     console.log("Clean up socket:", socket.id);
     console.log("user diconnected...",socket.username + "#" + socket.unum);
-    if(socket.username == 'DeadPugner'){
-      test_stream_sdp = '';//data.sdp;
+    //if(socket.username == 'DeadPugner'){
+     /// test_stream_sdp = '';//data.sdp;
       //socket.sdp = data.sdp;
-    }
+    //}
     // should clean up the user list 
     for (var channel in socket.channels) {
         part(channel);
