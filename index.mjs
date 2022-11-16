@@ -647,7 +647,19 @@ io.sockets.on("connection", socket => {
       // mkstreamer username
       if(data.message.substr(0,12) == '!mkstreamer '){
         //socket.emit("error",{message:"Error sending message",channel:"error",username:"servererror"});
-        const msg_md = do_md('Should make user: ',' a streamer!');
+        let chunks = data.message.split(" ");
+        if(chunks.length > 1){
+          const msg_md = do_md('Should make user: ', chunks[1] , ' a streamer!');
+          // check that we have a number and hash to add them as a streamer
+          // should find the user and add their info to the streamers
+          let uchunks = data.message.split("#");
+          if(uchunks.length > 1){
+            console.log("Should find user:",uchunks[0]);
+            console.log('And the matching num:', uchunks[1]);
+          }
+        }else{
+          const msg_md = do_md('You are missing the user info to make them a streamer');
+        }
         io.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
         return;
       }
