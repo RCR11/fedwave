@@ -676,6 +676,11 @@ io.sockets.on("connection", socket => {
                     let data = fs.readFileSync('approved_streamers.json');
                     
                     approved_streamers = JSON.parse(data);
+                  }catch(error){
+                    console.log("Error loading approved streamers json file.");
+                    msg_md = do_md('Failed to load the streamers object...');
+                    approved_streamers = {approvedstreamers:[]};// creates a default clean object to use
+                  }
                     let user_color = usocket.color;
                     let streamer_found = false;
                     // loop through our streamers and add this one if not found
@@ -699,9 +704,7 @@ io.sockets.on("connection", socket => {
                       msg_md = do_md('Found user: ' + user_to_find + ' nothing to do, they are already a streamer!');
                     }
                     
-                  }catch(error){
-                    console.log("Error loading approved streamers json file.");
-                  }
+                  
                   
                 }
                 
