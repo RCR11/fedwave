@@ -616,10 +616,34 @@ io.sockets.on("connection", socket => {
       // check if this should be a special admin command
       // check for ! so we can do server side commands
       // ban
+      if(data.message.substr(0,5) == '!ban '){
+        //socket.emit("error",{message:"Error sending message",channel:"error",username:"servererror"});
+        const msg_md = do_md('Should ban user: ');
+        io.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
+        return;
+      }
       // unban
+      if(data.message.substr(0,7) == '!unban '){
+        //socket.emit("error",{message:"Error sending message",channel:"error",username:"servererror"});
+        const msg_md = do_md('Should unban user: ');
+        io.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
+        return;
+      }
       // ipban
+      if(data.message.substr(0,7) == '!ipban '){
+        //socket.emit("error",{message:"Error sending message",channel:"error",username:"servererror"});
+        const msg_md = do_md('Should ipban user: ');
+        io.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
+        return;
+      }
       // iprangeban
       // mkstreamer username
+      if(data.message.substr(0,12) == '!mkstreamer '){
+        //socket.emit("error",{message:"Error sending message",channel:"error",username:"servererror"});
+        const msg_md = do_md('Should make user: ',' a streamer!');
+        io.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
+        return;
+      }
       // revoke username (removes them from the permissions files, streamers, admin,mods,jannys,etc)
       // permissions
       if(data.message.substr(0,6) == '!check'){
