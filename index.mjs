@@ -650,7 +650,7 @@ io.sockets.on("connection", socket => {
         let chunks = data.message.split(" ");
         let msg_md = do_md('You probably need to fix the mkstreamer command.'); //do_md('Should make user: ', chunks[1] , ' a streamer!');
         if(chunks.length > 1){
-          msg_md = do_md('Should make user: ', chunks[1] , ' a streamer!');
+          msg_md = do_md('Should make user: ' + chunks[1] + ' a streamer!');
           // check that we have a number and hash to add them as a streamer
           // should find the user and add their info to the streamers
           let uchunks = chunks[1].split("#");
@@ -658,23 +658,25 @@ io.sockets.on("connection", socket => {
               return /^-?\d+$/.test(val);
           }
           if(uchunks.length > 1){
-            console.log("Should find user:",uchunks[0]);
-            console.log('And the matching num:', parseInt(uchunks[1]));
+            let user_to_find = uchunks[0];
+            console.log("Should find user:",user_to_find);
+            let user_num = parseInt(uchunks[1]);
+            console.log('And the matching num:', user_num);
             // if the user already exists is should repalce it? or add art to it via avatar
             if(isNumeric(uchunks[1])){
-              msg_md = do_md('Should make user: ', uchunks[0] , ' a streamer!');
+              msg_md = do_md('Should make user: ' + user_to_find + ' a streamer!');
               // use the same logic used for whispers
               let lsockets = io.sockets.sockets; // skip manually tracking, just look through the socket set
               let user_found = false;
               lsockets.forEach(usocket => {
                 // need to look at adding the username#num to shit that gets emitted
-                if(usocket.username == uchunks[0] && usocket.unum == uchunks[1] ){
-                  msg_md = do_md('Found user: ', uchunks[0] , ' to make a streamer!');
+                if(usocket.username == user_to_find && usocket.unum == user_num ){
+                  msg_md = do_md('Found user: ' + user_to_find + ' to make a streamer!');
                 }
                 
               })
             }else{
-              msg_md = do_md('Failed to find user: ', uchunks[0] , ' ');
+              msg_md = do_md('Failed to find user: ' + user_to_find + ' ');
             }
             // check that we have a number and hash to add them as a streamer
           }
