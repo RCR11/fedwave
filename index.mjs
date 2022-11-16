@@ -672,6 +672,35 @@ io.sockets.on("connection", socket => {
                 // need to look at adding the username#num to shit that gets emitted
                 if(usocket.username == user_to_find && usocket.unum == user_num ){
                   msg_md = do_md('Found user: ' + user_to_find + ' to make a streamer!');
+                  try{
+                    let data = fs.readFileSync('approved_streamers.json');
+                    
+                    approved_streamers = JSON.parse(data);
+                    let user_color = usocket.color;
+                    let streamer_found = false;
+                    // loop through our streamers and add this one if not found
+                    for( const livestreamer in approved_streamers.approvedstreamers){
+                      //console.log(approved_streamers.approvedstreamers[livestreamer]);
+                      if(usocket.username == approved_streamers.approvedstreamers[livestreamer].username && usocket.unum == approved_streamers.approvedstreamers[livestreamer].num && usocket.color == approved_streamers.approvedstreamers[livestreamer].color){
+                        streamer_found = true;
+                        }
+                    }
+
+                    if(!streamer_found){
+                      console.log("Since the user wasn't found we can add them to the list");
+                      approved_streamers.approvedstreamers.push({username:user_to_find,num:user_num,color:user_color});
+                      // should save out the json for it
+                      try {
+                        fs.writeFileSync('approved_streamers.json', JSON.stringify(approved_streamers))
+                      } catch (err) {
+                        console.error(err)
+                      }
+                    }
+                    
+                  }catch(error){
+                    console.log("Error loading approved streamers json file.");
+                  }
+                  
                 }
                 
               })
