@@ -54,7 +54,10 @@
       </p>
 
       <video id="video-preview" controls loop></video>
-      <button >Mute</button>
+        <div class="graph-container" id="bitrateGraph">
+            <div>Bitrate</div>
+            <canvas id="bitrateCanvas"></canvas>
+        </div>
   </section>
     <style>
         video {
@@ -181,7 +184,17 @@
         Bump audio quality settings into being for streaming []
         https://stackoverflow.com/questions/46063374/is-it-really-possible-for-webrtc-to-stream-high-quality-audio-without-noise
 
+        applyConstraints seems to be what needs tracked down and then further backup the stack to find and set something similar to the ideal settings like these
         So looking at rs webrtc.js is in the webpack and has a bunch of stuff 
+
+        (null
+        connection.invokeGetUserMedia(null
+        media(null
+        options.onGettingLocalMedia(stream, returnBack);
+
+
+
+        So it seems like all of invokeGetUserMedia(null are what need to be supplemented with more contraints to allow higher quality bitrates
 
         //default video contraints
     let videoConstraints = {
@@ -228,6 +241,40 @@
         _util_js__WEBPACK_IMPORTED_MODULE_2__["muteState"](false);
     }
      Object.assign(audioConstraints, deviceIDinsert)
+
+     https://webrtc.github.io/samples/src/content/peerconnection/bandwidth/
+     a=rtpmap:111 opus/48000/2
+     CodecsHandler
+     https://github.com/webrtc/samples/blob/gh-pages/src/content/peerconnection/bandwidth/js/main.js
+     https://github.com/webrtc/samples/blob/gh-pages/src/js/third_party/graph.js
+
+     So to get the bandwdith for a connection you need to get the list of senders
+     Then go through the first one's stats, then for each stat set, look at the report and how many bytes were sent
+
+
+     const sender = pc1.getSenders()[0];
+  if (!sender) {
+    return;
+  }
+  sender.getStats().then(res => {
+    res.forEach(report => {
+      let bytes;
+      let headerBytes;
+      let packets;
+      if (report.type === 'outbound-rtp') {
+        if (report.isRemote) {
+          return;
+        }
+        const now = report.timestamp;
+        bytes = report.bytesSent;
+        headerBytes = report.headerBytesSent;
+
+        if (lastResult && lastResult.has(report.id)) {
+          // calculate bitrate
+          const bitrate = 8 * (bytes - lastResult.get(report.id).bytesSent) /
+            (now - lastResult.get(report.id).timestamp);
+
+        just keep and add the bytes sent as a running difference that needs updated every second
 
     */
     var enableRecordings = false;

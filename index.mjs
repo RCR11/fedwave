@@ -751,7 +751,7 @@ io.sockets.on("connection", socket => {
         let data = fs.readFileSync('approved_streamers.json');
         //console.log(data.toString());
         approved_streamers = JSON.parse(data);
-        console.log("approved streamers json obj:",approved_streamers.approvedstreamers);
+        //console.log("approved streamers json obj:",approved_streamers.approvedstreamers);
       }catch(error){
         console.log("Error loading approved streamers json file.");
       }
@@ -759,7 +759,7 @@ io.sockets.on("connection", socket => {
     // then we should do a for loop and look for our streamer that matches
     //for( const emote in emoteList.emotes){
     for( const livestreamer in approved_streamers.approvedstreamers){
-        console.log(approved_streamers.approvedstreamers[livestreamer]);
+        //console.log(approved_streamers.approvedstreamers[livestreamer]);
         if(socket.username == approved_streamers.approvedstreamers[livestreamer].username && socket.unum == approved_streamers.approvedstreamers[livestreamer].num && socket.color == approved_streamers.approvedstreamers[livestreamer].color){
             let streaminfo = {user:socket.username,desc:"A near real time live stream!",avatar:approved_streamers.approvedstreamers[livestreamer].avatar,viewers:0};
             if(data.desc){
@@ -877,6 +877,13 @@ socket.on("getlivestreams",(data) => {
 // CORS https://socket.io/docs/v3/handling-cors/
 // https://socket.io/docs/v4/faq/
 // hmm 
+/*
+https://stackoverflow.com/questions/43620041/how-to-create-multiple-nodejs-socket-io-server-client
+https://www.metered.ca/tools/openrelay/
+https://webrtc.org/getting-started/turn-server
+https://www.audiocodes.com/solutions-products/products/session-border-controllers-sbcs/webrtc-gateway
+https://www.geeksforgeeks.org/web-api-webrtc-getusermedia-method/
+*/
 import RTCMultiConnectionServer from 'rtcmulticonnection-server'
 //const RTCMultiConnectionServer = require('rtcmulticonnection-server');
 
