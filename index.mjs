@@ -653,7 +653,7 @@ io.sockets.on("connection", socket => {
           msg_md = do_md('Should make user: ', chunks[1] , ' a streamer!');
           // check that we have a number and hash to add them as a streamer
           // should find the user and add their info to the streamers
-          let uchunks = data.message.split("#");
+          let uchunks = chunks[1].split("#");
           function isNumeric(val) {
               return /^-?\d+$/.test(val);
           }
