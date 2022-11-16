@@ -625,7 +625,8 @@ io.sockets.on("connection", socket => {
       if(data.message.substr(0,6) == '!check'){
         //socket.emit("error",{message:"Error sending message",channel:"error",username:"servererror"});
         const msg_md = do_md('Holy shit your the admin!');
-        io.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml(socket.username),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
+        io.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
+        return;
       }
 
     }
