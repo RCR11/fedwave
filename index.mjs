@@ -95,6 +95,11 @@ let approved_streamers = [];
 
 let admins = [];
 
+let jannys = [];
+
+let banned = [];
+let bannedip = [];
+
 let emoteList = [];
 let altemoteList = [];
 
@@ -222,6 +227,17 @@ function getRandomColor() {
     // needs https://github.com/webrtc/adapter/
     var authStatus = true;//req.isAuthenticated();
     res.render('watch',{session:authStatus,req:req,config:template_config});
+  });
+
+  app.get('/v1/emotes',(req,res) => {
+    let temp_emotes = emoteList;
+    // copy all of the bw emotes into the list as well
+    for( const emote in altemoteList.data){
+      let bw_emote = {name:altemoteList.data[emote].label,url:altemoteList.data[emote].image};
+      temp_emotes.emotes.push(bw_emote);
+    }
+    res.send(temp_emotes);
+    
   });
 
 // returns a troll id 4 characters long
@@ -619,7 +635,23 @@ io.sockets.on("connection", socket => {
       if(data.message.substr(0,4) == '!ban'){
         if(data.message.substr(0,5) == '!ban '){
           //socket.emit("error",{message:"Error sending message",channel:"error",username:"servererror"});
-          const msg_md = do_md('Should ban user: ');
+          let chunks = data.message.split(" ");
+          if(chunks.length > 1){
+            let uchunks = chunks[1].split("#");
+            function isNumeric(val) {
+                return /^-?\d+$/.test(val);
+            }
+            if(uchunks.length > 1){
+              let user_to_find = uchunks[0];
+              console.log("Should find user:",user_to_find);
+              let user_num = parseInt(uchunks[1]);
+              console.log('And the matching num:', user_num);
+                // add them to the ban list, which is checked on connection and other events to clean up sockets
+                // it would be nice to add a ban message for the system to reference and send the user before they are disconnected
+            }
+
+          }
+          let msg_md = do_md('Should ban user: ');
           io.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
           return;
         }

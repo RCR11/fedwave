@@ -1,3 +1,8 @@
 node_modules
 .env
 approved_streamers.json
+admin.json
+mod.json
+janny.json
+banned.json
+ipbanned.json
