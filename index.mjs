@@ -648,17 +648,38 @@ io.sockets.on("connection", socket => {
       if(data.message.substr(0,12) == '!mkstreamer '){
         //socket.emit("error",{message:"Error sending message",channel:"error",username:"servererror"});
         let chunks = data.message.split(" ");
+        let msg_md = do_md('You probably need to fix the mkstreamer command.'); //do_md('Should make user: ', chunks[1] , ' a streamer!');
         if(chunks.length > 1){
-          const msg_md = do_md('Should make user: ', chunks[1] , ' a streamer!');
+          msg_md = do_md('Should make user: ', chunks[1] , ' a streamer!');
           // check that we have a number and hash to add them as a streamer
           // should find the user and add their info to the streamers
           let uchunks = data.message.split("#");
+          function isNumeric(val) {
+              return /^-?\d+$/.test(val);
+          }
           if(uchunks.length > 1){
             console.log("Should find user:",uchunks[0]);
-            console.log('And the matching num:', uchunks[1]);
+            console.log('And the matching num:', parseInt(uchunks[1]));
+            // if the user already exists is should repalce it? or add art to it via avatar
+            if(isNumeric(uchunks[1])){
+              msg_md = do_md('Should make user: ', uchunks[0] , ' a streamer!');
+              // use the same logic used for whispers
+              let lsockets = io.sockets.sockets; // skip manually tracking, just look through the socket set
+              let user_found = false;
+              lsockets.forEach(usocket => {
+                // need to look at adding the username#num to shit that gets emitted
+                if(usocket.username == uchunks[0] && usocket.unum == uchunks[1] ){
+                  msg_md = do_md('Found user: ', uchunks[0] , ' to make a streamer!');
+                }
+                
+              })
+            }else{
+              msg_md = do_md('Failed to find user: ', uchunks[0] , ' ');
+            }
+            // check that we have a number and hash to add them as a streamer
           }
         }else{
-          const msg_md = do_md('You are missing the user info to make them a streamer');
+          msg_md = do_md('You are missing the user info to make them a streamer');
         }
         io.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
         return;
@@ -761,6 +782,7 @@ io.sockets.on("connection", socket => {
       addUserToList(temp_username);
     //}
   });
+
 
 
   socket.on("whisper",(data) => {
