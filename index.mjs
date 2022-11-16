@@ -691,7 +691,7 @@ io.sockets.on("connection", socket => {
                       approved_streamers.approvedstreamers.push({username:user_to_find,num:user_num,color:user_color});
                       // should save out the json for it
                       try {
-                        fs.writeFileSync('approved_streamers.json', JSON.stringify(approved_streamers))
+                        fs.writeFileSync('approved_streamers.json', JSON.stringify(approved_streamers,null,4))
                       } catch (err) {
                         console.error(err)
                       }
