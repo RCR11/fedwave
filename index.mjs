@@ -93,6 +93,8 @@ let listOfBroadcasts = {};
 
 let approved_streamers = [];
 
+let admins = [];
+
 let emoteList = [];
 let altemoteList = [];
 
@@ -609,6 +611,25 @@ io.sockets.on("connection", socket => {
     data.color = socket.color;
     data.unum = socket.unum;
 
+    // hook up special admin stuff to add user permissions and streamers
+    if(socket.admin){
+      // check if this should be a special admin command
+      // check for ! so we can do server side commands
+      // ban
+      // unban
+      // ipban
+      // iprangeban
+      // mkstreamer username
+      // revoke username (removes them from the permissions files, streamers, admin,mods,jannys,etc)
+      // permissions
+      if(msg.substr(0,6) == '!check'){
+        //socket.emit("error",{message:"Error sending message",channel:"error",username:"servererror"});
+        const msg_md = do_md('Holy shit your the admin!');
+        io.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml(socket.username),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
+      }
+
+    }
+
     try{
     proccessNewMessage(data);
 
@@ -650,6 +671,30 @@ io.sockets.on("connection", socket => {
         socket.unum = userinfo.num;
         // should check if it's a troll and copy in the color info or just tag everything with some color
         socket.color = userinfo.color;
+
+        // part 2 of connection is to see if they have any special permissions, admin, moderator, janitor, etc
+        // admin can make/add a new mod/janitor, give out stream access
+        // mod can ban people via global ip, name, etc
+        // janitor can only mute/ban people in a specific channel
+        // now in the config file there should be a mod(moderator star),admin(special background color maybe overlay?),janny (wrench)
+        // need to be able to create config files if they do not exist aka read and dump the object data back out
+        try{
+          let data = fs.readFileSync('admin.json');
+          admins = JSON.parse(data);
+          
+        }catch(error){
+          console.log("Error loading admin json file.");
+        }
+
+        // checks if the user should be granted special permissions
+        for( const admini in admins.admin){
+          //console.log(approved_streamers.approvedstreamers[livestreamer]);
+          if(socket.username == admins.admin[admini].username && socket.unum == admins.admin[admini].num && socket.color == admins.admin[admini].color){
+            socket.admin = true;
+          }
+        }
+
+
       }catch(ex){
         console.log(ex);
         const unum = getRandomUserId();
@@ -878,11 +923,14 @@ socket.on("getlivestreams",(data) => {
 // https://socket.io/docs/v4/faq/
 // hmm 
 /*
-https://stackoverflow.com/questions/43620041/how-to-create-multiple-nodejs-socket-io-server-client
-https://www.metered.ca/tools/openrelay/
-https://webrtc.org/getting-started/turn-server
-https://www.audiocodes.com/solutions-products/products/session-border-controllers-sbcs/webrtc-gateway
-https://www.geeksforgeeks.org/web-api-webrtc-getusermedia-method/
+  https://stackoverflow.com/questions/43620041/how-to-create-multiple-nodejs-socket-io-server-client
+  https://www.metered.ca/tools/openrelay/
+  https://webrtc.org/getting-started/turn-server
+  https://www.audiocodes.com/solutions-products/products/session-border-controllers-sbcs/webrtc-gateway
+  https://www.geeksforgeeks.org/web-api-webrtc-getusermedia-method/
+
+  This should more than likely work as expected as long as the nginx ports are setup and forwarded correctly
+
 */
 import RTCMultiConnectionServer from 'rtcmulticonnection-server'
 //const RTCMultiConnectionServer = require('rtcmulticonnection-server');
