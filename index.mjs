@@ -695,6 +695,8 @@ io.sockets.on("connection", socket => {
                       } catch (err) {
                         console.error(err)
                       }
+                    }else{
+                      msg_md = do_md('Found user: ' + user_to_find + ' nothing to do, they are already a streamer!');
                     }
                     
                   }catch(error){
