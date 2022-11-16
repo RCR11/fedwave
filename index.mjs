@@ -616,12 +616,19 @@ io.sockets.on("connection", socket => {
       // check if this should be a special admin command
       // check for ! so we can do server side commands
       // ban
-      if(data.message.substr(0,5) == '!ban '){
+      if(data.message.substr(0,4) == '!ban'){
+        if(data.message.substr(0,5) == '!ban '){
+          //socket.emit("error",{message:"Error sending message",channel:"error",username:"servererror"});
+          const msg_md = do_md('Should ban user: ');
+          io.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
+          return;
+        }
         //socket.emit("error",{message:"Error sending message",channel:"error",username:"servererror"});
-        const msg_md = do_md('Should ban user: ');
+        const msg_md = do_md('You need to specify a username to ban. IE: `!ban username`');
         io.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
         return;
       }
+      
       // unban
       if(data.message.substr(0,7) == '!unban '){
         //socket.emit("error",{message:"Error sending message",channel:"error",username:"servererror"});
