@@ -79,6 +79,8 @@ function getChatConfig(){
     }
 }
 
+getChatConfig();
+
 function useSelectedVoice(){
     //vSelected = selected option text
     vSelected = $( "#voiceselect option:selected" ).text();
