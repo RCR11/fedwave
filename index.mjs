@@ -240,6 +240,21 @@ function getRandomColor() {
     
   });
 
+  app.get('/v1/missingimg',(req,res) => {
+    
+
+    if(process.env.TROLLICON){
+      res.send(process.env.TROLLICON);
+    }else{
+      // svg?
+      
+      res.send('/fed.svg');
+    }
+
+    
+    
+  });
+
 // returns a troll id 4 characters long
 function genTrollId(){
     var letters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
