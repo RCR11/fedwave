@@ -240,18 +240,15 @@ function getRandomColor() {
     
   });
 
-  app.get('/v1/missingimg',(req,res) => {
-    
-
-    if(process.env.TROLLICON){
-      res.send(process.env.TROLLICON);
-    }else{
-      // svg?
-      
-      res.send('/fed.svg');
+  app.get('/v1/chatconfig',(req,res) => {
+    let legacyChatConfig = {
+      'legacychat': process.env.LEGACYCHAT || '',
+      'defaultavatar': process.env.TROLLICON || '/fed.svg',
+      'antiscrape':process.env.ANTISCRAPE || ''
     }
 
-    
+    res.send(legacyChatConfig);
+
     
   });
 
