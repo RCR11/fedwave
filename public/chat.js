@@ -60,6 +60,12 @@ let load_count = 0;
 
 //let usertoken = "";
 
+let chatConfig = {};
+
+function getChatConfig(){
+    
+}
+
 function useSelectedVoice(){
     //vSelected = selected option text
     vSelected = $( "#voiceselect option:selected" ).text();
@@ -357,7 +363,7 @@ function said(data){
             msg_to_add_locally.message = datanew.message.replace(/\\n/g, "<br>");;
             msg_to_add_locally.username = msg_to;
             msg_to_add_locally.channel = datanew.channel;
-            msg_to_add_locally.avatar = 'https://bw.rnih.org/litechat/shh_litechat.jpg';
+            msg_to_add_locally.avatar = '/fed.svg';
         
             if(window.localStorage.useMsgCache){
                 let useLocalCache = window.localStorage.getItem("useMsgCache");
@@ -406,7 +412,7 @@ function checkForNewPremiumEmotes(){
     // does a call to the server to check the json data structure
     console.log('getting emotes');
     var temp_obj = null;
-    const emotesurl="https://bw.rnih.org/litechat/emotes.json";
+    const emotesurl="/v1/emotes";
     try{
     $.get(emotesurl, function(data, status){
 
@@ -421,22 +427,7 @@ function checkForNewPremiumEmotes(){
     
     }
     
-    // emotes_obj_bw
-    try{
-    $.get("https://bw.rnih.org/litechat/bwemotes.json", function(data, status){
-        //alert("Data: " + data + "\nStatus: " + status);
-        //console.log(data);
-        //console.log(JSON.stringify(data, null, 4))
-        const emoteinfo_str = JSON.stringify(data, null, 4);
-        //console.log(emoteinfo_str);
-        const emotes_info_obj =  JSON.parse(emoteinfo_str);
-        console.log('after the parser runs');
-        emotes_obj_bw = emotes_info_obj;
-
-    });
-    }catch(err){
     
-    }
     
     //checkChatConnections();
     
@@ -681,7 +672,7 @@ function cleanImages(message){
                     }else{
                         // do a url replace to something else safer
                         console.log("need to clean the url",url);
-                        const safe = "https://bw.rnih.org/emotes/bw/quack2-72.gif";
+                        const safe = "/fed.svg";
                         message = message.replace(url,safe);
                     }
                 });
@@ -777,10 +768,10 @@ function addMessage(data){
         let textnodeAvatar = document.createElement("div");
         textnodeAvatar.classList.add("avatar");
         
-        textnodeAvatar.innerHTML = "<img class=\"userav\" src=\"https://bw.rnih.org/emotes/dead_sus_troll_standing.png\" style=\"background: rgb(32, 99, 223);\">";
+        textnodeAvatar.innerHTML = "<img class=\"userav\" src=\"/fed.svg\" style=\"background: rgb(32, 99, 223);\">";
         if(data.color){
             let usercolor = hexToRgb(data.color);
-            textnodeAvatar.innerHTML = "<img class=\"userav\" src=\"https://bw.rnih.org/emotes/dead_sus_troll_standing.png\" style=\"background: rgb("+ usercolor.r+ "," + usercolor.g + ","+ usercolor.b +");\">";
+            textnodeAvatar.innerHTML = "<img class=\"userav\" src=\"/fed.svg\" style=\"background: rgb("+ usercolor.r+ "," + usercolor.g + ","+ usercolor.b +");\">";
         }
         let textnodeUserName = document.createElement("div"); // need to add a on click event for the attribute
         textnodeUserName.classList.add("username");
@@ -1041,10 +1032,10 @@ function addv2msg(data){
         
         let textnodeAvatar = document.createElement("div");
         textnodeAvatar.classList.add("avatar");
-        textnodeAvatar.innerHTML = "<img class=\"userav\" src=\"https://bw.rnih.org/emotes/dead_sus_troll_standing.png\" style=\"background: rgb(32, 99, 223);\">";
+        textnodeAvatar.innerHTML = "<img class=\"userav\" src=\"/fed.svg\" style=\"background: rgb(32, 99, 223);\">";
         if(data.color){
             let usercolor = hexToRgb(data.color);
-            textnodeAvatar.innerHTML = "<img class=\"userav\" src=\"https://bw.rnih.org/emotes/dead_sus_troll_standing.png\" style=\"background: rgb("+ usercolor.r+ "," + usercolor.g + ","+ usercolor.b +");\">";
+            textnodeAvatar.innerHTML = "<img class=\"userav\" src=\"/fed.svg\" style=\"background: rgb("+ usercolor.r+ "," + usercolor.g + ","+ usercolor.b +");\">";
         }
 
         textnodeAvatar.addEventListener('click', function(e){
@@ -1804,7 +1795,9 @@ function litechat(){
                 //<i aria-hidden="true" class="v-icon material-icons theme--dark" style="background: rgb(32, 99, 223);">person</i>
                 //textnodeAvatar.innerHTML = '<i aria-hidden="true" class="v-icon material-icons theme--dark userav" style="background: rgb(32, 99, 223);">person</i>';
                 //textnodeAvatar.innerHTML = "<img class=\"userav\" src=\"https://i.imgur.com/kdxSQI9.png\" style=\"background: " + ucolor+";\">";
-                textnodeAvatar.innerHTML = "<img class=\"userav\" src=\"https://bw.rnih.org/emotes/dead_sus_troll_standing.png\" style=\"background: rgb(32, 99, 223);\">";
+                textnodeAvatar.innerHTML = "<img class=\"userav\" src=\"/fed.svg\" style=\"background: rgb(32, 99, 223);\">";
+                // 
+
                 textnodeAvatar.addEventListener('click', function(e){
                     // do something
                     let atmessage = $("textarea#message").val()
