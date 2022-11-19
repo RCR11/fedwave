@@ -63,7 +63,20 @@ let load_count = 0;
 let chatConfig = {};
 
 function getChatConfig(){
-    
+    const chatconfigurl="/v1/chatconfig";
+    try{
+    $.get(chatconfigurl, function(data, status){
+
+        const chatinfo_str = JSON.stringify(data, null, 4);
+        //console.log(emoteinfo_str);
+        const chat_info_obj =  JSON.parse(chatinfo_str);
+        console.log('after the parser runs');
+        chatConfig = chat_info_obj;
+        
+    });
+    }catch(err){
+        console.log("Failed to parse chat config...");
+    }
 }
 
 function useSelectedVoice(){
@@ -231,7 +244,9 @@ function readTTSmessage(message){
 */
 
 let whisperSocketServer = null; // this is how we can whipser since someone can't fix their own version of whispers
-whisperSocketServer = io('wss://bw.rnih.org:8088',{transports: ['websocket'] } ); //socket
+if(chatConfig.legacychat){
+    whisperSocketServer = io(chatConfig.legacychat,{transports: ['websocket'] } ); //socket
+}
 
 let emotes_obj = null;
 
@@ -667,7 +682,7 @@ function cleanImages(message){
                 // this seems to work better and should be used to check each instance to see if its in the cdn 
                 matches.forEach( url => {
                     console.log("checking url:", url);
-                    if(url.includes("https://cdn.bitwave.tv/")){
+                    if(url.includes(chatConfig.antiscrape)){
                         console.log("url is clean...");
                     }else{
                         // do a url replace to something else safer
