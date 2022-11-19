@@ -421,9 +421,12 @@ function said(data){
         clean_old_messages();
    
 }
-whisperSocketServer.on( 'messagein', async data => await this.messagein(data) );
-whisperSocketServer.on( 'receipt_r', async data => await this.rr(data) );
-whisperSocketServer.on( 'said', async data => await this.said(data) );
+
+if(whisperSocketServer != null){
+    whisperSocketServer.on( 'messagein', async data => await this.messagein(data) );
+    whisperSocketServer.on( 'receipt_r', async data => await this.rr(data) );
+    whisperSocketServer.on( 'said', async data => await this.said(data) );
+}
 
 function checkForNewPremiumEmotes(){
     // does a call to the server to check the json data structure
