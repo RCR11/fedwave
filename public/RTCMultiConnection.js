@@ -5536,6 +5536,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
         };
 
         connection.onmute = function(e) {
+            console.log('Mute event!');
             if (!e || !e.mediaElement) {
                 return;
             }
