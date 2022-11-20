@@ -2223,6 +2223,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
 
     // MUTE doesn't seem to work
     function setMuteHandlers(connection, streamEvent) {
+        console.log('Should have set mute handlers.');
         if (!streamEvent.stream || !streamEvent.stream || !streamEvent.stream.addEventListener) return;
 
         streamEvent.stream.addEventListener('mute', function(event) {
@@ -2902,6 +2903,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
         }
 
         this.addRemoteSdp = function(remoteSdp, cb) {
+            console.log("Does this ever get the remote sdp to configure?");
             cb = cb || function() {};
 
             if (DetectRTC.browser.name !== 'Safari') {
