@@ -4819,6 +4819,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
         };
 
         connection.bandwidth.audio = 128;
+        console.log("Setting bandwidth for the connection?")
         connection.codecs = {
             audio: 'opus',
             video: 'VP9'
@@ -4827,6 +4828,9 @@ var RTCMultiConnection = function(roomid, forceOptions) {
         connection.processSdp = function(sdp) {
             // https://stackoverflow.com/questions/57653899/how-to-increase-the-bitrate-of-webrtc
             console.log("Should Process SDP, this would be a good spot to replace bitrate stuff")
+            console.log("Connection info:",connection.bandwidth);
+            connection.bandwidth.audio = 128;
+            console.log("Connection info:",connection.bandwidth);
             // ignore SDP modification if unified-pan is supported
             if (isUnifiedPlanSupportedDefault()) {
                 console.log("Says we are doing the unified plan SDP version");
