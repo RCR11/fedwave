@@ -4828,6 +4828,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
             console.log("Should Process SDP, this would be a good spot to replace bitrate stuff")
             // ignore SDP modification if unified-pan is supported
             if (isUnifiedPlanSupportedDefault()) {
+                console.log("Says we are doing the unified plan SDP version");
                 return sdp;
             }
 
