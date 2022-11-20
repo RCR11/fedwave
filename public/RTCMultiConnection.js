@@ -3056,11 +3056,12 @@ var RTCMultiConnection = function(roomid, forceOptions) {
         function createOfferOrAnswer(_method) {
             peer[_method](defaults.sdpConstraints).then(function(localSdp) {
                 if (DetectRTC.browser.name !== 'Safari') {
+                    console.log("Should have set the sdp, which we want to edit")
                     localSdp.sdp = connection.processSdp(localSdp.sdp);
                 }
                 peer.setLocalDescription(localSdp).then(function() {
                     if (!connection.trickleIce) return;
-
+                    console.log("We are doing the trickleIce...");
                     config.onLocalSdp({
                         type: localSdp.type,
                         sdp: localSdp.sdp,
