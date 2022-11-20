@@ -3061,7 +3061,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                 }
                 peer.setLocalDescription(localSdp).then(function() {
                     if (!connection.trickleIce) return;
-                    console.log("We are doing the trickleIce...");
+                    console.log("We are doing the trickleIce... This happens on the streamer");
                     config.onLocalSdp({
                         type: localSdp.type,
                         sdp: localSdp.sdp,
@@ -3368,6 +3368,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
         function setOpusAttributes(sdp, params) {
             params = params || {};
             console.log("Setting Opus to 48k, look at changing this...");
+            console.log("Opus Params:",params);
             var sdpLines = sdp.split('\r\n');
 
             // Opus
