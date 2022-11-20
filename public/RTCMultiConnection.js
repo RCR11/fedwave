@@ -4818,6 +4818,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
             video: false
         };
 
+        connection.bandwidth.audio = 128;
         connection.codecs = {
             audio: 'opus',
             video: 'VP9'
