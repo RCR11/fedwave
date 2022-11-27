@@ -14,6 +14,7 @@
 
 // MAHRK PUGNA SAYS YOU NEED TO FIX YOU SHID
 // TODO:
+//      Fix low bitrate audio streams [DONE] // HIGHBITRATE stuff that was changed to bump up the bitrates and audio quality
 //      Fix audio mute on streams/playback of them
 //      Fix reconnect so it restarts the stream and announce of stream start/restart
 //      Probably needs gainNode.connect(audioContext.destination); https://www.reddit.com/r/WebRTC/comments/hlr5fc/is_it_possible_to_control_volume_per_audio_track/
@@ -36,6 +37,9 @@
     }
 
 
+
+
+
 */
 
 let audioConstraints = {
@@ -56,6 +60,7 @@ let customConstraints = {
     audio:audioConstraints
 }
 
+// HIGHBITRATE
 function removeBandwidthRestriction(sdp) {
     return sdp.replace(/b=AS:.*\r\n/, '').replace(/b=TIAS:.*\r\n/, '');
   }
@@ -1650,11 +1655,13 @@ var RTCMultiConnection = function(roomid, forceOptions) {
             // create an offer sdp
             if (DetectRTC.isPromisesSupported) {
                 pc.createOffer().then(function(result) {
+                    // HIGHBITRATE
                     let better_sdp = removeBandwidthRestriction(result);
                     pc.setLocalDescription(better_sdp).then(afterCreateOffer);
                 });
             } else {
                 pc.createOffer(function(result) {
+                    // HIGHBITRATE
                     let better_sdp = removeBandwidthRestriction(result);
                     pc.setLocalDescription(better_sdp, afterCreateOffer, function() {});
                 }, function() {});
@@ -3061,6 +3068,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
 
         function createOfferOrAnswer(_method) {
             peer[_method](defaults.sdpConstraints).then(function(localSdp) {
+                // HIGHBITRATE
                 localSdp.sdp = localSdp.sdp.replace('useinbandfec=1', 'useinbandfec=1; stereo=1; maxaveragebitrate=510000');
                 if (DetectRTC.browser.name !== 'Safari') {
                     console.log("Should have set the sdp, which we want to edit")
@@ -3601,7 +3609,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
 
     function getUserMediaHandler(options) {
 
-
+        // HIGHBITRATE
         const hdAudioMediaConstraints = {video: true, 
             audio: {
               autoGainControl: false,
