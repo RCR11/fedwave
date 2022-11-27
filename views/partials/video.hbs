@@ -103,6 +103,9 @@
         // look at connection.applyConstraints(newconstraings,stream)
         // https://webrtc.org/getting-started/media-capture-and-constraints
         // https://webrtc.org/getting-started/remote-streams
+
+        //=fmtp:109 maxplaybackrate=48000;stereo=1;useinbandfec=1
+
     </script>
 
     <script src="/RTCMultiConnection.js"></script>
@@ -360,7 +363,7 @@
             // alert('Broadcast has been stopped.');
             // location.reload();
             console.error('broadcast-stopped', broadcastId);
-            alert('This broadcast has been stopped.');
+            //alert('This broadcast has been stopped.');
         });
 
         // this event is emitted when a broadcast is absent.
@@ -651,7 +654,8 @@
                         typeOfStreams: connection.session
                     });
                 }else{
-                    alert("Stream is offline!");
+                    //alert("Stream is offline!");
+                    console.log("Stream is now offline!");
                     disable_stream_connect = true;
                 }
             });
