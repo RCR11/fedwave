@@ -52,8 +52,16 @@
             </div>
           <div class="make-center" id="broadcast-viewers-counter"></div>
       </p>
-
-      <video id="video-preview" controls loop></video>
+        <div id="video-container">
+        <video id="video-preview"  ></video>
+        <div id="video-controls">
+            <button type="button" id="play-pause">Play</button>
+            <!---<input type="range" id="seek-bar" value="0">-->
+            <button type="button" id="mute">Mute</button>
+            <input type="range" id="volume-bar" min="0" max="1" step="0.1" value="1">
+            <button type="button" id="full-screen">Full-Screen</button>
+        </div>
+    </div>
         <div class="graph-container" id="bitrateGraph">
             <div>Bitrate</div>
             <canvas id="bitrateCanvas"></canvas>
@@ -105,7 +113,77 @@
         // https://webrtc.org/getting-started/remote-streams
 
         //=fmtp:109 maxplaybackrate=48000;stereo=1;useinbandfec=1
+        // https://blog.teamtreehouse.com/building-custom-controls-for-html5-videos
+        window.onload = function() {
 
+            // Video
+            var video = document.getElementById("video-preview");
+
+            // Buttons
+            var playButton = document.getElementById("play-pause");
+            var muteButton = document.getElementById("mute");
+            var fullScreenButton = document.getElementById("full-screen");
+
+            // Sliders
+            //var seekBar = document.getElementById("seek-bar");
+            var volumeBar = document.getElementById("volume-bar");
+
+            }
+
+
+            // Event listener for the play/pause button
+            playButton.addEventListener("click", function() {
+            if (video.paused == true) {
+                // Play the video
+                video.play();
+
+                // Update the button text to 'Pause'
+                playButton.innerHTML = "Pause";
+            } else {
+                // Pause the video
+                video.pause();
+
+                // Update the button text to 'Play'
+                playButton.innerHTML = "Play";
+            }
+            });
+
+            // Event listener for the mute button
+            muteButton.addEventListener("click", function() {
+            if (video.muted == false) {
+                // Mute the video
+                video.muted = true;
+
+                // Update the button text
+                muteButton.innerHTML = "Unmute";
+            } else {
+                // Unmute the video
+                video.muted = false;
+
+                // Update the button text
+                muteButton.innerHTML = "Mute";
+            }
+            });
+
+
+            // Event listener for the full-screen button
+            fullScreenButton.addEventListener("click", function() {
+            if (video.requestFullscreen) {
+                video.requestFullscreen();
+            } else if (video.mozRequestFullScreen) {
+                video.mozRequestFullScreen(); // Firefox
+            } else if (video.webkitRequestFullscreen) {
+                video.webkitRequestFullscreen(); // Chrome and Safari
+            }
+            });
+
+            // Event listener for the volume bar
+            volumeBar.addEventListener("change", function() {
+            // Update the video volume
+            video.volume = volumeBar.value;
+            });
+
+            // going to leave out the seek bar since you can't seek a webrtc track stream without a local cache
     </script>
 
     <script src="/RTCMultiConnection.js"></script>

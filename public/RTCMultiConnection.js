@@ -12,10 +12,10 @@
 // MIT License   - www.WebRTC-Experiment.com/licence
 // --------------------------------------------------
 
-// MAHRK PUGNA SAYS YOU NEED TO FIX YOU SHID
+// MAHRK PUGNA SAYS THERE IS A LOT TO WORK ON IN HERE 2022-11-28 this has been about a month in the making of patching and fixing
 // TODO:
 //      Fix low bitrate audio streams [DONE] // HIGHBITRATE stuff that was changed to bump up the bitrates and audio quality
-//      Fix audio mute on streams/playback of them
+//      Fix audio mute on streams/playback of them, should hook up audio controls or mute other stream/media playback in the tab
 //      Fix reconnect so it restarts the stream and announce of stream start/restart
 //      Probably needs gainNode.connect(audioContext.destination); https://www.reddit.com/r/WebRTC/comments/hlr5fc/is_it_possible_to_control_volume_per_audio_track/
 //      Need to find the audio stream/track and set the gain node to 
