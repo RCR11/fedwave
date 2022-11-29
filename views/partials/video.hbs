@@ -117,6 +117,10 @@
         // https://blog.teamtreehouse.com/building-custom-controls-for-html5-videos
 
         // https://www.inwebson.com/html5/custom-html5-video-controls-with-jquery/
+
+        let audioContext = AudioContext();
+        let gainNode = audioContext.createGain();
+        
         
 
             // Video
@@ -182,8 +186,9 @@
 
             // Event listener for the volume bar
             volumeBar.addEventListener("change", function() {
-            // Update the video volume
-            video.volume = volumeBar.value;
+                // Update the video volume
+                video.volume = volumeBar.value;
+                // now what would be nice is to have an audio track mute or something to hook the audio track up to the control
             });
 
             // going to leave out the seek bar since you can't seek a webrtc track stream without a local cache
