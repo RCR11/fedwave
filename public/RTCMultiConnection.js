@@ -2777,6 +2777,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                     try {
                         // last parameter is redundant for unified-plan
                         // starting from chrome version 72
+                        console.log("Track info:",track,localStream);
                         peer.addTrack(track, localStream);
                     } catch (e) {}
                 });
@@ -2867,6 +2868,8 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                 event.stream.isAudio = !event.stream.isVideo;
                 event.stream.isScreen = false;
             }
+
+            console.log("Streams to share:",streamsToShare);
 
             event.stream.streamid = event.stream.id;
 
