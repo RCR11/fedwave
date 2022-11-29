@@ -835,6 +835,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                         if(window.gainNode){
                             console.log("Should try and hook up the audio gain node");
                         }else{
+                            console.log("doing audio context setup!");
                             window.audioContext = new AudioContext();
                             window.gainNode = window.audioContext.createGain();
                         }
