@@ -42,6 +42,8 @@
 
 */
 
+let highbitratemodeaudio = false; // need to expose this as part of the api to allow the client or the streamer to set this option via sockets
+
 let audioConstraints = {
     echoCancellation:   { ideal: false },
     autoGainControl: { ideal: false },
@@ -1656,13 +1658,19 @@ var RTCMultiConnection = function(roomid, forceOptions) {
             if (DetectRTC.isPromisesSupported) {
                 pc.createOffer().then(function(result) {
                     // HIGHBITRATE
-                    let better_sdp = removeBandwidthRestriction(result);
+                    let better_sdp = result;
+                    if(highbitratemodeaudio){
+                        better_sdp = removeBandwidthRestriction(result);
+                    }
                     pc.setLocalDescription(better_sdp).then(afterCreateOffer);
                 });
             } else {
                 pc.createOffer(function(result) {
                     // HIGHBITRATE
-                    let better_sdp = removeBandwidthRestriction(result);
+                    let better_sdp = result;
+                    if(highbitratemodeaudio){
+                        better_sdp = removeBandwidthRestriction(result);
+                    }
                     pc.setLocalDescription(better_sdp, afterCreateOffer, function() {});
                 }, function() {});
             }
@@ -3069,7 +3077,9 @@ var RTCMultiConnection = function(roomid, forceOptions) {
         function createOfferOrAnswer(_method) {
             peer[_method](defaults.sdpConstraints).then(function(localSdp) {
                 // HIGHBITRATE
-                localSdp.sdp = localSdp.sdp.replace('useinbandfec=1', 'useinbandfec=1; stereo=1; maxaveragebitrate=510000');
+                if(highbitratemodeaudio){
+                    localSdp.sdp = localSdp.sdp.replace('useinbandfec=1', 'useinbandfec=1; stereo=1; maxaveragebitrate=510000');
+                }
                 if (DetectRTC.browser.name !== 'Safari') {
                     console.log("Should have set the sdp, which we want to edit")
                     localSdp.sdp = connection.processSdp(localSdp.sdp);
@@ -3623,7 +3633,9 @@ var RTCMultiConnection = function(roomid, forceOptions) {
             }
           }
 
-          options.localMediaConstraints = hdAudioMediaConstraints;
+          if(highbitratemodeaudio){
+            options.localMediaConstraints = hdAudioMediaConstraints;
+          }
 
         if (currentUserMediaRequest.mutex === true) {
             currentUserMediaRequest.queueRequests.push(options);
@@ -5554,6 +5566,14 @@ var RTCMultiConnection = function(roomid, forceOptions) {
         }
 
         connection.token = getRandomString;
+
+        connection.highbitratemodeaudio = highbitratemodeaudio;
+
+        // HIGHBITRATE
+        connection.setHighBitrateModeAudio = function(hdaudioEnable){
+            connection.highbitratemodeaudio = hdaudioEnable;
+            console.log("Configured HD Audio mode enabled:",hdaudioEnable);
+        }
 
         connection.onNewParticipant = function(participantId, userPreferences) {
             connection.acceptParticipationRequest(participantId, userPreferences);

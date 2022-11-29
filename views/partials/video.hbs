@@ -114,6 +114,8 @@
 
         //=fmtp:109 maxplaybackrate=48000;stereo=1;useinbandfec=1
         // https://blog.teamtreehouse.com/building-custom-controls-for-html5-videos
+
+        // https://www.inwebson.com/html5/custom-html5-video-controls-with-jquery/
         
 
             // Video
@@ -704,6 +706,7 @@
             return;
         }*/
 
+        connection.setHighBitrateModeAudio(false); // This should be used with a checkbox to configure if the stream should be high bitrate on the streamer side so it can be configured, automatically via config on the clients side
         disable_stream_connect = false;
         document.getElementById("livestreams").disabled = true;
 
