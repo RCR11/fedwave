@@ -2836,6 +2836,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
 
             event.stream = event.streams[event.streams.length - 1];
 
+            console.log("Track info:",event.track);
             if (!event.stream.id) {
                 event.stream.id = event.track.id;
             }
