@@ -5604,6 +5604,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
             selector.selectSingleFile(callback);
         };
 
+        // https://github.com/kmturley/webrtc-radio/blob/master/src/app/shared/services/listener.service.ts
         connection.onmute = function(e) {
             console.log('Mute event!');
             if (!e || !e.mediaElement) {
