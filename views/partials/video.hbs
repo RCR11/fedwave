@@ -118,9 +118,9 @@
 
         // https://www.inwebson.com/html5/custom-html5-video-controls-with-jquery/
 
-        let audioContext = AudioContext();
-        let gainNode = audioContext.createGain();
-        
+        const audioContext = new AudioContext();
+        const gainNode = audioContext.createGain();
+        let audioNode = null; //audioContext.createMediaStreamSource();
         
 
             // Video
