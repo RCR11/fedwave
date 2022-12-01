@@ -54,15 +54,19 @@
       </p>
         <div id="video-container">
         <video id="video-preview"  ></video>
-        <audio></audio>
+       
         <div id="video-controls">
             <button type="button" id="play-pause">Play</button>
             <!---<input type="range" id="seek-bar" value="0">-->
             <button type="button" id="mute">Mute</button>
             <input type="range" id="volume-bar" min="0" max="1" step="0.1" value="1">
             <button type="button" id="full-screen">Full-Screen</button>
+
+            <button type="button" id="vidmute">Video Mute</button>
+            <button type="button" id="audmute" onclick="hookAudio">Audio Mute</button>
         </div>
     </div>
+     <audio id="preview-audio" controls></audio>
         <div class="graph-container" id="bitrateGraph">
             <div>Bitrate</div>
             <canvas id="bitrateCanvas"></canvas>
@@ -121,7 +125,44 @@
         //const audioContext = new AudioContext();
         //const gainNode = audioContext.createGain();
         //let audioNode = null; //audioContext.createMediaStreamSource();
+
+        function hookAudio(){
+            //"preview-audio"
+            let audioElem = document.getElementById("preview-audio");
+            audioElem.srcObject = connection.attachStreams[0].getTracks()[0];
+            window.audioContext = new AudioContext();
+            window.gainNode = window.audioContext.createGain();
+            //window.gainNode.connect(this.incomingMedia);
+            window.audioNode = window.audioContext.createMediaStreamSource(remoteStream);
+            window.audioNode.connect(window.gainNode);
+            window.audioContext.resume();
+        }
+
+
+        function muteAudio(){
+            connection.attachStreams[0].getTracks()[0].enabled = true;
+            connection.attachStreams[0].getTracks()[0].muted = true;
+        }
         
+
+        function muteVideo(){
+            connection.streamEvents.selectFirst('local').mute('video');
+            connection.streamEvents.selectFirst('local').getTracks()[0].enabled = true; // i.e. manually enable audio track after
+
+                connection.streamEvents.selectFirst('local').getTracks()[1].enabled = false; // it will disable only video track
+            connection.send({
+                myVideoTrackIsMuted: true,
+                trackId: connection.streamEvents.selectFirst('local').getTracks()[1].id,
+                streamId: connection.streamEvents.selectFirst('local').id
+            });
+
+            connection.onmessage = function(event) {
+                if(event.data.myVideoTrackIsMuted === true) {
+                    document.getElementById(event.data.streamId).pause(); // you can set "srcObject=null" or removeAttribute('srcObject')
+                    document.getElementById(event.data.streamId).poster = '/images/poster.png'; // or background image
+                }
+            };
+        }
         
 
             // Video
