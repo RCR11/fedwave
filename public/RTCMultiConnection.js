@@ -832,13 +832,13 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                     }
 
                     if (!isVideoTrack && rtpSender.track.kind === 'audio') {
-                        if(window.gainNode){
+                        /*if(window.gainNode){
                             console.log("Should try and hook up the audio gain node");
                         }else{
                             console.log("doing audio context setup!");
                             window.audioContext = new AudioContext();
                             window.gainNode = window.audioContext.createGain();
-                        }
+                        }*/
                         connection.peers[remoteUserId].peer.lastAudioTrack = rtpSender.track;
                         rtpSender.replaceTrack(track);
                     }
