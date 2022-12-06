@@ -71,6 +71,9 @@
             <div>Bitrate</div>
             <canvas id="bitrateCanvas"></canvas>
         </div>
+
+        <input type="text" id="broadcast-id-slug" value="room-xyz#1234" autocorrect=off autocapitalize=off size=20>
+        <button id="join">Join Broadcast</button>
   </section>
     <style>
         video {
@@ -126,6 +129,13 @@
         //const gainNode = audioContext.createGain();
         //let audioNode = null; //audioContext.createMediaStreamSource();
 
+        // the problem seems to be with the tracks and streams and how they get hooked
+
+        // make a URL slug to start watching the stream or request the stream
+
+        // https://web.dev/webaudio-intro/
+        // https://gabrieltanner.org/blog/turn-server/
+
         function hookAudio(){
             //"preview-audio"
             let audioElem = document.getElementById("preview-audio");
@@ -136,6 +146,8 @@
             window.audioNode = window.audioContext.createMediaStreamSource(remoteStream);
             window.audioNode.connect(window.gainNode);
             window.audioContext.resume();
+            // connection.peers['Playlistbot9k'].streams[0].getTracks()
+            // connection.peers['Playlistbot9k'].streams[0].getAudioTracks()[0].enabled = true;
         }
 
 
@@ -238,6 +250,9 @@
 
     <script src="/RTCMultiConnection.js"></script>
     <script>
+
+        //connection.peers[remoteUserId].peer.lastAudioTrack = rtpSender.track;
+                        //rtpSender.replaceTrack(track);
         // Cool so everyone thinks that muaz is dead
         // so would be a potential replacement https://github.com/feross/simple-peer
         // hls rtmp cnd wrtc https://github.com/cdnbye/hlsjs-p2p-engine
@@ -630,6 +645,45 @@
         });
     };
 
+    document.getElementById('join').onclick = function() {
+        var broadcastId = document.getElementById('broadcast-id-slug').value;
+        if (broadcastId.replace(/^\s+|\s+$/g, '').length <= 0) {
+            alert('Please enter broadcast-id');
+            document.getElementById('broadcast-id-slug').focus();
+            return;
+        }
+
+        document.getElementById('join').disabled = true;
+
+        connection.extra.broadcastId = broadcastId;
+
+        connection.session = {
+            audio: true,
+            video: true,
+            oneway: true
+        };
+
+        connection.getSocket(function(socket) {
+            socket.emit('check-broadcast-presence', broadcastId, function(isBroadcastExists) {
+                if (!isBroadcastExists) {
+                    // the first person (i.e. real-broadcaster) MUST set his user-id
+                    //connection.userid = broadcastId;
+                    console.log("Stream not live!");
+                    alert("Stream not live :(");
+
+                }else{
+
+                    console.log('check-broadcast-presence', broadcastId, isBroadcastExists);
+
+                    socket.emit('join-broadcast', {
+                        broadcastId: broadcastId,
+                        userid: connection.userid,
+                        typeOfStreams: connection.session
+                    });
+                }
+            });
+        });
+    };
     
 
     connection.onstreamended = function() {};
