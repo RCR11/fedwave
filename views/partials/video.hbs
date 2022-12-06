@@ -423,6 +423,20 @@
         just keep and add the bytes sent as a running difference that needs updated every second
 
     */
+    // channel=channelname
+
+    function get(name){
+   if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search))
+        return decodeURIComponent(name[1]);
+    }
+    const chanval = get('channel');
+
+    if(chanval){
+        // set it in the join box
+        document.getElementById('broadcast-id-slug').value = chanval;
+    }
+
+    // do early setup for a shared watch link to a specific stream
     var enableRecordings = false;
     
     let disable_stream_connect = true;
