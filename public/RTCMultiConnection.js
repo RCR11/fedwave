@@ -64,7 +64,7 @@ let customConstraints = {
 
 // HIGHBITRATE
 function removeBandwidthRestriction(sdp) {
-    return sdp.replace(/b=AS:.*\r\n/, '').replace(/b=TIAS:.*\r\n/, '');
+    return String(sdp).replace(/b=AS:.*\r\n/, '').replace(/b=TIAS:.*\r\n/, '');
   }
 
 var RTCMultiConnection = function(roomid, forceOptions) {
