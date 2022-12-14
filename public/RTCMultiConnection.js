@@ -2292,7 +2292,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
 
     // Get HTMLAudioElement/HTMLVideoElement accordingly
     // todo: add API documentation for connection.autoCreateMediaElement
-
+    // STREAM STUFF FIXME
     function getRMCMediaElement(stream, callback, connection) {
         if (!connection.autoCreateMediaElement) {
             callback({});
@@ -2311,7 +2311,9 @@ var RTCMultiConnection = function(roomid, forceOptions) {
         }
 
         var mediaElement = document.createElement(isAudioOnly ? 'audio' : 'video');
-
+        console.log("=========================================================================");
+        console.log("called to find and set the media stream to our object for playback");
+        console.log("=========================================================================");
         mediaElement.srcObject = stream;
 
         mediaElement.setAttribute('autoplay', true);
