@@ -2372,6 +2372,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
         }
 
         var played = mediaElement.play();
+        console.log("this is after a play event is fired, status:",played);
         if (typeof played !== 'undefined') {
             var cbFired = false;
             setTimeout(function() {
@@ -5169,6 +5170,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
             var parentNode = connection.videosContainer;
             parentNode.insertBefore(e.mediaElement, parentNode.firstChild);
             var played = e.mediaElement.play();
+            // this does not get called it would seem
             console.log("maybe look at how much the play is called and look at unhooking all of this garbage...");
             // Possibly another FIXME situation
             if (typeof played !== 'undefined') {
@@ -5176,14 +5178,14 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                     /*** iOS 11 doesn't allow automatic play and rejects ***/
                 }).then(function() {
                     setTimeout(function() {
-                        e.mediaElement.play();
+                        //e.mediaElement.play();
                     }, 2000);
                 });
                 return;
             }
 
             setTimeout(function() {
-                e.mediaElement.play();
+                //e.mediaElement.play();
             }, 2000);
         };
 
@@ -5615,6 +5617,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
         };
 
         // https://github.com/kmturley/webrtc-radio/blob/master/src/app/shared/services/listener.service.ts
+        // maybe get rid of all of the mute/unmute handlers?
         connection.onmute = function(e) {
             console.log('Mute event!');
             if (!e || !e.mediaElement) {
@@ -5644,7 +5647,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
             if (e.unmuteType === 'both' || e.unmuteType === 'video') {
                 e.mediaElement.poster = null;
                 e.mediaElement.srcObject = e.stream;
-                e.mediaElement.play();
+                //e.mediaElement.play();
                 console.log("might be another spot to catch play requests at and another FIXME"); // FIXME
             } else if (e.unmuteType === 'audio') {
                 e.mediaElement.muted = false;
@@ -6062,6 +6065,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
 
         // if disabled, "event.mediaElement" for "onstream" will be NULL
         connection.autoCreateMediaElement = true;
+        connection.autoCreateMediaElement = false;
 
         // set password
         connection.password = null;
