@@ -3753,7 +3753,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                     navigator.mediaDevices.getDisplayMedia(options.localMediaConstraints).then(function(stream) {
                         stream.streamid = stream.streamid || stream.id || getRandomString();
                         stream.idInstance = idInstance;
-
+                        // FIXME maybe another spot to check and fix this up at and see what the streaming function does
                         streaming(stream);
                     }).catch(function(error) {
                         options.onLocalMediaError(error, options.localMediaConstraints);
@@ -5169,7 +5169,8 @@ var RTCMultiConnection = function(roomid, forceOptions) {
             var parentNode = connection.videosContainer;
             parentNode.insertBefore(e.mediaElement, parentNode.firstChild);
             var played = e.mediaElement.play();
-
+            console.log("maybe look at how much the play is called and look at unhooking all of this garbage...");
+            // Possibly another FIXME situation
             if (typeof played !== 'undefined') {
                 played.catch(function() {
                     /*** iOS 11 doesn't allow automatic play and rejects ***/
@@ -5644,6 +5645,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                 e.mediaElement.poster = null;
                 e.mediaElement.srcObject = e.stream;
                 e.mediaElement.play();
+                console.log("might be another spot to catch play requests at and another FIXME"); // FIXME
             } else if (e.unmuteType === 'audio') {
                 e.mediaElement.muted = false;
             }
