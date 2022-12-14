@@ -53,7 +53,7 @@
           <div class="make-center" id="broadcast-viewers-counter"></div>
       </p>
         <div id="video-container">
-        <video id="video-preview"  ></video>
+        <video id="video-preview" controls ></video>
        
         <div id="video-controls">
             <button type="button" id="play-pause">Play</button>
@@ -254,6 +254,7 @@
             volumeBar.addEventListener("change", function() {
                 // Update the video volume
                 video.volume = volumeBar.value;
+                console.log("New volume set for the video: ",volumeBar.value);
                 // now what would be nice is to have an audio track mute or something to hook the audio track up to the control
             });
 
@@ -339,7 +340,7 @@
             Hook up chat emotes []
             Persistent chat cache option client side []
 
-        Bump audio quality settings into being for streaming []
+        Bump audio quality settings into being for streaming [] This was working
         https://stackoverflow.com/questions/46063374/is-it-really-possible-for-webrtc-to-stream-high-quality-audio-without-noise
 
         applyConstraints seems to be what needs tracked down and then further backup the stack to find and set something similar to the ideal settings like these
