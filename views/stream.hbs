@@ -37,6 +37,7 @@
         <p class="no-mobile">
         Have you ckecked your VPN status and public ip info today?
         </p>
+        <p>If you are having issues starting your stream there may be a hung listener connected to the old signaling room. That can cause the system to not allow others to connect...</p>
   </h1>
   <div class="labelhelper" id="ipinfo" onclick="getMyIp()">Check my IP/VPN info...</div>
     <section class="make-center">
@@ -94,6 +95,15 @@
         // https://github.com/muaz-khan/WebRTC-Scalable-Broadcast
         // https://github.com/muaz-khan/WebRTC-Scalable-Broadcast/blob/master/WebRTC-Scalable-Broadcast.js
         // https://github.com/muaz-khan/WebRTC-Scalable-Broadcast/blob/master/RTCMultiConnection.js
+
+        /* Look at doing a stream query to re-fire this for the streamer if ther server restarts
+            socket.emit('join-broadcast', {
+                        broadcastId: broadcastId,
+                        userid: connection.userid,
+                        typeOfStreams: connection.session
+                    });
+
+        */
 
         // server side: https://github.com/muaz-khan/WebRTC-Scalable-Broadcast/blob/master/WebRTC-Scalable-Broadcast.js
     // recording is disabled because it is resulting for browser-crash
@@ -171,6 +181,8 @@
     connection.socketMessageEvent = 'scalable-media-broadcast-demo';
 
     // document.getElementById('broadcast-id').value = connection.userid;
+
+    connection.highbitratemodeaudio = true;
 
     // user need to connect server, so that others can reach him.
     connection.connectSocket(function(socket) {
@@ -399,6 +411,8 @@
         });
     };
 
+    // probably need to add a onreconnect option
+
     var allRecordedBlobs = [];
 
     function repeatedlyRecordStream(stream) {
@@ -541,7 +555,7 @@
                 
                 textnodeAvatar.classList.add("avatar");
             
-                textnodeAvatar.innerHTML = "<img class=\"userav\" src=\"https://bw.rnih.org/emotes/dead_sus_troll_standing.png\" style=\"background: rgb(32, 99, 223);\">";
+                textnodeAvatar.innerHTML = "<img class=\"userav\" src=\"{{config.TROLLICON}}\" style=\"background: rgb(32, 99, 223);\">";
                 textnodeAvatar.addEventListener('click', function(e){
                     // do something
                     /*let atmessage = $("textarea#message").val()
