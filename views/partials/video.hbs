@@ -146,6 +146,8 @@
         // to someone that is using chrome, so chromium, brave, chrome all cause crashing, might be based on the user agent
         // Error code: SIGILL is the error I get in both versions
 
+        // need to also debug how to reconnect and setup a room as the streamer if the server restarts
+
         function hookAudio(){
             //"preview-audio"
             let audioElem = document.getElementById("preview-audio");
@@ -474,6 +476,8 @@
     // we don't need to keep room-opened
     // scalable-broadcast.js will handle stuff itself.
     connection.autoCloseEntireSession = true;
+
+    connection.highbitratemodeaudio = true; // see if we can force it on and to sound better
 
     // by default, socket.io server is assumed to be deployed on your own URL
     connection.socketURL = "{{config.SIGSERVER}}";
