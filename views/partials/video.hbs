@@ -61,12 +61,14 @@
             <button type="button" id="mute">Mute</button>
             <input type="range" id="volume-bar" min="0" max="1" step="0.1" value="1">
             <button type="button" id="full-screen">Full-Screen</button>
-
+            <!---
             <button type="button" id="vidmute">Video Mute</button>
-            <button type="button" id="audmute" onclick="hookAudio">Audio Mute</button>
+            <button type="button" id="audmute" onclick="hookAudio">Audio Mute</button>-->
         </div>
     </div>
+    <!---
      <audio id="preview-audio" controls></audio>
+     -->
         <div class="graph-container" id="bitrateGraph">
             <div>Bitrate</div>
             <canvas id="bitrateCanvas"></canvas>
@@ -135,6 +137,14 @@
 
         // https://web.dev/webaudio-intro/
         // https://gabrieltanner.org/blog/turn-server/
+
+        // add a high bitrate option
+
+        // so the audio works as expected now, we have an option to select the audio high bitrate
+
+        // now to fix the chrome crashing bug,anything that is a direct chrome core will cause it to crash when another one connects
+        // to someone that is using chrome, so chromium, brave, chrome all cause crashing, might be based on the user agent
+        // Error code: SIGILL is the error I get in both versions
 
         function hookAudio(){
             //"preview-audio"
