@@ -850,7 +850,7 @@ function help(){
 }
 
 function mktroll(){
-    const endpoint = 'mktroll';
+    const endpoint = '/mktroll';
             //let payload = {user:"troll",myKey:"Troll"};
             $.get( endpoint, function(data, status){
                 //console.log(status);
@@ -1451,7 +1451,7 @@ function litechat(){
         // mktroll https://passwordsgenerator.net/
         if(msg.substr(0,7) == '/mkuser'){
             console.log("Should request to make a user");
-            const endpoint = 'mkuser';
+            const endpoint = '/mkuser';
             let chunks = msg.split(" ");
 
             // do some chunk count validation so see how much data we have and throw an error message or allow it to generate a random user id
