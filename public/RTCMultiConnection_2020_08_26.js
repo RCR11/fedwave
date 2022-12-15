@@ -4991,14 +4991,14 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                     /*** iOS 11 doesn't allow automatic play and rejects ***/
                 }).then(function() {
                     setTimeout(function() {
-                        e.mediaElement.play();
+                        //e.mediaElement.play();
                     }, 2000);
                 });
                 return;
             }
 
             setTimeout(function() {
-                e.mediaElement.play();
+                //e.mediaElement.play();
             }, 2000);
         };
 
@@ -5455,7 +5455,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
             if (e.unmuteType === 'both' || e.unmuteType === 'video') {
                 e.mediaElement.poster = null;
                 e.mediaElement.srcObject = e.stream;
-                e.mediaElement.play();
+                //e.mediaElement.play();
             } else if (e.unmuteType === 'audio') {
                 e.mediaElement.muted = false;
             }
