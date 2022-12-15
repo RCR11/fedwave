@@ -4265,6 +4265,9 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                 if (typeof StreamsHandler !== 'undefined') {
                     StreamsHandler.setHandlers(stream, true, connection);
                 }
+                var isAudioMuted = stream.getAudioTracks().filter(function(track) {
+                    return track.enabled;
+                }).length === 0;
 
                 connection.streamEvents[stream.streamid] = {
                     stream: stream,
@@ -4273,7 +4276,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                     userid: connection.userid,
                     extra: connection.extra,
                     streamid: stream.streamid,
-                    isAudioMuted: true
+                    isAudioMuted: isAudioMuted
                 };
 
                 try {
@@ -4747,7 +4750,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                             mPeer.onGettingLocalMedia(screen);
 
                             if ((session.audio || session.video) && !isAudioPlusTab(connection)) {
-                                connection.invokeGetUserMedia(customConstraints, callback);
+                                connection.invokeGetUserMedia(null, callback);
                             } else {
                                 callback(screen);
                             }
@@ -4759,10 +4762,10 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                             audio: isAudioPlusTab(connection),
                             video: true,
                             isScreen: true
-                        }, (session.audio || session.video) && !isAudioPlusTab(connection) ? connection.invokeGetUserMedia(customConstraints, callback) : callback);
+                        }, (session.audio || session.video) && !isAudioPlusTab(connection) ? connection.invokeGetUserMedia(null, callback) : callback);
                     }
                 } else if (session.audio || session.video) {
-                    connection.invokeGetUserMedia(customConstraints, callback, session);
+                    connection.invokeGetUserMedia(null, callback, session);
                 }
             }
         }
@@ -5259,7 +5262,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                             mPeer.onGettingLocalMedia(screen);
 
                             if ((session.audio || session.video) && !isAudioPlusTab(connection)) {
-                                connection.invokeGetUserMedia(customConstraints, function(stream) {
+                                connection.invokeGetUserMedia(null, function(stream) {
                                     gumCallback(stream);
                                 });
                             } else {
@@ -5275,7 +5278,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                             isScreen: true
                         }, function(stream) {
                             if ((session.audio || session.video) && !isAudioPlusTab(connection)) {
-                                connection.invokeGetUserMedia(customConstraints, function(stream) {
+                                connection.invokeGetUserMedia(null, function(stream) {
                                     gumCallback(stream);
                                 });
                             } else {
@@ -5284,7 +5287,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                         });
                     }
                 } else if (session.audio || session.video) {
-                    connection.invokeGetUserMedia(customConstraints, gumCallback);
+                    connection.invokeGetUserMedia(null, gumCallback);// these had custom audio contraints
                 }
             }
 
@@ -5432,7 +5435,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                             mPeer.onGettingLocalMedia(screen);
 
                             if ((session.audio || session.video) && !isAudioPlusTab(connection)) {
-                                connection.invokeGetUserMedia(customConstraints, gumCallback);
+                                connection.invokeGetUserMedia(null, gumCallback); // also had custom media contraints
                             } else {
                                 gumCallback(screen);
                             }
@@ -5444,10 +5447,10 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                             audio: isAudioPlusTab(connection),
                             video: true,
                             isScreen: true
-                        }, (session.audio || session.video) && !isAudioPlusTab(connection) ? connection.invokeGetUserMedia(customConstraints, gumCallback) : gumCallback);
+                        }, (session.audio || session.video) && !isAudioPlusTab(connection) ? connection.invokeGetUserMedia(null, gumCallback) : gumCallback);
                     }
                 } else if (session.audio || session.video) {
-                    connection.invokeGetUserMedia(customConstraints, gumCallback);
+                    connection.invokeGetUserMedia(null, gumCallback);
                 }
             }
 
