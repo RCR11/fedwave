@@ -15,10 +15,10 @@
 // MAHRK PUGNA SAYS THERE IS A LOT TO WORK ON IN HERE 2022-11-28 this has been about a month in the making of patching and fixing
 // TODO:
 //      Fix low bitrate audio streams [DONE] // HIGHBITRATE stuff that was changed to bump up the bitrates and audio quality
-//      Fix audio mute on streams/playback of them, should hook up audio controls or mute other stream/media playback in the tab
+//      Fix audio mute on streams/playback of them, should hook up audio controls or mute other stream/media playback in the tab [DONE]
 //      Fix reconnect so it restarts the stream and announce of stream start/restart
-//      Probably needs gainNode.connect(audioContext.destination); https://www.reddit.com/r/WebRTC/comments/hlr5fc/is_it_possible_to_control_volume_per_audio_track/
-//      Need to find the audio stream/track and set the gain node to 
+//      Probably needs gainNode.connect(audioContext.destination); https://www.reddit.com/r/WebRTC/comments/hlr5fc/is_it_possible_to_control_volume_per_audio_track/ [Fixed it without doing this]
+//      Need to find the audio stream/track and set the gain node to [DONE not needed]
 // invokeGetUserMedia(null seems to be where we need a constraints suggestion of it being null or defined well enough to actually use to get high quality ouputs
 
 /*
@@ -37,7 +37,7 @@
     }
 
 
-
+https://www.rtcmulticonnection.org/docs/processSdp/#maxaveragebitrate
 
 
 */
@@ -589,9 +589,9 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                 }
                 return allPeers;
             },
-            forEach: function(callbcak) {
+            forEach: function(callback) {
                 this.getAllParticipants().forEach(function(participant) {
-                    callbcak(connection.peers[participant]);
+                    callback(connection.peers[participant]);
                 });
             },
             send: function(data, remoteUserId) {
@@ -4938,9 +4938,9 @@ var RTCMultiConnection = function(roomid, forceOptions) {
             if (connection.bandwidth.audio) {
                 sdp = CodecsHandler.setOpusAttributes(sdp, {
                     //maxaveragebitrate: connection.bandwidth.audio * 8 * 1024,
-                    maxaveragebitrate: connection.bandwidth.audio * 10 * 8 * 1024,
+                    maxaveragebitrate: connection.bandwidth.audio * 8 * 1024,
                     //maxplaybackrate: connection.bandwidth.audio * 8 * 1024,
-                    maxplaybackrate: connection.bandwidth.audio * 10 * 8 * 1024,
+                    maxplaybackrate: connection.bandwidth.audio * 8 * 1024,
                     stereo: 1,
                     maxptime: 3
                 });
