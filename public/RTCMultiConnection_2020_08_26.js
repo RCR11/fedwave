@@ -14,6 +14,11 @@
 
 let highbitratemodeaudio = true;
 
+// HIGHBITRATE
+function removeBandwidthRestriction(sdp) {
+    return String(sdp).replace(/b=AS:.*\r\n/, '').replace(/b=TIAS:.*\r\n/, '');
+}
+
 var RTCMultiConnection = function(roomid, forceOptions) {
 
     var browserFakeUserAgent = 'Fake/5.0 (FakeOS) AppleWebKit/123 (KHTML, like Gecko) Fake/12.3.4567.89 Fake/123.45';
@@ -1541,11 +1546,21 @@ var RTCMultiConnection = function(roomid, forceOptions) {
             // create an offer sdp
             if (DetectRTC.isPromisesSupported) {
                 pc.createOffer().then(function(result) {
-                    pc.setLocalDescription(result).then(afterCreateOffer);
+                    // HIGHBITRATE
+                    let better_sdp = result;
+                    if(highbitratemodeaudio){
+                        better_sdp = removeBandwidthRestriction(result);
+                    }
+                    pc.setLocalDescription(better_sdp).then(afterCreateOffer);
                 });
             } else {
                 pc.createOffer(function(result) {
-                    pc.setLocalDescription(result, afterCreateOffer, function() {});
+                    // HIGHBITRATE
+                    let better_sdp = result;
+                    if(highbitratemodeaudio){
+                        better_sdp = removeBandwidthRestriction(result);
+                    }
+                    pc.setLocalDescription(better_sdp, afterCreateOffer, function() {});
                 }, function() {});
             }
 
@@ -2940,6 +2955,10 @@ var RTCMultiConnection = function(roomid, forceOptions) {
 
         function createOfferOrAnswer(_method) {
             peer[_method](defaults.sdpConstraints).then(function(localSdp) {
+                // HIGHBITRATE
+                if(highbitratemodeaudio){
+                    localSdp.sdp = localSdp.sdp.replace('useinbandfec=1', 'useinbandfec=1; stereo=1; maxaveragebitrate=510000');
+                }
                 if (DetectRTC.browser.name !== 'Safari') {
                     localSdp.sdp = connection.processSdp(localSdp.sdp);
                 }
@@ -3476,6 +3495,23 @@ var RTCMultiConnection = function(roomid, forceOptions) {
     };
 
     function getUserMediaHandler(options) {
+        // HIGHBITRATE
+        const hdAudioMediaConstraints = {video: true, 
+            audio: {
+              autoGainControl: false,
+              channelCount: 2,
+              echoCancellation: false,
+              latency: 0,
+              noiseSuppression: false,
+              sampleRate: 48000,
+              sampleSize: 16,
+              volume: 1.0
+            }
+          }
+
+          if(highbitratemodeaudio){
+            options.localMediaConstraints = hdAudioMediaConstraints;
+          }
         if (currentUserMediaRequest.mutex === true) {
             currentUserMediaRequest.queueRequests.push(options);
             return;
@@ -5871,7 +5907,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
         };
 
         // if disabled, "event.mediaElement" for "onstream" will be NULL
-        connection.autoCreateMediaElement = true;
+        connection.autoCreateMediaElement = false;
 
         // set password
         connection.password = null;
