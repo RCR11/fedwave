@@ -42,7 +42,7 @@
 
 */
 
-let highbitratemodeaudio = false; // need to expose this as part of the api to allow the client or the streamer to set this option via sockets
+let highbitratemodeaudio = true; // need to expose this as part of the api to allow the client or the streamer to set this option via sockets
 
 let audioConstraints = {
     echoCancellation:   { ideal: false },
