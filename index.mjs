@@ -964,6 +964,7 @@ io.sockets.on("connection", socket => {
             cleanStreamerList(socket.username);
             streamList.push(streaminfo);
             console.log("Matched our streamer!");
+            console.log("Now:",streamList.length,' streamers');
             //io.sockets.emit("livestreams",{streams:Array.from(streamListSet)}); // let everyone know there is a new live stream
             
           }
