@@ -921,7 +921,7 @@ io.sockets.on("connection", socket => {
   function cleanStreamerList(streamer){
     for(let streami = 0;streami < streamList.length;streami++){
       if(streamList[streami].user == streamer){
-        console.log("Now:",streamList.length,' streamers:',streamList);
+        console.log("Now:",streamList.length,' streamers:',streamList, ' splicing:',streami);
         streamList.splice(streami);
         console.log("Now:",streamList.length,' streamers:',streamList);
       }
