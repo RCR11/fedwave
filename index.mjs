@@ -921,7 +921,9 @@ io.sockets.on("connection", socket => {
   function cleanStreamerList(streamer){
     for(let streami = 0;streami < streamList.length;streami++){
       if(streamList[streami].user == streamer){
+        console.log("Now:",streamList.length,' streamers:',streamList);
         streamList.splice(streami);
+        console.log("Now:",streamList.length,' streamers:',streamList);
       }
     }
   }
@@ -964,7 +966,7 @@ io.sockets.on("connection", socket => {
             cleanStreamerList(socket.username);
             streamList.push(streaminfo);
             console.log("Matched our streamer!");
-            console.log("Now:",streamList.length,' streamers');
+            console.log("Now:",streamList.length,' streamers:',streamList);
             //io.sockets.emit("livestreams",{streams:Array.from(streamListSet)}); // let everyone know there is a new live stream
             
           }
