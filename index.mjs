@@ -965,9 +965,11 @@ io.sockets.on("connection", socket => {
             streamList.push(streaminfo);
             console.log("Matched our streamer!");
             //io.sockets.emit("livestreams",{streams:Array.from(streamListSet)}); // let everyone know there is a new live stream
-            io.sockets.emit("livestreams",{streams:streamList});
+            
           }
     }
+
+    io.sockets.emit("livestreams",{streams:streamList});
 
     // so the process should check for instances of the username and num in the list and remove them if in the list/object (maybe use a key)
     // then add the user instance to the live stream list for viewing after it has started
