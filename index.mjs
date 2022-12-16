@@ -919,7 +919,7 @@ io.sockets.on("connection", socket => {
   });
 
   function cleanStreamerList(streamer){
-    for(let streami = 0;streami < streamList.length;streami+=1){
+    for(let streami = 0;streami < streamList.length;streami++){
       if(streamList[streami].user == streamer){
         streamList.splice(streami);
       }
