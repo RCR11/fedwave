@@ -486,6 +486,8 @@
 
     connection.highbitratemodeaudio = true; // see if we can force it on and to sound better
 
+    
+
     // by default, socket.io server is assumed to be deployed on your own URL
     connection.socketURL = "{{config.SIGSERVER}}";
     // this should be in the dotenv file and passed in as a template option
@@ -1050,6 +1052,47 @@
         // https://ipinfo.io/AS212238/IP/subnetbits
         // curl -v https://ipinfo.io
         });*/
+    }
+
+    if(chanval){
+        console.log("Trying to connect to the stream...",chanval );
+        var broadcastId = document.getElementById('broadcast-id-slug').value;
+        if (broadcastId.replace(/^\s+|\s+$/g, '').length <= 0) {
+            //alert('Please enter broadcast-id');
+            document.getElementById('broadcast-id-slug').focus();
+            return;
+        }
+
+        document.getElementById('join').disabled = true;
+
+        connection.extra.broadcastId = broadcastId;
+
+        connection.session = {
+            audio: true,
+            video: true,
+            oneway: true
+        };
+
+        connection.getSocket(function(socket) {
+            socket.emit('check-broadcast-presence', broadcastId, function(isBroadcastExists) {
+                if (!isBroadcastExists) {
+                    // the first person (i.e. real-broadcaster) MUST set his user-id
+                    //connection.userid = broadcastId;
+                    console.log("Stream not live!");
+                    alert("Stream not live :(");
+
+                }else{
+
+                    console.log('check-broadcast-presence', broadcastId, isBroadcastExists);
+
+                    socket.emit('join-broadcast', {
+                        broadcastId: broadcastId,
+                        userid: connection.userid,
+                        typeOfStreams: connection.session
+                    });
+                }
+            });
+        });
     }
 
     </script>
