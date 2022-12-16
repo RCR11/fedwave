@@ -922,7 +922,7 @@ io.sockets.on("connection", socket => {
     for(let streami = 0;streami < streamList.length;streami++){
       if(streamList[streami].user == streamer){
         console.log("Now:",streamList.length,' streamers:',streamList, ' splicing:',streami);
-        streamList.splice(streami);
+        streamList.splice(streami,1);
         console.log("Now:",streamList.length,' streamers:',streamList);
       }
     }
