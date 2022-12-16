@@ -74,8 +74,8 @@
             <canvas id="bitrateCanvas"></canvas>
         </div>
 
-        <input type="text" id="broadcast-id-slug" value="room-xyz#1234" autocorrect=off autocapitalize=off size=20>
-        <button id="join">Join Broadcast</button>
+        <input class="hide" type="text" id="broadcast-id-slug" value="room-xyz#1234" autocorrect=off autocapitalize=off size=20>
+        <button class="hide" id="join">Join Broadcast</button>
   </section>
     <style>
         video {
@@ -142,11 +142,15 @@
 
         // so the audio works as expected now, we have an option to select the audio high bitrate
 
-        // now to fix the chrome crashing bug,anything that is a direct chrome core will cause it to crash when another one connects
-        // to someone that is using chrome, so chromium, brave, chrome all cause crashing, might be based on the user agent
-        // Error code: SIGILL is the error I get in both versions
+        // now to fix the chrome crashing bug,anything that is a direct chrome core will cause it to crash when another one connects [FIXED]
+        // to someone that is using chrome, so chromium, brave, chrome all cause crashing, might be based on the user agent [FIXED]
+        // Error code: SIGILL is the error I get in both versions [FIXED]
 
         // need to also debug how to reconnect and setup a room as the streamer if the server restarts
+
+        // https://dev.to/whitphx/python-webrtc-basics-with-aiortc-48id
+
+        // https://github.com/muaz-khan/RTCMultiConnection/wiki#stereo-audio
 
         function hookAudio(){
             //"preview-audio"
