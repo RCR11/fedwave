@@ -580,7 +580,11 @@
 
         connection.isUpperUserLeft = false;
         videoPreview.srcObject = event.stream;
-        videoPreview.play();
+        try{
+            videoPreview.play();
+        }catch(error){
+            console.log("There was an error auto playing, you probably need to manually click play");
+        }
 
         videoPreview.userid = event.userid;
 
