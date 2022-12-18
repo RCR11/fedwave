@@ -19,6 +19,15 @@
 //      Fix reconnect so it restarts the stream and announce of stream start/restart
 //      Probably needs gainNode.connect(audioContext.destination); https://www.reddit.com/r/WebRTC/comments/hlr5fc/is_it_possible_to_control_volume_per_audio_track/ [Fixed it without doing this]
 //      Need to find the audio stream/track and set the gain node to [DONE not needed]
+//      Look at fixing the chrome bug, or swapping the library that gets used see if the 2020 version works any better []
+//      Add connection quality metrics to change/force people to get pushed to the end of chain if their connection sucks []
+//      Now using the 2020 version instead of this
+
+// https://github.com/muaz-khan/RTCMultiConnection-Server/wiki
+//      
+
+
+
 // invokeGetUserMedia(null seems to be where we need a constraints suggestion of it being null or defined well enough to actually use to get high quality ouputs
 
 /*

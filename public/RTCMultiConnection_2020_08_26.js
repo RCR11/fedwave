@@ -12,6 +12,18 @@
 // MIT License   - www.WebRTC-Experiment.com/licence
 // --------------------------------------------------
 
+/* Notable changes and fixes by MP 2022-12-15
+    // HIGHBITRATE, adds support for high bitrate audio that is stereo etc, making this good for broadcast quality use
+    // FIXEDAUDIODOUBLE Also removed the auto create media elements stuff, this caused the audio doubling that you could not control [DONE] https://github.com/muaz-khan/RTCMultiConnection/issues/1027
+    // at some point this will be updated to add support for metrics to change a users chain position, so people with crap connections 
+        can be pushed to the end of view chains
+    // add support for lower bitrate chain and audio only chain
+
+    A good primer on webrtc https://dev.to/whitphx/python-webrtc-basics-with-aiortc-48id
+    https://www.rtcmulticonnection.org/docs/processSdp/#maxaveragebitrate
+
+*/
+
 let highbitratemodeaudio = true;
 
 // HIGHBITRATE
@@ -2601,6 +2613,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
             };
         }
 
+        // https://github.com/muaz-khan/RTCMultiConnection/issues/1019
         if (!peer.getLocalStreams && peer.getSenders) {
             peer.getLocalStreams = function() {
                 var stream = new MediaStream();
@@ -2650,6 +2663,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
 
             if (!localStream) return;
 
+            // https://github.com/muaz-khan/RTCMultiConnection/issues/1019
             peer.getLocalStreams().forEach(function(stream) {
                 if (localStream && stream.id == localStream.id) {
                     localStream = null;
@@ -2913,6 +2927,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
         }
 
         var streamsToShare = {};
+        // https://github.com/muaz-khan/RTCMultiConnection/issues/1019
         peer.getLocalStreams().forEach(function(stream) {
             streamsToShare[stream.streamid] = {
                 isAudio: !!stream.isAudio,
@@ -5027,14 +5042,14 @@ var RTCMultiConnection = function(roomid, forceOptions) {
                     /*** iOS 11 doesn't allow automatic play and rejects ***/
                 }).then(function() {
                     setTimeout(function() {
-                        //e.mediaElement.play();
+                        //e.mediaElement.play(); // https://github.com/muaz-khan/RTCMultiConnection/issues/1027
                     }, 2000);
                 });
                 return;
             }
 
             setTimeout(function() {
-                //e.mediaElement.play();
+                //e.mediaElement.play(); // https://github.com/muaz-khan/RTCMultiConnection/issues/1027
             }, 2000);
         };
 
@@ -5491,7 +5506,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
             if (e.unmuteType === 'both' || e.unmuteType === 'video') {
                 e.mediaElement.poster = null;
                 e.mediaElement.srcObject = e.stream;
-                //e.mediaElement.play();
+                //e.mediaElement.play(); // https://github.com/muaz-khan/RTCMultiConnection/issues/1027
             } else if (e.unmuteType === 'audio') {
                 e.mediaElement.muted = false;
             }
@@ -5907,7 +5922,7 @@ var RTCMultiConnection = function(roomid, forceOptions) {
         };
 
         // if disabled, "event.mediaElement" for "onstream" will be NULL
-        connection.autoCreateMediaElement = false;
+        connection.autoCreateMediaElement = false; // FIXEDAUDIODOUBLE, this has been set to false to fix the audio doubling
 
         // set password
         connection.password = null;

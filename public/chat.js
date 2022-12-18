@@ -894,7 +894,7 @@ function bindSounds(){
   try{
       var quad_string =  window.localStorage.getItem('useQuad');
           if (quad_string === '1'){
-          document.getElementById("audio2").src="https://bw.rnih.org/litechat/quad.mp3";
+          document.getElementById("audio2").src=chatConfig.QUAD_S;
           }
       }catch(err){
       
@@ -903,7 +903,7 @@ function bindSounds(){
   try{
       var quad_string =  window.localStorage.getItem('useBones');
           if (quad_string === '1'){
-          document.getElementById("audio2").src="https://bw.rnih.org/litechat/taunt.wav";
+          document.getElementById("audio2").src=chatConfig.BONES_S;
           }
       }catch(err){
       
@@ -912,7 +912,7 @@ function bindSounds(){
   try{
       var quad_string =  window.localStorage.getItem('useRail');
           if (quad_string === '1'){
-          document.getElementById("audio2").src="https://bw.rnih.org/litechat/railgf1a.wav";
+          document.getElementById("audio2").src=chatConfig.RAIL_S;
           }
       }catch(err){
       
@@ -922,7 +922,7 @@ function bindSounds(){
   try{
       var quad_string =  window.localStorage.getItem('useHit');
           if (quad_string === '1'){
-          document.getElementById("audio2").src="https://bw.rnih.org/litechat/hit.wav";
+          document.getElementById("audio2").src=chatConfig.HIT_S;
           }
       }catch(err){
       
@@ -931,7 +931,7 @@ function bindSounds(){
   try{
       var quad_string =  window.localStorage.getItem('useProtect');
           if (quad_string === '1'){
-          document.getElementById("audio2").src="https://bw.rnih.org/litechat/protect.wav";
+          document.getElementById("audio2").src=chatConfig.PROTECT_S;
           }
       }catch(err){
       
@@ -940,7 +940,7 @@ function bindSounds(){
   try{
       var quad_string =  window.localStorage.getItem('useRunty');
           if (quad_string === '1'){
-          document.getElementById("audio2").src="https://bw.rnih.org/litechat/runty.mp3";
+          document.getElementById("audio2").src=chatConfig.RUNTY_S;
           }
       }catch(err){
       
@@ -950,16 +950,16 @@ function bindSounds(){
   try{
       var quad_string =  window.localStorage.getItem('useMenu');
           if (quad_string === '1'){
-          document.getElementById("audio2").src="https://bw.rnih.org/litechat/menu1.wav";
+          document.getElementById("audio2").src=chatConfig.MENU1_S;
           }
           if (quad_string === '2'){
-          document.getElementById("audio2").src="https://bw.rnih.org/litechat/menu2.wav";
+          document.getElementById("audio2").src=chatConfig.MENU2_S;
           }
           if (quad_string === '3'){
-          document.getElementById("audio2").src="https://bw.rnih.org/litechat/menu3.wav";
+          document.getElementById("audio2").src=chatConfig.MENU3_S;
           }
           if (quad_string === '4'){
-          document.getElementById("audio2").src="https://bw.rnih.org/litechat/menu4.wav";
+          document.getElementById("audio2").src=chatConfig.MENU4_S;
           }
       }catch(err){
       
