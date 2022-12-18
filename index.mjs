@@ -50,7 +50,19 @@ let template_config = {
     HAPPYBLOB:process.env.HAPPYBLOB,
     SADBLOB:process.env.SADBLOB,
     ECHOESL:process.env.ECHOESL,
-    ECHOES:process.env.ECHOES,
+    DEFAULT_S:process.env.DEFAULT_S,
+    
+    QUAD_S:process.env.QUAD_S,
+    TAUNT_S:process.env.TAUNT_S,
+    RAIL_S:process.env.RAIL_S,
+    HIT_S:process.env.HIT_S,
+    PROTECT_S:process.env.PROTECT_S,
+    RUNTY_S:process.env.RUNTY_S,
+    MENU1_S:process.env.MENU1_S,
+    MENU2_S:process.env.MENU2_S,
+    MENU3_S:process.env.MENU3_S,
+    MENU4_S:process.env.MENU4_S,
+    
 }
 
 app.use(bodyParser.urlencoded({ extended: true }));
