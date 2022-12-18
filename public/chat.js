@@ -890,7 +890,9 @@ function playSound() {
 function bindSounds(){
   // used to bind the sound sources to prevent them from playing intially
   // should look for a setting in storage to enable quad via /quad
-  document.getElementById("audio2").src=chatConfig.DEFAULT_S;
+  if(chatConfig.DEFAULT_S){
+    document.getElementById("audio2").src=chatConfig.DEFAULT_S;
+  }
   try{
       var quad_string =  window.localStorage.getItem('useQuad');
           if (quad_string === '1'){
