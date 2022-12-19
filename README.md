@@ -165,11 +165,12 @@ Logs you'll want to probably clean up:
 In linux: 
 ```/var/log/
 /var/log/nginx/
-~/.pm2/*.logs```
+~/.pm2/*.logs
+```
 
 ## Security
 Markdown (but with some safe restrictions of use to prevent issues with scraping of IP info)
-    Ip scraping is accomplished by injecting markdown content that can be directed to a server for loading by users in a chat, common with src, images, links, buttons, etc
+-    Ip scraping is accomplished by injecting markdown content that can be directed to a server for loading by users in a chat, common with src, images, links, buttons, etc
 
 Another class of things that need to be check are all other data outputs, notice in messaging that the channel, username, and other details
 that come through are also sanatized for user input and that they also use specific access methods when content is displayed that is user
