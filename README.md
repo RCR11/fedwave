@@ -12,13 +12,13 @@ Cross site whispering !w username#num@server
 Federation can be enabled and disabled by a admin at will, allows the outgoing and the incomming to be turned off
 
 Techonologies used of note:
-	Socket.io (provides chat, live stream info, negotiates live stream connections)
-	jose (to provide authentication via tokens) 
-	RTCMultiConnection (handles webrtc connections)
-	hbs for streaming site pages
-	nodejs (server side)
-	markedjs (message formatting)
-	htmlsanitizer (for message cleaning of html inputs)
+-	Socket.io (provides chat, live stream info, negotiates live stream connections)
+-	jose (to provide authentication via tokens) 
+-	RTCMultiConnection (handles webrtc connections)
+-	hbs for streaming site pages
+-	nodejs (server side)
+-	markedjs (message formatting)
+-	htmlsanitizer (for message cleaning of html inputs)
 	
 
 ## To get started
