@@ -112,7 +112,8 @@ it allows the users listed in it to be used for !mkstreamer !ban !unban etc from
 ```{"admin":[
     {"username": "AsweetAdminName", "color": "#666666", "num": 666},
     {"username": "AnotherAdminName", "color": "#333333", "num": 333}
-]}```
+]}
+```
 
 For the admin to work, the name needs to be matched, color needs to match, and the num needs to match.
 
