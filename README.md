@@ -54,7 +54,8 @@ sudo ufw allow from 127.0.0.1 proto tcp to any port 5555
 sudo ufw allow from 127.0.0.1 proto tcp to any port 9002
 sudo ufw allow 9001/tcp
 
-sudo ufw allow 3478/tcp```
+sudo ufw allow 3478/tcp
+```
 	
 ### Setup NPM/NodeJS
 
@@ -68,7 +69,8 @@ NVM is a pretty nice option for getting npm/nodejs installed and working in a ve
 cd fedwave.git
 git init --bare
 nano hooks/post-receive
-chmod +x hooks/post-receive```
+chmod +x hooks/post-receive
+```
 
 ### Setup your reference to remote production for your local git
 `git remote add production ssh://user@server:/full/path/to/bare.git`
@@ -79,7 +81,8 @@ pm2 startup systemd
 sudo systemctl start pm2-fedwave.service
 
 pm2 start ./index.mjs
-pm2 save```
+pm2 save
+```
 
 ### Setup Nginx or some type of reverse proxy/cloudflare
 Make the following files based on the proxy templates for nginx
@@ -98,7 +101,8 @@ Make the following files based on the proxy templates for nginx
 {"approvedstreamers":[
     {"username": "MizztourMetokur", "color": "#1A07D8", "num": 83271,"avatar":"https://fedwave.tv/emotes/4of5starshat.png"}
     
-]}```
+]}
+```
 
 # Configure admins
 
