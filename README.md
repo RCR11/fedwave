@@ -6,8 +6,8 @@ Providing features like: Chat, video live streams, channeling, federation, minim
 
 ## Federation
 Chat messages, allow the linking of servers to ferate chat, federated messages should be username#num@federatedhost.tld
-LiveStreams, allowing servers to list and show info about other streams that are live and how to connect to them.
-Cross site whispering !w username#num@server
+-	LiveStreams, allowing servers to list and show info about other streams that are live and how to connect to them.
+-	Cross site whispering !w username#num@server
 
 Federation can be enabled and disabled by a admin at will, allows the outgoing and the incomming to be turned off
 
