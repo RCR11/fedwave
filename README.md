@@ -5,7 +5,7 @@ The idea was to build a minimal site that a streamer could run on their own usin
 Providing features like: Chat, video live streams, channeling, federation, minimal management.
 
 ## Federation
-Chat messages, allow the linking of servers to ferate chat, federated messages should be username#num@federatedhost.tld
+Chat messages, allow the linking of servers to federate chat, federated messages should be username#num@federatedhost.tld
 -	LiveStreams, allowing servers to list and show info about other streams that are live and how to connect to them.
 -	Cross site whispering !w username#num@server
 
@@ -65,11 +65,17 @@ https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubunt
 NVM is a pretty nice option for getting npm/nodejs installed and working in a version that your software will probably want https://github.com/nvm-sh/nvm
 
 ### Setup the production folders
+
 ```mkdir fedwave.git
 cd fedwave.git
 git init --bare
 nano hooks/post-receive
 chmod +x hooks/post-receive
+```
+
+Also make the directory that the post-receive target copies to
+
+```mkdir fedwave
 ```
 
 ### Setup your reference to remote production for your local git
@@ -93,7 +99,7 @@ Make the following files based on the proxy templates for nginx
 ### Certs via certbot
 `certbot --nginx -d fedwave.tv`
 
-# Manually configure appoved streamers
+# Manually configure approved streamers
 `nano approved_streamers.json`
 
 ## a sample looks like:
@@ -127,6 +133,7 @@ Or they can use a regular microphone and webcam to stream (via laptop, computer,
 
 https://github.com/MarshalX/python-webrtc
 https://pericror.com/software/python-create-a-webrtc-video-stream-from-images/
+https://www.npmjs.com/package/emoji-picker-element
 In theory that could be made to work if it handled all of the signaling events of the backend signaling server.
 
 # Protocol theory
@@ -167,6 +174,10 @@ In linux:
 /var/log/nginx/
 ~/.pm2/*.logs
 ```
+
+# Optional Cloudflare
+
+https://www.digitalocean.com/community/tutorials/how-to-host-a-website-using-cloudflare-and-nginx-on-ubuntu-22-04
 
 ## Security
 Markdown (but with some safe restrictions of use to prevent issues with scraping of IP info)
