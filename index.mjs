@@ -283,7 +283,8 @@ function getRandomColor() {
   app.get('/v1/channels/live',(req,res) => {
     
     //"livestreams",{streams:streamList}
-    res.send({success:true,streamers:streamList,live:{src:'https://hls.robotstreamer.com/tv/4126.m3u8',name:'plbrs',type:'video/mp4'}});
+
+    res.send({success:true,streamers:streamList,live:true});
     
   });
 
@@ -1064,6 +1065,10 @@ fwcio.sockets.on("connection", socket => {
             if(data.desc){
               streaminfo.desc = sanitizeHtml(data.desc);
               streaminfo.title = sanitizeHtml(data.desc);
+            }
+
+            if(data.src){
+              streaminfo.src = data.src;
             }
       
             if(data.viewers){
