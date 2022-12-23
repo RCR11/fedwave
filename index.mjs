@@ -283,7 +283,7 @@ function getRandomColor() {
   app.get('/v1/channels/live',(req,res) => {
     
     //"livestreams",{streams:streamList}
-    res.send({success:true,streamers:streamList});
+    res.send({success:true,streamers:streamList,live:{src:'https://hls.robotstreamer.com/tv/4126.m3u8',name:'plbrs',type:'video/mp4'}});
     
   });
 
