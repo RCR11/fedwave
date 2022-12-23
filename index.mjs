@@ -270,6 +270,20 @@ function getRandomColor() {
   app.get('/v1/channels/live',(req,res) => {
     
     //"livestreams",{streams:streamList}
+    res.send({streamers:streamList});
+    
+  });
+
+  app.get('/v1/chat/channels',(req,res) => {
+    
+    //"livestreams",{streams:streamList}
+    res.send({streams:streamList});
+    
+  });
+
+  app.get('/v1/chat/users',(req,res) => {
+    
+    //"livestreams",{streams:streamList}
     res.send({streams:streamList});
     
   });
