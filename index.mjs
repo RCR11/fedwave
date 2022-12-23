@@ -295,11 +295,25 @@ function getRandomColor() {
     
   });
 
-  app.get('/api/channel/',(req,res) => {
+  app.get('/api/channel/:id',(req,res) => {
     
     //"livestreams",{streams:streamList}
+    var currStream = streamList.filter(function(streamer){
+      if(streamer.id == req.params.id){
+         return true;
+      }
+   });
 
-    res.send({success:true,streamers:streamList[0],live:true});
+
+    //let streamername = req.params.id;
+    console.log("trying to find streamer: ",req.params.id);
+    if(currStream.length == 1){
+      res.json(currStream[0])
+   } else {
+      res.status(404);//Set status to 404 as movie was not found
+      res.json({message: "Not Found"});
+   }
+    //res.send({success:true,streamers:streamList[0],live:true});
     
   });
 
