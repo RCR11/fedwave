@@ -78,9 +78,9 @@ function getChatConfig(){
         if(chatConfig.legacychat){
             whisperSocketServer = io(chatConfig.legacychat,{transports: ['websocket'] } ); //socket
             
-                whisperSocketServer.on( 'messagein', async data => await this.messagein(data) );
-                whisperSocketServer.on( 'receipt_r', async data => await this.rr(data) );
-                whisperSocketServer.on( 'said', async data => await this.said(data) );
+                whisperSocketServer.on( 'messagein', async data => await messagein(data) );
+                whisperSocketServer.on( 'receipt_r', async data => await rr(data) );
+                whisperSocketServer.on( 'said', async data => await said(data) );
             console.log("Connected to legacy chat:",chatConfig.legacychat);
         }
         
