@@ -86,7 +86,9 @@ import http from 'http';
 const server = http.createServer(app);
 
 import { Server } from 'socket.io';
-const fwcio = new Server(server);
+const fwcio = new Server(server,{cors: {
+  origin: "*"
+}});
 
 const signalingServer = http.createServer(app);
 const io_signal_server = new Server(signalingServer,{cors: {
