@@ -1061,7 +1061,7 @@ fwcio.sockets.on("connection", socket => {
     for( const livestreamer in approved_streamers.approvedstreamers){
         //console.log(approved_streamers.approvedstreamers[livestreamer]);
         if(socket.username == approved_streamers.approvedstreamers[livestreamer].username && socket.unum == approved_streamers.approvedstreamers[livestreamer].num && socket.color == approved_streamers.approvedstreamers[livestreamer].color){
-            let streaminfo = {name:socket.username,user:socket.username,desc:"A near real time live stream!",thumbnail:approved_streamers.approvedstreamers[livestreamer].avatar,avatar:approved_streamers.approvedstreamers[livestreamer].avatar,viewers:0,viewCount:0,live:true};
+            let streaminfo = {to:socket.username,owner:socket.username,name:socket.username,user:socket.username,desc:"A near real time live stream!",thumbnail:approved_streamers.approvedstreamers[livestreamer].avatar,avatar:approved_streamers.approvedstreamers[livestreamer].avatar,viewers:0,viewCount:0,live:true};
             if(data.desc){
               streaminfo.desc = sanitizeHtml(data.desc);
               streaminfo.title = sanitizeHtml(data.desc);
