@@ -12,13 +12,13 @@ const app = express();
         Need to add config for ice servers
         Chat server that it connects to for the client side
         Video ICE 
-        Find and remove https://bw.rnih.org []
-            lc.rnih.org []
         Add client config push for video
         FedConnect (for federation of data between instances) Swaps keys, has a message
             Emotes
             Chat, jannying chat content?
             Live streams
+        Need federation sockets to allow pushing data to connected instances that are subbed to us like a user
+        Need federation sockets to allow pulling and subbing to other instances
         Glowing Fed Logo or powered by
         https://github.com/kmturley/webrtc-radio
         userPreferences
@@ -50,6 +50,7 @@ let template_config = {
     HAPPYBLOB:process.env.HAPPYBLOB,
     SADBLOB:process.env.SADBLOB,
     ECHOESL:process.env.ECHOESL,
+    ECHOES:process.env.ECHOES,
     DEFAULT_S:process.env.DEFAULT_S,
     
     QUAD_S:process.env.QUAD_S,
@@ -274,6 +275,32 @@ function getRandomColor() {
 
     
   });
+
+  // add fedration page to show federation info status
+  // have a fed api to request federation from another server, sends a special token so the other server can send back to use via public key
+  /* Federation
+    Should have options of what to sync and how to connect
+    There should be another public socket or unlisted user for federation, that allows them to sub (get messages/send messages)
+    So the way that it should work allows the special federation socket to connect and then provides a way to push/pull messages
+    Now as an admin you can do stuff via the chat api that enables and disables federation features
+    Live stream list federation
+  */
+  app.get('/fed',(req,res) => {
+    var authStatus = true;//req.isAuthenticated();
+    res.render('federation',{session:authStatus,req:req,config:template_config});
+  });
+
+  // Moderation, no one likes it but for illegal things
+  /* Should show a user list to be moderated
+      There will be a special moderation endpoint/chat message that logs the moderation action in detail
+      Type of moderation (ban,ip ban, temp ban), who moderated (which mod or admin), who was moderated (which user/ip), messages of ban status
+      is it in a channel, global, federated, everywhere
+      scope of ban/moderatation (global, channel, federated, everywhere)
+      Detail level of ban, username, name + num, name + num + color
+
+      messages, has the message, and time it was submitted, who submitted it
+
+  */
 
 // returns a troll id 4 characters long
 function genTrollId(){
