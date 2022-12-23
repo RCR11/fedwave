@@ -246,7 +246,7 @@ function readTTSmessage(message){
 */
 
 let whisperSocketServer = null; // this is how we can whipser since someone can't fix their own version of whispers
-if(chatConfig.legacychat != ''){
+if(chatConfig.legacychat){
     whisperSocketServer = io(chatConfig.legacychat,{transports: ['websocket'] } ); //socket
     
         whisperSocketServer.on( 'messagein', async data => await this.messagein(data) );
