@@ -386,6 +386,12 @@ function said(data){
             msg_to_add_locally.username = msg_to;
             msg_to_add_locally.channel = datanew.channel;
             msg_to_add_locally.avatar = '/fed.svg';
+            
+            
+
+            if(chatConfig.defaultavatar){
+                msg_to_add_locally.avatar = chatConfig.defaultavatar;
+            }
         
             if(window.localStorage.useMsgCache){
                 let useLocalCache = window.localStorage.getItem("useMsgCache");
@@ -790,9 +796,17 @@ function addMessage(data){
         textnodeAvatar.classList.add("avatar");
         
         textnodeAvatar.innerHTML = "<img class=\"userav\" src=\"/fed.svg\" style=\"background: rgb(32, 99, 223);\">";
+        if(chatConfig.defaultavatar){
+            
+            textnodeAvatar.innerHTML = "<img class=\"userav\" src=\""+chatConfig.defaultavatar+"\" style=\"background: rgb(32, 99, 223);\">";
+        }
         if(data.color){
             let usercolor = hexToRgb(data.color);
             textnodeAvatar.innerHTML = "<img class=\"userav\" src=\"/fed.svg\" style=\"background: rgb("+ usercolor.r+ "," + usercolor.g + ","+ usercolor.b +");\">";
+            if(chatConfig.defaultavatar){
+            
+                textnodeAvatar.innerHTML = "<img class=\"userav\" src=\""+chatConfig.defaultavatar+"\" style=\"background: rgb("+ usercolor.r+ "," + usercolor.g + ","+ usercolor.b +");\">";
+            }
         }
         let textnodeUserName = document.createElement("div"); // need to add a on click event for the attribute
         textnodeUserName.classList.add("username");
@@ -1056,9 +1070,17 @@ function addv2msg(data){
         let textnodeAvatar = document.createElement("div");
         textnodeAvatar.classList.add("avatar");
         textnodeAvatar.innerHTML = "<img class=\"userav\" src=\"/fed.svg\" style=\"background: rgb(32, 99, 223);\">";
+        if(chatConfig.defaultavatar){
+            
+            textnodeAvatar.innerHTML = "<img class=\"userav\" src=\""+chatConfig.defaultavatar+"\" style=\"background: rgb("+ usercolor.r+ "," + usercolor.g + ","+ usercolor.b +");\">";
+        }
         if(data.color){
             let usercolor = hexToRgb(data.color);
             textnodeAvatar.innerHTML = "<img class=\"userav\" src=\"/fed.svg\" style=\"background: rgb("+ usercolor.r+ "," + usercolor.g + ","+ usercolor.b +");\">";
+            if(chatConfig.defaultavatar){
+            
+                textnodeAvatar.innerHTML = "<img class=\"userav\" src=\""+chatConfig.defaultavatar+"\" style=\"background: rgb("+ usercolor.r+ "," + usercolor.g + ","+ usercolor.b +");\">";
+            }
         }
 
         textnodeAvatar.addEventListener('click', function(e){
@@ -1820,6 +1842,10 @@ function litechat(){
                 //textnodeAvatar.innerHTML = "<img class=\"userav\" src=\"https://i.imgur.com/kdxSQI9.png\" style=\"background: " + ucolor+";\">";
                 textnodeAvatar.innerHTML = "<img class=\"userav\" src=\"/fed.svg\" style=\"background: rgb(32, 99, 223);\">";
                 // 
+                if(chatConfig.defaultavatar){
+                    textnodeAvatar.innerHTML = "<img class=\"userav\" src=\""+chatConfig.defaultavatar+"\" style=\"background: rgb(32, 99, 223);\">";
+                    //textnodeAvatar.innerHTML = "<img class=\"userav\" src=\""+chatConfig.defaultavatar+"\" style=\"background: rgb("+ usercolor.r+ "," + usercolor.g + ","+ usercolor.b +");\">";
+                }
 
                 textnodeAvatar.addEventListener('click', function(e){
                     // do something
