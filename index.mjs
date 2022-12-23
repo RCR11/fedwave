@@ -77,12 +77,15 @@ import http from 'http';
 const server = http.createServer(app);
 
 import { Server } from 'socket.io';
-const io = new Server(server);
+const fwcio = new Server(server);
 
 const signalingServer = http.createServer(app);
 const io_signal_server = new Server(signalingServer,{cors: {
   origin: "*"
 }});
+
+import {io} from "socket.io-client";// Need to look at managing federation sockets and getting request for federation
+// Needs the token, with server info for federation
 
 import bcrypt from 'bcryptjs';
 
@@ -250,6 +253,13 @@ function getRandomColor() {
       temp_emotes.emotes.push(bw_emote);
     }
     res.send(temp_emotes);
+    
+  });
+
+  app.get('/v1/channels/live',(req,res) => {
+    
+    //"livestreams",{streams:streamList}
+    res.send({streams:streamList});
     
   });
 
@@ -626,13 +636,13 @@ function genTrollId(){
     
     // now for testing this will spit out stuff and still needs a safety pass of filtering output
     // to whitelisted tag types 
-    io.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml(msg.username),channel:sanitizeHtml(msg.channel),color:sanitizeHtml(msg.color),unum:msg.unum});
+    fwcio.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml(msg.username),channel:sanitizeHtml(msg.channel),color:sanitizeHtml(msg.color),unum:msg.unum});
   }
 
   function addUserToList(temp_username){
     userList.add(sanitizeHtml(temp_username));
     // then fire an event to push the updated user list?
-    io.sockets.emit("update usernames",{users:Array.from(userList)});
+    fwcio.sockets.emit("update usernames",{users:Array.from(userList)});
   }
   
   function setsAreEqual(a, b) {
@@ -650,7 +660,7 @@ function genTrollId(){
     let userListTemp = new Set();
   
     // update the temp list 
-    io.sockets.sockets.forEach(user_s => {
+    fwcio.sockets.sockets.forEach(user_s => {
       if(user_socket_id != user_s.id){
         userListTemp.add(sanitizeHtml(user_s.username + "#" + user_s.unum));
       }
@@ -663,7 +673,7 @@ function genTrollId(){
     }else{
       // if diff send the new updated users list, set the userList = userListTemp as well
       userList = userListTemp;
-      io.sockets.emit("update usernames",{users:Array.from(userList)});
+      fwcio.sockets.emit("update usernames",{users:Array.from(userList)});
     }
   
     
@@ -672,12 +682,12 @@ function genTrollId(){
     /*if(userList.has(temp_username)){
       console.log("Found user to remove...");
       userList.delete(temp_username);
-      io.sockets.emit("update usernames",{users:Array.from(userList)});
+      fwcio.sockets.emit("update usernames",{users:Array.from(userList)});
     }*/
   }
 
-  io.sockets.on("error", e => console.log(e));
-io.sockets.on("connection", socket => {
+  fwcio.sockets.on("error", e => console.log(e));
+fwcio.sockets.on("connection", socket => {
   socket.channels = {};
   sockets[socket.id] = socket;
   //let currentUser = socket.id;
@@ -714,12 +724,12 @@ io.sockets.on("connection", socket => {
 
           }
           let msg_md = do_md('Should ban user: ');
-          io.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
+          fwcio.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
           return;
         }
         //socket.emit("error",{message:"Error sending message",channel:"error",username:"servererror"});
         const msg_md = do_md('You need to specify a username to ban. IE: `!ban username`');
-        io.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
+        fwcio.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
         return;
       }
       
@@ -727,14 +737,14 @@ io.sockets.on("connection", socket => {
       if(data.message.substr(0,7) == '!unban '){
         //socket.emit("error",{message:"Error sending message",channel:"error",username:"servererror"});
         const msg_md = do_md('Should unban user: ');
-        io.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
+        fwcio.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
         return;
       }
       // ipban
       if(data.message.substr(0,7) == '!ipban '){
         //socket.emit("error",{message:"Error sending message",channel:"error",username:"servererror"});
         const msg_md = do_md('Should ipban user: ');
-        io.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
+        fwcfwcio.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
         return;
       }
       // iprangeban
@@ -760,7 +770,7 @@ io.sockets.on("connection", socket => {
             if(isNumeric(uchunks[1])){
               msg_md = do_md('Should make user: ' + user_to_find + ' a streamer!');
               // use the same logic used for whispers
-              let lsockets = io.sockets.sockets; // skip manually tracking, just look through the socket set
+              let lsockets = fwcio.sockets.sockets; // skip manually tracking, just look through the socket set
               let user_found = false;
               lsockets.forEach(usocket => {
                 // need to look at adding the username#num to shit that gets emitted
@@ -811,7 +821,7 @@ io.sockets.on("connection", socket => {
         }else{
           msg_md = do_md('You are missing the user info to make them a streamer');
         }
-        io.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
+        fwcio.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
         return;
       }
       // revoke username (removes them from the permissions files, streamers, admin,mods,jannys,etc)
@@ -819,7 +829,7 @@ io.sockets.on("connection", socket => {
       if(data.message.substr(0,6) == '!check'){
         //socket.emit("error",{message:"Error sending message",channel:"error",username:"servererror"});
         const msg_md = do_md('Holy shit your the admin!');
-        io.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
+        fwcio.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
         return;
       }
 
@@ -924,7 +934,7 @@ io.sockets.on("connection", socket => {
     console.log("Whisper to:", data.to);
     //console.log("message:", data.message);
     // loop through all of the user connections and look for the authenticated user that matches the socket and send them the message and try to match up the number as well
-    let lsockets = io.sockets.sockets; // skip manually tracking, just look through the socket set
+    let lsockets = fwcio.sockets.sockets; // skip manually tracking, just look through the socket set
     let user_found = false;
     lsockets.forEach(usocket => {
       // need to look at adding the username#num to shit that gets emitted
@@ -1017,12 +1027,12 @@ io.sockets.on("connection", socket => {
             streamList.push(streaminfo);
             console.log("Matched our streamer!");
             console.log("Now:",streamList.length,' streamers:',streamList);
-            //io.sockets.emit("livestreams",{streams:Array.from(streamListSet)}); // let everyone know there is a new live stream
+            //fwcio.sockets.emit("livestreams",{streams:Array.from(streamListSet)}); // let everyone know there is a new live stream
             
           }
     }
 
-    io.sockets.emit("livestreams",{streams:streamList});
+    fwcio.sockets.emit("livestreams",{streams:streamList});
 
     // so the process should check for instances of the username and num in the list and remove them if in the list/object (maybe use a key)
     // then add the user instance to the live stream list for viewing after it has started
@@ -1046,7 +1056,7 @@ io.sockets.on("connection", socket => {
 socket.on("getlivestreams",(data) => {
     // returns a list of the current live streams
     // publishes a livestreams message
-    //io.sockets.emit("update usernames",{users:Array.from(userList)});
+    //fwcio.sockets.emit("update usernames",{users:Array.from(userList)});
     // the live streams should have a user name, description, live status, user picture from token
     // need to make sure that all of the streamlistset is stripped of HTML
     // yeah add user, desc, live, avatar
@@ -1080,7 +1090,7 @@ socket.on("getlivestreams",(data) => {
     //console.log("user sdp:",data.sdp);
 
     // this should happen but doesn't seem to...
-    io.sockets.emit("watcherconnect",{sdp:data.sdp,user:socket.username});// this is what the streamer should connect back to
+    fwcio.sockets.emit("watcherconnect",{sdp:data.sdp,user:socket.username});// this is what the streamer should connect back to
   })
 
 
@@ -1118,6 +1128,8 @@ socket.on("getlivestreams",(data) => {
   // signaling shit
   
 });
+
+
 
 
 // CORS https://socket.io/docs/v3/handling-cors/
