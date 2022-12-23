@@ -256,15 +256,27 @@ function getRandomColor() {
     res.render('watch',{session:authStatus,req:req,config:template_config});
   });
 
-  app.get('/v1/emotes',(req,res) => {
+  app.get('/v1/emotesfw',(req,res) => {
     let temp_emotes = emoteList;
-    // copy all of the bw emotes into the list as well
     for( const emote in altemoteList.data){
       let bw_emote = {label:altemoteList.data[emote].label,value:altemoteList.data[emote].value,name:altemoteList.data[emote].label,url:altemoteList.data[emote].image,image:altemoteList.data[emote].image};
       temp_emotes.emotes.push(bw_emote);
     }
+    res.send(temp_emotes); // litechat standard
+    
+  });
+
+  app.get('/v1/emotes',(req,res) => {
+    //let temp_emotes = emoteList;
+    // copy all of the bw emotes into the list as well
+    res.send(altemoteList);
+
+    /*for( const emote in altemoteList.data){
+      let bw_emote = {label:altemoteList.data[emote].label,value:altemoteList.data[emote].value,name:altemoteList.data[emote].label,url:altemoteList.data[emote].image,image:altemoteList.data[emote].image};
+      temp_emotes.emotes.push(bw_emote);
+    }
     //res.send(temp_emotes); // litechat standard
-    res.send({success:true,data:temp_emotes});
+    res.send({success:true,data:temp_emotes});*/
     
   });
 
