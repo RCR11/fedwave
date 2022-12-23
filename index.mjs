@@ -647,7 +647,7 @@ function genTrollId(){
     
     // now for testing this will spit out stuff and still needs a safety pass of filtering output
     // to whitelisted tag types 
-    fwcio.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml(msg.username),channel:sanitizeHtml(msg.channel),color:sanitizeHtml(msg.color),unum:msg.unum});
+    fwcio.sockets.emit("bulkmessage",[{message:msg_md,username:sanitizeHtml(msg.username),channel:sanitizeHtml(msg.channel),color:sanitizeHtml(msg.color),unum:msg.unum}]);
   }
 
   function addUserToList(temp_username){
