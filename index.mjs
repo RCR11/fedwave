@@ -292,7 +292,8 @@ function getRandomColor() {
   app.get('/v1/messages',(req,res) => {
     
     //"livestreams",{streams:streamList}
-    res.send({success:true,data:[{message:"Test message on the server", user:"Test User"}]});
+    // fwcio.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
+    res.send({success:true,data:[{message:"Test message on the server", username:"Test User",channel:'Test Server channel'}]});
     
   });
 
