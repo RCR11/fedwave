@@ -260,10 +260,11 @@ function getRandomColor() {
     let temp_emotes = emoteList;
     // copy all of the bw emotes into the list as well
     for( const emote in altemoteList.data){
-      let bw_emote = {name:altemoteList.data[emote].label,url:altemoteList.data[emote].image};
+      let bw_emote = {label:altemoteList.data[emote].label,value:altemoteList.data[emote].value,name:altemoteList.data[emote].label,url:altemoteList.data[emote].image,image:altemoteList.data[emote].image};
       temp_emotes.emotes.push(bw_emote);
     }
-    res.send(temp_emotes);
+    //res.send(temp_emotes); // litechat standard
+    res.send({success:true,data:temp_emotes});
     
   });
 
