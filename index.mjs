@@ -295,6 +295,14 @@ function getRandomColor() {
     
   });
 
+  app.get('/api/channel/',(req,res) => {
+    
+    //"livestreams",{streams:streamList}
+
+    res.send({success:true,streamers:streamList[0],live:true});
+    
+  });
+
   app.get('/v1/chat/users',(req,res) => {
     
     //"livestreams",{streams:streamList}
@@ -303,6 +311,14 @@ function getRandomColor() {
   });
 
   app.get('/v1/messages',(req,res) => {
+    
+    //"livestreams",{streams:streamList}
+    // fwcio.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
+    res.send({success:true,data:[{message:"Test message on the server", username:"Test User",channel:'Test Server channel'}]});
+    
+  });
+
+  app.get('/api/bump',(req,res) => {
     
     //"livestreams",{streams:streamList}
     // fwcio.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
