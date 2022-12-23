@@ -289,6 +289,13 @@ function getRandomColor() {
     
   });
 
+  app.get('/v1/messages',(req,res) => {
+    
+    //"livestreams",{streams:streamList}
+    res.send({success:true,data:[{message:"Test message on the server", user:"Test User"}]});
+    
+  });
+
   app.get('/v1/chatconfig',(req,res) => {
     let legacyChatConfig = {
       'legacychat': process.env.LEGACYCHAT || '',
