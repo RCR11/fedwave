@@ -345,7 +345,11 @@ function messagein(data){
         }
         
         // add the message to the messages as a whisper
-        whisperSocketServer.emit('receipt', message_rct) ;
+        if(whisperSocketServer){
+            whisperSocketServer.emit('receipt', message_rct) ;
+        }else{
+            console.log('Legacy chat not connected.');
+        }
     }
     
     
@@ -1362,7 +1366,11 @@ function litechat(){
         // should check if we have a troll token and if we are set to troll or not
         // if it fails we get called troll:dickhead on our unauthenticated socket connection
         this.socket.emit('new user', {jwt:usertoken});
-        whisperSocketServer.emit('hi',username_global);
+        if(whisperSocketServer){
+            whisperSocketServer.emit('hi',username_global);
+        }else{
+            console.log('Legacy chat not connected.');
+        }
         //whisperSocketServer.emit('hi',$("#userid").val());
         // add a load count to prevent from reloading
         if(load_count == 0){
@@ -1796,7 +1804,11 @@ function litechat(){
                 channel: channel,
                 user: username_global
             };
-            whisperSocketServer.emit('say', msgt);
+            if(whisperSocketServer){
+                whisperSocketServer.emit('say', msgt);
+            }else{
+                console.log('Legacy chat not connected.');
+            }
             $("textarea#message").val("");
             return;
         }
