@@ -1979,6 +1979,17 @@ function litechat(){
         // this is the stuff we need to process and show
         // add back some of the ignore logic just return out of it for ignored channel/user
         //console.log(data);
+        data.forEach(message => {
+            if(window.localStorage.useMsgCache){
+                let useLocalCache = window.localStorage.getItem("useMsgCache");
+                if(useLocalCache == "true"){
+                    renderMessages.push(message);
+                }
+            }
+            saveMessages();
+            addv2msg(message);
+        });
+        /* SINGLE MESSAGE PROCESSING
         if(window.localStorage.useMsgCache){
             let useLocalCache = window.localStorage.getItem("useMsgCache");
             if(useLocalCache == "true"){
@@ -1987,6 +1998,7 @@ function litechat(){
         }
         saveMessages();
         addv2msg(data);
+        */
         
     }
 
