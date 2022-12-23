@@ -81,6 +81,16 @@ function getChatConfig(){
 
 getChatConfig();
 
+let whisperSocketServer = null; // this is how we can whipser since someone can't fix their own version of whispers
+if(chatConfig.legacychat){
+    whisperSocketServer = io(chatConfig.legacychat,{transports: ['websocket'] } ); //socket
+    
+        whisperSocketServer.on( 'messagein', async data => await this.messagein(data) );
+        whisperSocketServer.on( 'receipt_r', async data => await this.rr(data) );
+        whisperSocketServer.on( 'said', async data => await this.said(data) );
+    console.log("Connected to legacy chat:",chatConfig.legacychat);
+}
+
 function useSelectedVoice(){
     //vSelected = selected option text
     vSelected = $( "#voiceselect option:selected" ).text();
@@ -245,15 +255,7 @@ function readTTSmessage(message){
 ============================================================================================
 */
 
-let whisperSocketServer = null; // this is how we can whipser since someone can't fix their own version of whispers
-if(chatConfig.legacychat){
-    whisperSocketServer = io(chatConfig.legacychat,{transports: ['websocket'] } ); //socket
-    
-        whisperSocketServer.on( 'messagein', async data => await this.messagein(data) );
-        whisperSocketServer.on( 'receipt_r', async data => await this.rr(data) );
-        whisperSocketServer.on( 'said', async data => await this.said(data) );
-    console.log("Connected to legacy chat:",chatConfig.legacychat);
-}
+
 
 let emotes_obj = null;
 
