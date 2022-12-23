@@ -1068,7 +1068,7 @@ fwcio.sockets.on("connection", socket => {
             }
 
             if(data.src){
-              streaminfo.src = data.src;
+              streaminfo.url = data.src;
             }
       
             if(data.viewers){
