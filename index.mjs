@@ -1069,6 +1069,7 @@ fwcio.sockets.on("connection", socket => {
 
             if(data.src){
               streaminfo.url = data.src;
+              systeminfo.type = "application/x-mpegURL";
             }
       
             if(data.viewers){
