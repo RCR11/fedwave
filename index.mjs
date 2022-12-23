@@ -70,6 +70,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(bodyParser.raw());
 
+import cors from 'cors';
+// https://www.npmjs.com/package/express-cors
+// https://www.npmjs.com/package/cors
+if(process.env.CORS_ALLOW){
+  
+}else{
+  app.use(cors({origins:['*']}))
+}
+
 
 const port = process.env.PORT || 3150;
 
@@ -1157,4 +1166,8 @@ io_signal_server.on('connection', function(socket) {
 let signalServerPort = process.env.SIGPORT || 9002;//9002; // this is the internal local port
 signalingServer.listen(signalServerPort), () => console.log('Signaling Server for WebRTC is running on port: ', signalServerPort)
 
+// would be nice to add cores to the server start
+/*{cors: {
+  origin: "*"
+}*/ 
 server.listen(port, () => console.log(`Server is running on port ${port}`));
