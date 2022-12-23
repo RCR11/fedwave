@@ -386,7 +386,7 @@ function said(data){
             msg_to_add_locally.username = msg_to;
             msg_to_add_locally.channel = datanew.channel;
             msg_to_add_locally.avatar = '/fed.svg';
-            
+
             
 
             if(chatConfig.defaultavatar){
@@ -1072,7 +1072,7 @@ function addv2msg(data){
         textnodeAvatar.innerHTML = "<img class=\"userav\" src=\"/fed.svg\" style=\"background: rgb(32, 99, 223);\">";
         if(chatConfig.defaultavatar){
             
-            textnodeAvatar.innerHTML = "<img class=\"userav\" src=\""+chatConfig.defaultavatar+"\" style=\"background: rgb("+ usercolor.r+ "," + usercolor.g + ","+ usercolor.b +");\">";
+            textnodeAvatar.innerHTML = "<img class=\"userav\" src=\""+chatConfig.defaultavatar+"\" style=\"background: rgb(32, 99, 223);\">";
         }
         if(data.color){
             let usercolor = hexToRgb(data.color);
