@@ -304,6 +304,12 @@ function getRandomColor() {
       }
    });
 
+   app.get('/v1/user/register',(req,res) => {
+      // should return state of success or error message
+      // have a token or not as well
+      res.send({success:false,message:"not implemented yet"});
+   })
+
 
     //let streamername = req.params.id;
     console.log("trying to find streamer: ",req.params.id, ' in: ',currStream);
@@ -337,6 +343,14 @@ function getRandomColor() {
     //"livestreams",{streams:streamList}
     // fwcio.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
     res.send({success:true,data:[{message:"Test message on the server", username:"Test User",channel:'Test Server channel'}]});
+    
+  });
+
+  app.get('/v1/chat/bans',(req,res) => {
+
+  });
+
+  app.get('/v1/chat/unban',(req,res) => {
     
   });
 
@@ -1099,6 +1113,7 @@ fwcio.sockets.on("connection", socket => {
 
             if(data.src){
               streaminfo.url = data.src;
+              streaminfo.src = data.src;
               streaminfo.type = "application/x-mpegURL";
             }
       
