@@ -299,14 +299,14 @@ function getRandomColor() {
     
     //"livestreams",{streams:streamList}
     var currStream = streamList.filter(function(streamer){
-      if(streamer.id == req.params.id){
+      if(streamer.name == req.params.id){
          return true;
       }
    });
 
 
     //let streamername = req.params.id;
-    console.log("trying to find streamer: ",req.params.id);
+    console.log("trying to find streamer: ",req.params.id, ' in: ',currStream);
     if(currStream.length == 1){
       res.json(currStream[0])
    } else {
