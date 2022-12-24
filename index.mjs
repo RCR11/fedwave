@@ -326,7 +326,7 @@ function getRandomColor() {
   app.get('/v1/chat/users',(req,res) => {
     
     //"livestreams",{streams:streamList}
-    res.send({success:true,users:Array.from(userList)});
+    res.send({success:true,data:Array.from(userList)});
     
   });
 
