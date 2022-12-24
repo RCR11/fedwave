@@ -307,8 +307,8 @@ function getRandomColor() {
 
     //let streamername = req.params.id;
     console.log("trying to find streamer: ",req.params.id, ' in: ',currStream);
-    if(currStream.length == 1){
-      res.json(currStream[0])
+    if(streamList.length == 1){
+      res.json(streamList[0])
    } else {
       res.status(404);//Set status to 404 as movie was not found
       res.json({message: "Not Found"});
