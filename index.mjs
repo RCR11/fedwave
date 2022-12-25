@@ -1181,7 +1181,7 @@ fwcio.sockets.on("connection", socket => {
       let temp_username = socket.username + "#" + socket.unum;
       addUserToList(temp_username);
     //}
-    socket.emit('hyrate',[{message:do_md('This is test hydration for chat'),username:sanitizeHtml('SERVER'),channel:sanitizeHtml('test data.channel'),color:sanitizeHtml(socket.color),unum:socket.unum}]);
+    //socket.emit('hyrate',[{message:do_md('This is test hydration for chat'),username:sanitizeHtml('SERVER'),channel:sanitizeHtml('test data.channel'),color:sanitizeHtml(socket.color),unum:socket.unum}]);
   });
 
 
