@@ -1110,7 +1110,7 @@ fwcio.sockets.on("connection", socket => {
 
         }catch(ex){
           console.log("Error processing message:",ex);
-          socket.emit("error",{message:"Error sending message",channel:"error",username:"servererror"});
+          socket.emit("error",[{message:"Error sending message",channel:"error",username:"servererror"}]);
           return;
         }
         // should be sent back as a regular message, but with processing done to the message contents
@@ -1118,8 +1118,8 @@ fwcio.sockets.on("connection", socket => {
         //console.log("REMOVE FOR PRODUCTION, processed message:", processed_message);
         let whisperColor = "#FF9800";
         try{
-          usocket.emit("bulkmessage",{message:'<span style=" color: rgb(218, 152, 0);">[to: ' + data.to + "]</span> " + processed_message,color:socket.color,username:socket.username,unum:socket.unum,channel:"whisper"});
-          socket.emit("bulkmessage",{message:"<span style='color: rgb(218, 152, 0);'>Sent to: "+ data.to + " </span>  " + processed_message,color:socket.color,username:socket.username,unum:socket.unum,channel:"whisper"});
+          usocket.emit("bulkmessage",[{message:'<span style=" color: rgb(218, 152, 0);">[to: ' + data.to + "]</span> " + processed_message,color:socket.color,username:socket.username,unum:socket.unum,channel:"whisper"}]);
+          socket.emit(["bulkmessage",{message:"<span style='color: rgb(218, 152, 0);'>Sent to: "+ data.to + " </span>  " + processed_message,color:socket.color,username:socket.username,unum:socket.unum,channel:"whisper"}]);
           user_found = true;
         }catch(ex){
           console.log("We had an error sending our whisper:",ex);
@@ -1133,7 +1133,7 @@ fwcio.sockets.on("connection", socket => {
       }else{
         let failure_message = ":(<`User not found` Not sent: " + data.message;
         failure_message = do_md(failure_message);
-        socket.emit("bulkmessage",{message:failure_message,color:socket.color,username:socket.username,unum:socket.unum,channel:"whisper"});
+        socket.emit("bulkmessage",[{message:failure_message,color:socket.color,username:socket.username,unum:socket.unum,channel:"whisper"}]);
       }
 
   });
