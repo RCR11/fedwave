@@ -423,6 +423,95 @@ function getRandomColor() {
     
   });
 
+  // adds the fat chat compatible api
+  app.post('/v1/whispers/send', async (req,res) => {
+    let from_token = req.body.chatToken;
+    let receiver = req.body.receiver;
+    let message = req.body.message;
+
+    let error_message = "";
+
+    // check user token sent
+    let from_user = '';//userinfo.username;
+    let from_user_unum = '';//userinfo.num;
+    let from_user_color = '';//userinfo.color;
+    let parsed_user = false;
+    try{
+      const { payload, protectedHeader } = await jose.jwtVerify(data.jwt, rsaPubKey, {
+        issuer: template_config.TOKENISSUER,
+        audience: template_config.TOKENAUDIENCE
+      })
+      //console.log("stuff in the payload that has been verified:",payload);
+      const mysubinfo = payload.sub;
+      //console.log("My sub info:",mysubinfo);
+      let userinfo = mysubinfo;//JSON.parse(mysubinfo);
+      
+      from_user = userinfo.username;
+      from_user_unum = userinfo.num;
+      from_user_color = userinfo.color;
+      parsed_user = true;
+    }catch(error){
+      error_message = "Could not parse the user token! \n";
+    }
+
+    if(parsed_user && receiver && message){
+      
+
+
+      // see if we can find who we are sending to
+      let lsockets = fwcio.sockets.sockets; // skip manually tracking, just look through the socket set
+      let user_found = false;
+      lsockets.forEach(usocket => {
+        // need to look at adding the username#num to shit that gets emitted
+          //const from_user = socket.username + "#" + socket.unum;
+          const to_user = usocket.username + "#" + usocket.unum;
+          if(receiver == to_user){
+            // we can then send a message to the user at that socket
+            console.log("Found user socket!");
+            let processed_message = message;
+            try{
+              //proccessNewMessage(processed_message);
+              processed_message = do_md(processed_message);
+
+            }catch(ex){
+              console.log("Error processing message:",ex);
+              //socket.emit("error",[{message:"Error sending message",channel:"error",username:"servererror"}]);
+              error_message += "Error processing message for user! \n"
+              return;
+            }
+            // should be sent back as a regular message, but with processing done to the message contents
+            // now to see how they were processed to add the orange text header...
+            //console.log("REMOVE FOR PRODUCTION, processed message:", processed_message);
+            let whisperColor = "#FF9800";
+            try{
+              usocket.emit("bulkmessage",[{message:'<span style=" color: rgb(218, 152, 0);">[to: ' + receiver + "]</span> " + processed_message,color:from_user_color,username:from_user,unum:from_user_unum,channel:"whisper"}]);
+              //socket.emit("bulkmessage",[{message:"<span style='color: rgb(218, 152, 0);'>Sent to: "+ receiver + " </span>  " + processed_message,color:from_user_color,username:from_user,unum:from_user_unum,channel:"whisper"}]);
+              user_found = true;
+            }catch(ex){
+              console.log("We had an error sending our whisper:",ex);
+            }
+          }
+      });
+
+      if(user_found){
+        res.send({success:true,data:[{message:'Sent!'}]});  
+      }else{
+        error_message += "User not found! \n";
+        res.send({success:false,data:[{message:error_message}]});
+      }
+      
+
+
+      // find and send
+    }else{
+      // error
+      res.send({success:false,data:[{message:"Some type of error when trying to send whisper to user."}]});
+    }
+
+
+
+  });
+
   app.get('/v1/chatconfig',(req,res) => {
     let legacyChatConfig = {
       'legacychat': process.env.LEGACYCHAT || '',
