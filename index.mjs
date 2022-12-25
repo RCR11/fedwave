@@ -951,6 +951,7 @@ fwcio.sockets.on("connection", socket => {
   sockets[socket.id] = socket;
   //let currentUser = socket.id;
   //RTCMultiConnectionServer.addSocket(socket);
+  
 
   socket.on("message",(data)=> {
     // process the message that came in...
@@ -983,7 +984,7 @@ fwcio.sockets.on("connection", socket => {
 
           }
           let msg_md = do_md('Should ban user: ');
-          fwcio.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
+          fwcio.sockets.emit("bulkmessage",[{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum}]);
           return;
         }
         //socket.emit("error",{message:"Error sending message",channel:"error",username:"servererror"});
@@ -1180,6 +1181,7 @@ fwcio.sockets.on("connection", socket => {
       let temp_username = socket.username + "#" + socket.unum;
       addUserToList(temp_username);
     //}
+    socket.emit('hyrate',[{message:do_md('This is test hydration for chat'),username:sanitizeHtml('SERVER'),channel:sanitizeHtml('test data.channel'),color:sanitizeHtml(socket.color),unum:socket.unum}]);
   });
 
 
