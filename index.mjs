@@ -1119,7 +1119,7 @@ fwcio.sockets.on("connection", socket => {
         let whisperColor = "#FF9800";
         try{
           usocket.emit("bulkmessage",[{message:'<span style=" color: rgb(218, 152, 0);">[to: ' + data.to + "]</span> " + processed_message,color:socket.color,username:socket.username,unum:socket.unum,channel:"whisper"}]);
-          socket.emit(["bulkmessage",{message:"<span style='color: rgb(218, 152, 0);'>Sent to: "+ data.to + " </span>  " + processed_message,color:socket.color,username:socket.username,unum:socket.unum,channel:"whisper"}]);
+          socket.emit("bulkmessage",[{message:"<span style='color: rgb(218, 152, 0);'>Sent to: "+ data.to + " </span>  " + processed_message,color:socket.color,username:socket.username,unum:socket.unum,channel:"whisper"}]);
           user_found = true;
         }catch(ex){
           console.log("We had an error sending our whisper:",ex);
