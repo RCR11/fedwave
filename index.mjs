@@ -436,8 +436,9 @@ function getRandomColor() {
     let from_user_unum = '';//userinfo.num;
     let from_user_color = '';//userinfo.color;
     let parsed_user = false;
+    console.log("Should try and send a whisper to:",receiver);
     try{
-      const { payload, protectedHeader } = await jose.jwtVerify(data.jwt, rsaPubKey, {
+      const { payload, protectedHeader } = await jose.jwtVerify(from_token, rsaPubKey, {
         issuer: template_config.TOKENISSUER,
         audience: template_config.TOKENAUDIENCE
       })
