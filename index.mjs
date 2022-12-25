@@ -407,8 +407,9 @@ function getRandomColor() {
     
   });
 
-  app.get('/v1/messages/',(req,res) => {
-    
+  app.get('/v1/messages/:id',(req,res) => {
+    let streamName = req.params.id;
+    console.log("Should build and filter messages to send back to the user. Channel:",streamName);
     //"livestreams",{streams:streamList}
     // fwcio.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
     res.send({success:true,data:[{message:"Test message on the server", username:"Test User",channel:'Test Server channel'}]});
