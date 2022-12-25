@@ -498,7 +498,7 @@ function getRandomColor() {
         res.send({success:true,data:[{message:'Sent!'}]});  
       }else{
         error_message += "User not found! \n";
-        res.send({success:false,data:[{message:error_message}]});
+        res.send({success:false,data:{message:error_message}});
       }
       
 
@@ -506,7 +506,7 @@ function getRandomColor() {
       // find and send
     }else{
       // error
-      res.send({success:false,data:[{message:"Some type of error when trying to send whisper to user."}]});
+      res.send({success:false,data:{message:"Some type of error when trying to send whisper to user."}});
     }
 
 
