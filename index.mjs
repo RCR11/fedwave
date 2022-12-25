@@ -30,6 +30,7 @@ const app = express();
             captureUserMedia
         Add Janny/Admin/Moderator tools via websocket api etc that is authed
         So far I like the rebake process that has produced this, need to hook this up and add a fw sub to run this on
+        https://github.com/supabase/supabase
 
 */
 
@@ -295,8 +296,9 @@ function getRandomColor() {
     
   });
 
-  app.get('/v1/user/register',(req,res) => {
+  app.post('/v1/user/register',(req,res) => {
     // should return state of success or error message
+    console.log('Trying to register. which in this case is throw a token back', req.body.username,req.body.email,req.body.password);
     // have a token or not as well
     res.send({success:false,message:"not implemented yet"});
  });
