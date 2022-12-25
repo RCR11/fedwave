@@ -296,11 +296,43 @@ function getRandomColor() {
     
   });
 
-  app.post('/v1/user/register',(req,res) => {
+  app.post('/v1/user/register',async (req,res) => {
     // should return state of success or error message
     console.log('Trying to register. which in this case is throw a token back', req.body.username,req.body.email,req.body.password);
-    // have a token or not as well
-    res.send({success:false,message:"not implemented yet"});
+    let run = req.body.username;
+    let rem = req.body.email;
+    let rpa = req.body.password;
+    if(run && rem && rpa){
+      // don't do anything with the email
+      let userobj = {username:"Dickhead",color:"Red", num:9,secreth: "mytestsecrethash"};
+        if(req.body.username){
+          userobj.username = run;
+        }
+        if(req.body.myKey){
+          let bhash = await bcrypt.hash(req.body.myKey,saltRounds);
+          //let bhash = bcrypt.hashSync(req.body.myKey, saltRounds);
+          userobj.secreth = bhash; // but we need to make sure that we strip the returns
+        }
+        userobj.color = getRandomColor();
+        userobj.num = getRandomUserId();
+        const jwt = await new jose.SignJWT({ 'urn:example:claim': true })
+          .setProtectedHeader({ alg: 'PS256' })
+          .setIssuedAt()
+          .setIssuer('urn:example:issuer')
+          .setAudience('urn:example:audience')
+          //.setExpirationTime('2h')
+          .setSubject(userobj)
+          .sign(rsaPriKey)
+    
+        //console.log(jwt)
+    
+        //const randomState = rand(160,36);
+        //res.send(jwt);
+      res.send({success:true,message:'Made you an account!',token:jwt});
+    }else{
+      // have a token or not as well
+      res.send({success:false,message:"not implemented yet"});
+    }
  });
 
  app.post('/v1/reports',(req,res) => {
