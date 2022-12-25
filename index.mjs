@@ -391,7 +391,8 @@ function getRandomColor() {
       // do a for loop over userList and build new users to add based on that and then emit that 
       let tempnamelist = Array.from(userList);
       tempnamelist.forEach(user => {
-        fatchatUserList.push({user:{username:user,avatar:'',color:'',watching:'Playlistbot9k'}});
+        //fatchatUserList.push({username:user,avatar:'',color:'',watching:'Playlistbot9k'});
+        fatchatUserList.push({username:user,watching:'Playlistbot9k'});
       })
 
 
