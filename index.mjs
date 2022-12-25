@@ -400,7 +400,7 @@ function getRandomColor() {
   });
 
   app.get('/v1/messages',(req,res) => {
-    
+    console.log("Should feed the client hydration messages");
     //"livestreams",{streams:streamList}
     // fwcio.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
     res.send({success:true,data:[{message:"Test message on the server", username:"Test User",channel:'Test Server channel'}]});
@@ -412,7 +412,7 @@ function getRandomColor() {
     console.log("Should build and filter messages to send back to the user. Channel:",streamName);
     //"livestreams",{streams:streamList}
     // fwcio.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
-    res.send({success:true,data:[{message:"Test message on the server", username:"Test User",channel:'Test Server channel'}]});
+    res.send({success:true,data:[{message:"Test message on the server", username:"Test User",channel:streamName}]});
     
   });
 
