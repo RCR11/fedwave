@@ -295,6 +295,27 @@ function getRandomColor() {
     
   });
 
+  app.get('/v1/user/register',(req,res) => {
+    // should return state of success or error message
+    // have a token or not as well
+    res.send({success:false,message:"not implemented yet"});
+ });
+
+ app.post('/v1/reports',(req,res) => {
+  // should return state of success or error message
+  /* Expects:
+   const payload = {
+          name: this.name,
+          email: this.email,
+          subject: this.subject,
+          report: this.report,
+          captcha: this.captchaToken,
+        }*/
+  // have a token or not as well
+  res.send({success:false,message:"not implemented yet"});
+});
+
+
   app.get('/api/channel/:id',(req,res) => {
     
     //"livestreams",{streams:streamList}
@@ -304,11 +325,7 @@ function getRandomColor() {
       }
    });
 
-   app.get('/v1/user/register',(req,res) => {
-      // should return state of success or error message
-      // have a token or not as well
-      res.send({success:false,message:"not implemented yet"});
-   })
+   
 
 
     //let streamername = req.params.id;
@@ -326,7 +343,25 @@ function getRandomColor() {
   app.get('/v1/chat/users',(req,res) => {
     
     //"livestreams",{streams:streamList}
-    res.send({success:true,data:Array.from(userList)});
+    /*state[$states.userlist] = Object
+      .keys( data )
+      .map( key => {
+        return {
+          user: key,
+          data: data[key].data,
+          watching: data[key].watching,
+        };
+      })*/
+
+      let fatchatUserList = [];
+      // do a for loop over userList and build new users to add based on that and then emit that 
+      let tempnamelist = Array.from(userList);
+      tempnamelist.forEach(user => {
+        fatchatUserList.push({username:user,avatar:'',color:''});
+      })
+
+
+    res.send({success:true,data:fatchatUserList});
     
   });
 
