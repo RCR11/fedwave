@@ -392,7 +392,7 @@ function getRandomColor() {
       let tempnamelist = Array.from(userList);
       tempnamelist.forEach(user => {
         //fatchatUserList.push({username:user,avatar:'',color:'',watching:'Playlistbot9k'});
-        fatchatUserList.push({username:user,watching:'Playlistbot9k'});
+        fatchatUserList.push({username:user,watching:'Playlistbot9k',data:'something'});
       })
 
 
