@@ -402,7 +402,7 @@ function getRandomColor() {
       tempnamelist.forEach(user => {
         //fatchatUserList.push({username:user,avatar:'',color:'',watching:'Playlistbot9k'});
         //fatchatUserList.push({username:user,watching:'Playlistbot9k',data:'something'});
-        fatchatUserList.push({ [user.user]: user });
+        fatchatUserList.push({ [user.user]: {avatar:null,username:user.user,page:null,color:null} });
       })
 
 
