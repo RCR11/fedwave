@@ -274,10 +274,10 @@ function getRandomColor() {
 
     // then iterate through the stuff and add more
 
-    emoteList.forEach(emote => {
+    emoteList.emotes.forEach(emote => {
       let bw_emote = {label:emote.name,value:':'+emote.name+':',name:emote.name,url:emote.url,image:emote.url};
-      altemoteList.data.push(bw_emote);
-    })
+      temp_emotes.data.push(bw_emote);
+    });
 
     
 
@@ -287,7 +287,7 @@ function getRandomColor() {
     }
     //res.send(temp_emotes); // litechat standard
     res.send({success:true,data:temp_emotes});*/
-    res.send(altemoteList);
+    res.send(temp_emotes);
   });
 
   app.get('/v1/channels/live',(req,res) => {
