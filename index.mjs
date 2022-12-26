@@ -270,7 +270,16 @@ function getRandomColor() {
   app.get('/v1/emotes',(req,res) => {
     //let temp_emotes = emoteList;
     // copy all of the bw emotes into the list as well
-    res.send(altemoteList);
+    let temp_emotes = altemoteList;
+
+    // then iterate through the stuff and add more
+
+    emoteList.forEach(emote => {
+      let bw_emote = {label:emote.name,value:':'+emote.name+':',name:emote.name,url:emote.url,image:emote.url};
+      altemoteList.data.push(bw_emote);
+    })
+
+    
 
     /*for( const emote in altemoteList.data){
       let bw_emote = {label:altemoteList.data[emote].label,value:altemoteList.data[emote].value,name:altemoteList.data[emote].label,url:altemoteList.data[emote].image,image:altemoteList.data[emote].image};
@@ -278,7 +287,7 @@ function getRandomColor() {
     }
     //res.send(temp_emotes); // litechat standard
     res.send({success:true,data:temp_emotes});*/
-    
+    res.send(altemoteList);
   });
 
   app.get('/v1/channels/live',(req,res) => {
