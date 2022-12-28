@@ -274,6 +274,7 @@ function getRandomColor() {
 
     // then iterate through the stuff and add more
 
+
     emoteList.emotes.forEach(emote => {
       let bw_emote = {label:emote.name,value:':'+emote.name+':',name:emote.name,url:emote.url,image:emote.url};
       temp_emotes.data.push(bw_emote);
@@ -384,6 +385,33 @@ function getRandomColor() {
     //res.send({success:true,streamers:streamList[0],live:true});
     
   });
+
+  // cname = data[user].page.watch;
+// cname = data[user].page;
+app.get('/api/channels/list',(req,res) => {
+    
+  //"livestreams",{streams:streamList}
+  /*var currStream = streamList.filter(function(streamer){
+    if(streamer.name == req.params.id){
+       return true;
+    }
+ });*/
+
+ 
+
+
+  //let streamername = req.params.id;
+  //console.log("trying to find streamer: ",req.params.id, ' in: ',currStream);
+  res.json(streamList);
+  /*if(streamList.length == 1){
+    
+ } else {
+    res.status(404);//Set status to 404 as movie was not found
+    res.json({message: "Not Found"});
+ }*/
+  //res.send({success:true,streamers:streamList[0],live:true});
+  
+});
 
   app.get('/v1/chat/users',(req,res) => {
     
@@ -791,6 +819,7 @@ function genTrollId(){
           altemoteList = JSON.parse(data);
         }catch(error){
           console.log('Error loading alt emotes json file.');
+          altemoteList = [];
         }
       }
       
@@ -804,6 +833,8 @@ function genTrollId(){
           emoteList = JSON.parse(data);
         }catch(error){
           console.log("Error loading emotes json file.");
+          emoteList = [];
+          emoteList.emotes = [];
         }
       }
       
