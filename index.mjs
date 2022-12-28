@@ -365,6 +365,7 @@ function getRandomColor() {
   app.get('/api/channel/:id',(req,res) => {
     
     //"livestreams",{streams:streamList}
+    console.log("Streamers to select from:",streamList);
     var currStream = streamList.filter(function(streamer){
       if(streamer.name == req.params.id){
          return true;
