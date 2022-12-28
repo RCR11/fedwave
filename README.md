@@ -73,22 +73,81 @@ nano hooks/post-receive
 chmod +x hooks/post-receive
 ```
 
-Also make the directory that the post-receive target copies to
+### Also make the directory that the post-receive target copies to
 
 ```mkdir fedwave
 ```
 
 ### Setup your reference to remote production for your local git
-`git remote add production ssh://user@server:/full/path/to/bare.git`
+```git remote add production ssh://user@server:/full/path/to/bare.git
+git push production
+```
+
+### Configuration
+
+You'll want to make a `.env` file
+For reference these are configuration options that you will probably want to setup.
+
+```PORT=3556
+SIGPORT=9004
+SIGSERVER="https://fedwave.tv:9005/"
+TOKENISSUER='urn:fedwave:issuer'
+TOKENAUDIENCE='urn:fedwave:audience'
+BRANDING="Fedwave"
+BRANDINGFAV=""
+BRANDINGLOGO=""
+KEYNAME="tokenkey"
+SALTROUNDS=10
+TROLLICON='/dead_sus_troll_standing.png'
+LEGACYCHAT=""
+ANTISCRAPE="https://cdn.bitwave.tv/"
+ICESERVER2="{
+        urls: 'turns:muazkhan.com:5349',
+        credential: 'muazkh',
+        username: 'hkzaum'
+    }"
+ICESERVER4="{
+        urls: 'turns:muazkhan.com:3478',
+        credential: 'muazkh',
+        username: 'hkzaum'
+    }"
+ICESERVER3="{
+        urls: 'turn:muazkhan.com:3478',
+        credential: 'muazkh',
+        username: 'hkzaum'
+    }"
+ICESERVER1="{
+        urls: 'stun:stun.l.google.com:19302'
+    }"
+SIR='<img src="/sir.png">'
+HAPPYBLOB='<img src="/happyblob.gif">'
+SADBLOB='<img src="/SadBlobby.png">'
+ECHOESL='<img style="-webkit-transform: scaleX(-1);transform: scaleX(-1);" src="/echoes.gif">'
+ECHOES='<img src="/echoes.gif">'
+QUAD_S='/quad.mp3'
+TAUNT_S='/taunt.wav'
+RAIL_S='/railgf1a.wav'
+HIT_S='/hit.wav'
+PROTECT_S='/protect.wav'
+RUNTY_S='/runty.mp3'
+MENU1_S='/menu1.wav'
+MENU2_S='/menu2.wav'
+MENU3_S='/menu3.wav'
+MENU4_S='/menu4.wav'
+DEFAULT_S='https://www.myinstants.com/media/sounds/kitty-blabla.mp3'
+```
 
 ### Setup PM2
 ```npm i pm2@latest -g
 pm2 startup systemd
 sudo systemctl start pm2-fedwave.service
+```
 
-pm2 start ./index.mjs
+
+``` pm2 start ./index.mjs --name fedwave
 pm2 save
 ```
+
 
 ### Setup Nginx or some type of reverse proxy/cloudflare
 Make the following files based on the proxy templates for nginx
