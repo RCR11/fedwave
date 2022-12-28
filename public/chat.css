@@ -20,6 +20,21 @@ body{background-color:#2f2f2f}
             --resizable-width: 600px;
             height: var(--resizable-width);
         }
+
+        ol {
+            display: block;
+            list-style-type: decimal;
+            margin-top: 0em;
+            margin-bottom: 1em;
+            margin-left: 0;
+            margin-right: 0;
+            padding-left: 0;
+            width: 475px;
+            height: 600px;
+            overflow-x:hidden;
+         overflow-y: scroll;
+           
+        }
         
         .disconnected{
             background-color:#FF0000;
