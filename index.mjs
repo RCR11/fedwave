@@ -359,6 +359,8 @@ function getRandomColor() {
 });
 
 
+// cname = data[user].page.watch;
+// cname = data[user].page;
   app.get('/api/channel/:id',(req,res) => {
     
     //"livestreams",{streams:streamList}
