@@ -370,7 +370,7 @@
 
                     // set it as the next defaut stream title
                     let rtmpstream = 'https://hls.robotstreamer.com/tv/4126.m3u8';
-                    rtmpstream = document.getElementById('broadcast-desc').value;
+                    rtmpstream = document.getElementById('rtmp').value;
                     localStorage.setItem('rtmp',rtmpstream);
                     localStorage.setItem('broadcast-desc',broadcastDesc);
                     socketlc.emit('announcestream',{desc:broadcastDesc,viewers:0,src:rtmpstream});
