@@ -48,6 +48,7 @@
           <button id="open-or-join">Start Broadcast</button>
 
           <div  class="make-center labelhelper" id="broadcast-viewers-counter"></div>
+          <input type="text" id="rtmp" value="RTMP" autocomplete="off" autocapitalize="off" size="20">
       </p>
 
       <video id="video-preview" controls loop></video>
@@ -153,6 +154,12 @@
 
     if (localStorage.getItem('broadcast-desc')) {
         document.getElementById('broadcast-desc').value = localStorage.getItem('broadcast-desc');
+    }
+
+    if (localStorage.getItem('rtmp')) {
+        document.getElementById('rtmp').value = localStorage.getItem('rtmp');
+    }else{
+        document.getElementById('rtmp').value = 'https://hls.robotstreamer.com/tv/4126.m3u8';
     }
 
     // https://www.rtcmulticonnection.org/docs/iceServers/
@@ -363,6 +370,8 @@
 
                     // set it as the next defaut stream title
                     let rtmpstream = 'https://hls.robotstreamer.com/tv/4126.m3u8';
+                    rtmpstream = document.getElementById('broadcast-desc').value;
+                    localStorage.setItem('rtmp',rtmpstream);
                     localStorage.setItem('broadcast-desc',broadcastDesc);
                     socketlc.emit('announcestream',{desc:broadcastDesc,viewers:0,src:rtmpstream});
                     was_live = true;
@@ -478,7 +487,8 @@
         console.log('View count:',event.numberOfBroadcastViewers);
         document.getElementById('broadcast-viewers-counter').innerHTML = 'Number of broadcast viewers: <b>' + event.numberOfBroadcastViewers + '</b>';
         let broadcastDesc = document.getElementById('broadcast-desc').value;
-        socketlc.emit('announcestream',{desc:broadcastDesc,viewers:event.numberOfBroadcastViewers});
+        let rtmpstream = document.getElementById('rtmp').value;
+        socketlc.emit('announcestream',{desc:broadcastDesc,viewers:event.numberOfBroadcastViewers,src:rtmpstream});
     };
 
     // connect and get live stream list
