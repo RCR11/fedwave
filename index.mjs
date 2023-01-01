@@ -306,6 +306,75 @@ function getRandomColor() {
     
   });
 
+  app.post('/v1/user/exchangetoken',async (req,res) => {
+    // should return state of success or error message
+    //console.log('Trying to get a chatToken from FB login.',req.body);
+    let rtoken = req.body.token;
+    //console.log("Token:",rtoken);
+    if(rtoken){
+
+      // parse the rtoken, validate the iss,aud,auth_time
+      const payload = await jose.decodeJwt(rtoken);
+      console.log("Payload decoded maybe:?",payload);
+      //const { payload, protectedHeader } = await jose.jwtVerify(data.jwt, rsaPubKey, {
+      //  issuer: template_config.TOKENISSUER,
+      //  audience: template_config.TOKENAUDIENCE
+      //})
+      //console.log("stuff in the payload that has been verified:",payload);
+      let login_valid = true;
+      const mysubinfo = payload.sub;
+      //console.log("My sub info:",mysubinfo);
+      let userinfo = mysubinfo;//JSON.parse(mysubinfo);
+      console.log("Authed:",userinfo);
+      if(payload.iss != 'https://securetoken.google.com/bitwave-7f415'){
+        login_valid = false;
+      }
+      if(payload.aud != 'bitwave-7f415'){
+        login_valid = false;
+      }
+      if(payload.auth_time < 1672600925){
+        login_valid = false;
+      }
+      //userinfo.name;
+      //socket.unum = userinfo.num;
+      // should check if it's a troll and copy in the color info or just tag everything with some color
+      //socket.color = userinfo.color;
+      // don't do anything with the email
+      let userobj = {username:"Dickhead",color:"Red", num:9,secreth: "mytestsecrethash"};
+        if(userinfo.name){
+          userobj.username = userinfo.name;
+        }
+        if(req.body.myKey){
+          let bhash = await bcrypt.hash(req.body.myKey,saltRounds);
+          //let bhash = bcrypt.hashSync(req.body.myKey, saltRounds);
+          userobj.secreth = bhash; // but we need to make sure that we strip the returns
+        }
+        userobj.color = '#0000aa';// getRandomColor();
+        userobj.num = 99999;//getRandomUserId(); // if it is valid it's a shitwave color and number specific to them
+        const jwt = await new jose.SignJWT({ 'urn:example:claim': true })
+          .setProtectedHeader({ alg: 'PS256' })
+          .setIssuedAt()
+          .setIssuer('urn:example:issuer')
+          .setAudience('urn:example:audience')
+          //.setExpirationTime('2h')
+          .setSubject(userobj)
+          .sign(rsaPriKey)
+    
+        //console.log(jwt)
+    
+        //const randomState = rand(160,36);
+        //res.send(jwt);
+        let done_token = "nothing";
+        if(login_valid){
+          done_token = jwt;
+        }
+      res.send({success:login_valid,message:'Made you an account!',chatToken:done_token});
+    }else{
+      // have a token or not as well
+      res.send({success:false,message:"not implemented yet"});
+    }
+ });
+
   app.post('/v1/user/register',async (req,res) => {
     // should return state of success or error message
     console.log('Trying to register. which in this case is throw a token back', req.body.username,req.body.email,req.body.password);
