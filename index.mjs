@@ -341,8 +341,8 @@ function getRandomColor() {
       //socket.color = userinfo.color;
       // don't do anything with the email
       let userobj = {username:"Dickhead",color:"Red", num:9,secreth: "mytestsecrethash"};
-        if(userinfo.name){
-          userobj.username = userinfo.name;
+        if(payload.name){
+          userobj.username = payload.name;
         }
         if(req.body.myKey){
           let bhash = await bcrypt.hash(req.body.myKey,saltRounds);
