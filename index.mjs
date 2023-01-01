@@ -308,7 +308,7 @@ function getRandomColor() {
 
   app.post('/v1/user/exchangetoken',async (req,res) => {
     // should return state of success or error message
-    //console.log('Trying to get a chatToken from FB login.',req.body);
+    console.log('Trying to get a chatToken from FB login.',req.body);
     let rtoken = req.body.token;
     //console.log("Token:",rtoken);
     if(rtoken){
