@@ -349,7 +349,7 @@ function getRandomColor() {
           //let bhash = bcrypt.hashSync(req.body.myKey, saltRounds);
           userobj.secreth = bhash; // but we need to make sure that we strip the returns
         }
-        userobj.color = '#0000aa';// getRandomColor();
+        userobj.color = '#0000dd';// getRandomColor();
         userobj.num = 99999;//getRandomUserId(); // if it is valid it's a shitwave color and number specific to them
         const jwt = await new jose.SignJWT({ 'urn:example:claim': true })
           .setProtectedHeader({ alg: 'PS256' })
