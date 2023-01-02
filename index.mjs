@@ -83,7 +83,7 @@ if(process.env.CORS_ALLOW){
 
 const port = process.env.PORT || 3150;
 
-import http from 'http';
+import http, { get } from 'http';
 const server = http.createServer(app);
 
 import { Server } from 'socket.io';
@@ -458,6 +458,29 @@ function getRandomColor() {
     //res.send({success:true,streamers:streamList[0],live:true});
     
   });
+
+get.post('/v1/admin/fireworks',(req,res) => {
+  // should do something to pop fireworks for a stream
+  /* m.type === 'fireworks'
+       m.channel, this.page 
+       m.topText, m.bottomText
+       message
+       subtext
+  */
+
+       const message = req.body.message;
+        const subtext = req.body.subtext;
+        if(message && subtext){
+        const msg_md = do_md(message);
+        let bottom_text = do_md(subtext);
+       fwcio.sockets.emit("bulkmessage",[{message:msg_md,type:'fireworks',topText:msg_md,bottomText:bottom_text,channel:sanitizeHtml(msg.channel),timestamp:Date.now()}]);
+
+       res.send( 'Created fireworks' );
+      }else{
+        res.send("Error missing things to show and abuse fireworks...");
+      }
+
+});
 
   // cname = data[user].page.watch;
 // cname = data[user].page;
