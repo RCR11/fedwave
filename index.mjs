@@ -478,7 +478,7 @@ app.get('/api/channels/list',(req,res) => {
   let userlist = [];
   let tempnamelist = Array.from(userList);
   tempnamelist.forEach(user => {
-    fatchatUserList.push({avatar:null,name:user});
+    userlist.push({avatar:null,name:user});
   });
   res.json({streams:streamList,users:userlist});
   /*if(streamList.length == 1){
