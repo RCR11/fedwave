@@ -306,6 +306,9 @@ function getRandomColor() {
     
   });
 
+
+  // const endpoint = `https://fw.rnih.org/v1/coins/${this.username}/alerts/${this.offset}`;
+
   app.post('/v1/user/exchangetoken',async (req,res) => {
     // should return state of success or error message
     console.log('Trying to get a chatToken from FB login.',req.body);
@@ -472,7 +475,12 @@ app.get('/api/channels/list',(req,res) => {
 
   //let streamername = req.params.id;
   //console.log("trying to find streamer: ",req.params.id, ' in: ',currStream);
-  res.json(streamList);
+  let userlist = [];
+  let tempnamelist = Array.from(userList);
+  tempnamelist.forEach(user => {
+    fatchatUserList.push({avatar:null,name:user});
+  });
+  res.json({streams:streamList,users:userlist});
   /*if(streamList.length == 1){
     
  } else {
