@@ -459,7 +459,7 @@ function getRandomColor() {
     
   });
 
-get.post('/v1/admin/fireworks',(req,res) => {
+app.post('/v1/admin/fireworks',(req,res) => {
   // should do something to pop fireworks for a stream
   /* m.type === 'fireworks'
        m.channel, this.page 
