@@ -135,6 +135,9 @@ let bannedip = [];
 let emoteList = [];
 let altemoteList = [];
 
+let federation_clients = []; // these should be servers that we can connect to and listen to via the socket io client io
+let federation_sockets = []; // these are the connections that should be tracked and used for federation
+
 async function securityChecks(){
     // does startup checks for jwt and other security info that we need to run securely 
     //https://github.com/panva/jose/blob/main/docs/functions/key_generate_key_pair.generateKeyPair.md#readme
@@ -731,6 +734,41 @@ username: user.username,
     var authStatus = true;//req.isAuthenticated();
     res.render('federation',{session:authStatus,req:req,config:template_config});
   });
+
+  function bulkFedMsg(data){
+
+    data.forEach(msg => {
+      // check the message type and ignore it if it's a federation message
+      // if it has federation in the message that means that it already came from a federated source and shouldn't be passed along
+      if(msg.federation){
+        // message gets dropped
+      }else{
+        fwcio.sockets.emit("bulkmessage",[{federation:'fw.rnih.org',message:msg.message,username:sanitizeHtml(msg.username),channel:sanitizeHtml(msg.channel),color:sanitizeHtml(msg.color),timestamp:Date.now(),unum:msg.unum}]);
+      }
+  });
+    
+
+    
+  }
+
+  // so basic federation should allow you to listen to another server via a federation socket, all the messages that come in on it will get rebroadcast via our main socket
+  // with the exception of fed messages, they will get dropped 
+  // ==========================================================================================================================================================
+  // FED SOCKET STUFF
+  // ==========================================================================================================================================================
+  function setup_ferderation(){
+    //federation_clients
+    // federation sockets is where they should be stored
+    let fw_client = 'https://fw.rnih.org';
+
+    console.log("Should connect to the federation servers that we want to listen to");
+    let fcs = io(chatConfig.legacychat,{transports: ['websocket'] } ); // fed client socket
+    // hook the federation message processing based on message type
+    fcs.on('bulkmessage',bulkFedMsg);
+
+  }
+
+  setup_ferderation();
 
   // Moderation, no one likes it but for illegal things
   /* Should show a user list to be moderated
