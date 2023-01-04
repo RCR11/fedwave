@@ -32,6 +32,10 @@ const app = express();
         So far I like the rebake process that has produced this, need to hook this up and add a fw sub to run this on
         https://github.com/supabase/supabase
 
+        First type of federation will be passive listen to another server, probably do it via gui
+
+        optional message logging that can be configured per streamer
+
 */
 
 import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
@@ -476,13 +480,29 @@ app.post('/v1/admin/fireworks',(req,res) => {
 
         const msg_md = do_md(message);
         let bottom_text = do_md(subtext);
-       fwcio.sockets.emit("bulkmessage",[{message:msg_md,type:'fireworks',topText:msg_md,bottomText:bottom_text,channel:sanitizeHtml(req.body.channel),timestamp:Date.now()}]);
+       //fwcio.sockets.emit("bulkmessage",[{message:msg_md,type:'fireworks',topText:msg_md,bottomText:bottom_text,channel:sanitizeHtml(req.body.channel),timestamp:Date.now()}]);
 
        res.send( 'Created fireworks' );
       }else{
         res.send("Error missing things to show and abuse fireworks...");
       }
 
+});
+
+app.post('/v1/admin/alert',(req,res) => {
+    // get the message and push it out message
+    if(req.body.message){
+      //await showSystemAlert( color, icon, message, textColor );
+    //const message = do_md(req.body.message);
+    const color = req.body.color || 'blue';
+    const icon = req.body.icon || 'warning';
+    const message = req.body.message || 'no message';
+    const textColor = req.body.textColor || 'black--text';
+    //fwcio.sockets.emit("bulkmessage",[{message:msg_md,type:'fireworks',topText:msg_md,bottomText:bottom_text,channel:sanitizeHtml(req.body.channel),timestamp:Date.now()}]);
+    res.send( 'Created alert' );
+    }else{
+      res.send( 'Should show an error :(' );
+    } 
 });
 
   // cname = data[user].page.watch;
@@ -495,7 +515,13 @@ app.get('/api/channels/list',(req,res) => {
        return true;
     }
  });*/
-
+/*
+username: user.username,
+        avatar: user.avatar || null,
+        color: user.color   || null,
+        page: user.page     || null,
+      .page = { watch: channel };
+        */
  
 
 
@@ -1157,6 +1183,14 @@ fwcio.sockets.on("connection", socket => {
         fwcfwcio.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
         return;
       }
+
+      if(data.message.substr(0,7) == '!emotes'){
+        //socket.emit("error",{message:"Error sending message",channel:"error",username:"servererror"});
+        const msg_md = do_md('Should reload emotes');
+        getEmotes();
+        fwcfwcio.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
+        return;
+      }
       // iprangeban
       // mkstreamer username
       if(data.message.substr(0,12) == '!mkstreamer '){
@@ -1424,6 +1458,7 @@ fwcio.sockets.on("connection", socket => {
     //for( const emote in emoteList.emotes){
     for( const livestreamer in approved_streamers.approvedstreamers){
         //console.log(approved_streamers.approvedstreamers[livestreamer]);
+        //{"title":"Stream Title","name":"User Display Name","avatar":"https://site.com/uploads/v2/avatar/displayimage.png","poster":"https://site.com/static/img/streamposter.png","thumbnail":"https://site.com/preview/user.jpg","to":"/user","live":true,"nsfw":false,"url":"https://site.com/hls/userrtmp/index.m3u8","owner":"ownerapikeyfirebase","banned":false}
         if(socket.username == approved_streamers.approvedstreamers[livestreamer].username && socket.unum == approved_streamers.approvedstreamers[livestreamer].num && socket.color == approved_streamers.approvedstreamers[livestreamer].color){
             let streaminfo = {name:socket.username,user:socket.username,desc:"A near real time live stream!",thumbnail:approved_streamers.approvedstreamers[livestreamer].avatar,avatar:approved_streamers.approvedstreamers[livestreamer].avatar,viewers:0,viewCount:0,live:true};
             if(data.desc){
@@ -1443,6 +1478,27 @@ fwcio.sockets.on("connection", socket => {
               streaminfo.to = socket.username;
               streaminfo.owner = socket.username;
             }
+
+            if(data.nsfw){
+              streaminfo.nsfw = data.nsfw;
+            }else{
+              streaminfo.nsfw = false;
+            }
+
+            if(data.live){
+              streaminfo.live = data.live;
+            }
+
+            if(data.banned){
+              // should check if it's true and not add the stream or remove it from the list
+
+            }
+
+            if(data.federation){
+              // should check if it's allowed to federate with the server info to connect back to for streaming
+              streaminfo.federation = data.federation; // should be the domain
+            }
+
             //streamListSet.add(streaminfo);
             cleanStreamerList(socket.username);
             streamList.push(streaminfo);
