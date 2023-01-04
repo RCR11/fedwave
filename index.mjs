@@ -762,7 +762,7 @@ username: user.username,
     let fw_client = 'https://fw.rnih.org';
 
     console.log("Should connect to the federation servers that we want to listen to");
-    let fcs = io(chatConfig.legacychat,{transports: ['websocket'] } ); // fed client socket
+    let fcs = io(fw_client,{transports: ['websocket'] } ); // fed client socket
     // hook the federation message processing based on message type
     fcs.on('bulkmessage',bulkFedMsg);
 
