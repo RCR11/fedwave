@@ -743,7 +743,11 @@ username: user.username,
       if(msg.federation){
         // message gets dropped
       }else{
-        fwcio.sockets.emit("bulkmessage",[{federation:'fw.rnih.org',message:msg.message,username:sanitizeHtml(msg.username),channel:sanitizeHtml(msg.channel),color:sanitizeHtml(msg.color),timestamp:Date.now(),unum:msg.unum}]);
+
+        // do a user filter check for plb
+        if(msg.username != "plb"){
+          fwcio.sockets.emit("bulkmessage",[{federation:'fw.rnih.org',message:msg.message,username:sanitizeHtml(msg.username),channel:sanitizeHtml(msg.channel),color:sanitizeHtml(msg.color),timestamp:Date.now(),unum:msg.unum}]);
+        }
       }
   });
     
@@ -764,6 +768,9 @@ username: user.username,
     console.log("Should connect to the federation servers that we want to listen to");
     let fcs = io(fw_client,{transports: ['websocket'] } ); // fed client socket
     // hook the federation message processing based on message type
+    // hook the info onto the socket so we know what connection this stuff is on and a name
+    fcs.fedname = "Fedwave";
+    fcs.fedurl = fw_client;
     fcs.on('bulkmessage',bulkFedMsg);
 
   }
