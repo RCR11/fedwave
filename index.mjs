@@ -775,7 +775,7 @@ username: user.username,
 
   }
 
-  setup_ferderation();
+  //setup_ferderation();
 
   // Moderation, no one likes it but for illegal things
   /* Should show a user list to be moderated
