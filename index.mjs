@@ -546,6 +546,55 @@ username: user.username,
   
 });
 
+// cname = data[user].page;
+app.get('/api/channels',(req,res) => {
+    
+  //"livestreams",{streams:streamList}
+  /*var currStream = streamList.filter(function(streamer){
+    if(streamer.name == req.params.id){
+       return true;
+    }
+ });*/
+/*
+username: user.username,
+        avatar: user.avatar || null,
+        color: user.color   || null,
+        page: user.page     || null,
+      .page = { watch: channel };
+        */
+ /* From plb
+       if viewlist['success'] == True:
+                for channel in viewlist['data']:
+                    if chatname == channel['channel']:
+                        # save the view count 
+                        viewer_count_for_channel = channel['viewCount']
+                        obsviewcounts()
+                        try:
+                            for viewer in channel.viewers:
+                                unique_users.add(viewer)
+
+
+ */
+
+
+  //let streamername = req.params.id;
+  //console.log("trying to find streamer: ",req.params.id, ' in: ',currStream);
+  let userlist = [];
+  let tempnamelist = Array.from(userList);
+  tempnamelist.forEach(user => {
+    userlist.push({avatar:null,name:user});
+  });
+  res.json({streams:streamList,users:userlist});
+  /*if(streamList.length == 1){
+    
+ } else {
+    res.status(404);//Set status to 404 as movie was not found
+    res.json({message: "Not Found"});
+ }*/
+  //res.send({success:true,streamers:streamList[0],live:true});
+  
+});
+
   app.get('/v1/chat/users',(req,res) => {
     
     //"livestreams",{streams:streamList}
@@ -565,8 +614,11 @@ username: user.username,
       tempnamelist.forEach(user => {
         //fatchatUserList.push({username:user,avatar:'',color:'',watching:'Playlistbot9k'});
         //fatchatUserList.push({username:user,watching:'Playlistbot9k',data:'something'});
-        fatchatUserList.push({ [user]: {data:{watching:{ page: 'Playlistbot9k' },avatar:null,username:user,page:'Playlistbot9k',color:null}} });
+        //fatchatUserList.push({ [user]: {data:{watching:{ page: 'Playlistbot9k' },avatar:null,username:user,page:'Playlistbot9k',color:null}} });
+        
+        // the other model similar to this is in plb
       });
+      fatchatUserList.push([{'playlistbot':{channel:'playlistbot',viewers:tempnamelist,viewCount:tempnamelist.length}}]);
 
       console.log("User list:",fatchatUserList);
 
