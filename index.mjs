@@ -609,16 +609,18 @@ username: user.username,
       })*/
 
       let fatchatUserList = [];
+      let viewersList = [];
       // do a for loop over userList and build new users to add based on that and then emit that 
       let tempnamelist = Array.from(userList);
       tempnamelist.forEach(user => {
         //fatchatUserList.push({username:user,avatar:'',color:'',watching:'Playlistbot9k'});
         //fatchatUserList.push({username:user,watching:'Playlistbot9k',data:'something'});
         //fatchatUserList.push({ [user]: {data:{watching:{ page: 'Playlistbot9k' },avatar:null,username:user,page:'Playlistbot9k',color:null}} });
+        viewersList.push({username:user,watching:'Playlistbot9k'});
         
         // the other model similar to this is in plb
       });
-      fatchatUserList.push([{'playlistbot':{channel:'playlistbot',viewers:tempnamelist,viewCount:tempnamelist.length}}]);
+      fatchatUserList.push([{'playlistbot':{channel:'playlistbot',viewers:viewersList,viewCount:tempnamelist.length}}]);
 
       console.log("User list:",fatchatUserList);
 
