@@ -646,7 +646,7 @@ username: user.username,
       //fatchatUserList.push({channel:"NoAgenda",viewCount:viewersList.length,viewers:viewersList});
 
 
-    res.send({success:true,data:fatchatUserList});
+    res.json({success:true,data:fatchatUserList});
     
   });
 
