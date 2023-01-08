@@ -1234,6 +1234,14 @@ fwcio.sockets.on("connection", socket => {
     data.color = socket.color;
     data.unum = socket.unum;
 
+    if(socket.unum == undefined || socket.username == undefined || socket.color == undefined){
+      // should force a disconnect of the client aka get them to reconnect
+      let error_message = "You have been disconnected, you need to be authenticated before you can send a message.";
+      error_message = do_md(error_message)
+      socket.emit("bulkmessage",[{message:error_message,color:'#DDDDDD',username:'SYSTEM',unum:0,channel:"SYSTEM"}]);
+      socket.disconnect();
+    }
+
     // hook up special admin stuff to add user permissions and streamers
     if(socket.admin){
       // check if this should be a special admin command
@@ -1448,6 +1456,7 @@ fwcio.sockets.on("connection", socket => {
         const unum = getRandomUserId();
         socket.username = "troll:dickhead";
         socket.unum = unum;
+        // should send a message that they have a corrupt token, maybe disconnect them?
       }
     }else{
       // if it exists
@@ -1474,6 +1483,14 @@ fwcio.sockets.on("connection", socket => {
     // try to find the sockets that are active for that user and then
     // send it to them
     // should use the socket user num to find them and send to them as well with the user name
+    if(socket.unum == undefined || socket.username == undefined || socket.color == undefined){
+      // should force a disconnect of the client aka get them to reconnect
+      // send the error message to the user that they have not been authenticated
+      let error_message = "You have been disconnected, you need to be authenticated before you can send a message.";
+      error_message = do_md(error_message)
+      socket.emit("bulkmessage",[{message:error_message,color:'#DDDDDD',username:'SYSTEM',unum:0,channel:"SYSTEM"}]); // should make system errors a standard message style
+      socket.disconnect();
+    }
     //console.log("Whisper:",data);
     console.log("Whisper to:", data.to);
     //console.log("message:", data.message);
