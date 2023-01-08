@@ -632,7 +632,7 @@ username: user.username,
       tempnamelist.forEach(user => {
         //fatchatUserList.push({username:user,avatar:'',color:'',watching:'Playlistbot9k'});
         //fatchatUserList.push({username:user,watching:'Playlistbot9k',data:'something'});
-        fatchatUserList.push({ [user]: {data:{watching:{ page: 'NoAgenda' },avatar:null,username:user,page:'NoAgenda',color:null}} });
+        fatchatUserList.push({ [user]: {username:user,data:{watching:{ page: 'NoAgenda' },avatar:null,username:user,page:'NoAgenda',color:null}} });
         //viewersList.push({data:{username:user,watching:'Playlistbot9k',page:'Playlistbot9k'}});
         //fatchatUserList.push([{[user]:{channel:'Playlistbot9k',viewers:viewersList,viewCount:tempnamelist.length}}]);  
         // the other model similar to this is in plb
