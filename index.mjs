@@ -301,6 +301,7 @@ function getRandomColor() {
   app.get('/v1/channels/live',(req,res) => {
     
     //"livestreams",{streams:streamList}
+    console.log("Is this the one that gets called for the user list?");
 
     res.send({success:true,streamers:streamList,live:true});
     
@@ -1586,7 +1587,7 @@ fwcio.sockets.on("connection", socket => {
         //console.log(approved_streamers.approvedstreamers[livestreamer]);
         //{"title":"Stream Title","name":"User Display Name","avatar":"https://site.com/uploads/v2/avatar/displayimage.png","poster":"https://site.com/static/img/streamposter.png","thumbnail":"https://site.com/preview/user.jpg","to":"/user","live":true,"nsfw":false,"url":"https://site.com/hls/userrtmp/index.m3u8","owner":"ownerapikeyfirebase","banned":false}
         if(socket.username == approved_streamers.approvedstreamers[livestreamer].username && socket.unum == approved_streamers.approvedstreamers[livestreamer].num && socket.color == approved_streamers.approvedstreamers[livestreamer].color){
-            let streaminfo = {name:socket.username,user:socket.username,desc:"A near real time live stream!",thumbnail:approved_streamers.approvedstreamers[livestreamer].avatar,avatar:approved_streamers.approvedstreamers[livestreamer].avatar,viewers:0,viewCount:0,live:true};
+            let streaminfo = {channel:socket.username,name:socket.username,user:socket.username,desc:"A near real time live stream!",thumbnail:approved_streamers.approvedstreamers[livestreamer].avatar,avatar:approved_streamers.approvedstreamers[livestreamer].avatar,viewers:[{username:"MarkP",page:socket.username}],viewCount:0,live:true};
             if(data.desc){
               streaminfo.desc = sanitizeHtml(data.desc);
               streaminfo.title = sanitizeHtml(data.desc);
