@@ -620,8 +620,8 @@ username: user.username,
         //fatchatUserList.push([{[user]:{channel:'Playlistbot9k',viewers:viewersList,viewCount:tempnamelist.length}}]);  
         // the other model similar to this is in plb
       });
-      fatchatUserList.push([{'Playlistbot9k':{channel:'Playlistbot9k',viewers:viewersList,viewCount:tempnamelist.length}}]);
-      fatchatUserList.push([{'NoAgenda':{channel:'NoAgenda',viewers:viewersList,viewCount:tempnamelist.length}}]);
+      fatchatUserList.push([{'Playlistbot9k':{username:"Test username",channel:'Playlistbot9k',viewers:viewersList,viewCount:tempnamelist.length}}]);
+      fatchatUserList.push([{'NoAgenda':{username:"Test username",channel:'NoAgenda',viewers:viewersList,viewCount:tempnamelist.length}}]);
 
       console.log("User list:",fatchatUserList);
 
