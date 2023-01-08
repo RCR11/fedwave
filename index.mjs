@@ -298,19 +298,16 @@ function getRandomColor() {
     res.send(temp_emotes);
   });
 
+  // this is what is hit by most things, like pages/index, streamerlist live, chat/chat.vue
   app.get('/v1/channels/live',(req,res) => {
     
     //"livestreams",{streams:streamList}
     console.log("Is this the one that gets called for the user list?");
-    let userListUpdate = [];
-    let tempnamelist = Array.from(userList);
-    tempnamelist.forEach(user => {
-      userListUpdate.push({avatar:null,name:user,username:user,page:'NoAgenda',color:"#dddddd"});
-    });
-    console.log("User list via channel:",userListUpdate);
-    res.send({success:true,data:userListUpdate,streamers:streamList,live:true});
+    
+    res.send({success:true,streamers:streamList,live:true});
     
   });
+
 
   app.get('/v1/chat/channels',(req,res) => {
     
@@ -635,8 +632,8 @@ username: user.username,
       tempnamelist.forEach(user => {
         //fatchatUserList.push({username:user,avatar:'',color:'',watching:'Playlistbot9k'});
         //fatchatUserList.push({username:user,watching:'Playlistbot9k',data:'something'});
-        //fatchatUserList.push({ [user]: {data:{watching:{ page: 'Playlistbot9k' },avatar:null,username:user,page:'Playlistbot9k',color:null}} });
-        viewersList.push({data:{username:user,watching:'Playlistbot9k',page:'Playlistbot9k'}});
+        fatchatUserList.push({ [user]: {data:{watching:{ page: 'NoAgenda' },avatar:null,username:user,page:'NoAgenda',color:null}} });
+        //viewersList.push({data:{username:user,watching:'Playlistbot9k',page:'Playlistbot9k'}});
         //fatchatUserList.push([{[user]:{channel:'Playlistbot9k',viewers:viewersList,viewCount:tempnamelist.length}}]);  
         // the other model similar to this is in plb
       });
@@ -645,8 +642,8 @@ username: user.username,
 
       console.log("User list:",fatchatUserList);
 
-      fatchatUserList.push({channel:"Playlistbot9k",viewCount:viewersList.length,viewers:viewersList});
-      fatchatUserList.push({channel:"NoAgenda",viewCount:viewersList.length,viewers:viewersList});
+      //fatchatUserList.push({channel:"Playlistbot9k",viewCount:viewersList.length,viewers:viewersList});
+      //fatchatUserList.push({channel:"NoAgenda",viewCount:viewersList.length,viewers:viewersList});
 
 
     res.send({success:true,data:fatchatUserList});
