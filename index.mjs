@@ -440,6 +440,14 @@ function getRandomColor() {
 });
 
 
+function genUsersList(page){
+  let userlist = [];
+  let tempnamelist = Array.from(userList);
+  tempnamelist.forEach(user => {
+    userlist.push({avatar:null,name:user,page:page,color:"#dddddd"});
+  });
+}
+
 // cname = data[user].page.watch;
 // cname = data[user].page;
   app.get('/api/channel/:id',(req,res) => {
@@ -534,7 +542,7 @@ username: user.username,
   let userlist = [];
   let tempnamelist = Array.from(userList);
   tempnamelist.forEach(user => {
-    userlist.push({avatar:null,name:user});
+    userlist.push({avatar:null,name:user,username:user,page:"NoAgenda",color:"#FFFFFF"});
   });
   res.json({streams:streamList,users:userlist});
   /*if(streamList.length == 1){
