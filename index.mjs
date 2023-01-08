@@ -302,8 +302,12 @@ function getRandomColor() {
     
     //"livestreams",{streams:streamList}
     console.log("Is this the one that gets called for the user list?");
-
-    res.send({success:true,streamers:streamList,live:true});
+    let userListUpdate = [];
+    let tempnamelist = Array.from(userList);
+    tempnamelist.forEach(user => {
+      userListUpdate.push({avatar:null,name:user,page:page,color:"#dddddd"});
+    });
+    res.send({success:true,data:userListUpdate,streamers:streamList,live:true});
     
   });
 
