@@ -305,8 +305,9 @@ function getRandomColor() {
     let userListUpdate = [];
     let tempnamelist = Array.from(userList);
     tempnamelist.forEach(user => {
-      userListUpdate.push({avatar:null,name:user,page:'NoAgenda',color:"#dddddd"});
+      userListUpdate.push({avatar:null,name:user,username:user,page:'NoAgenda',color:"#dddddd"});
     });
+    console.log("User list via channel:",userListUpdate);
     res.send({success:true,data:userListUpdate,streamers:streamList,live:true});
     
   });
