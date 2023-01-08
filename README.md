@@ -25,6 +25,10 @@ Techonologies used of note:
 
 You will need a system with git, npm, pm2, optional but recommend setup steps: cloudflare or use lets encrypt
 
+Setup NVM for using npm/node 
+
+`nvm exec 16 npm run dev`
+
 
 git co 
 npm i

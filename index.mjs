@@ -1582,6 +1582,10 @@ fwcio.sockets.on("connection", socket => {
               streaminfo.title = sanitizeHtml(data.desc);
             }
 
+            if(streaminfo.thumbnail){
+              streaminfo.cover = streaminfo.thumbnail;
+            }
+
             if(data.src){
               streaminfo.url = data.src;
               streaminfo.src = data.src;
