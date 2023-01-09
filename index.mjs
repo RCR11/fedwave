@@ -494,7 +494,7 @@ app.post('/v1/admin/fireworks',(req,res) => {
 
         const msg_md = do_md(message);
         let bottom_text = do_md(subtext);
-       //fwcio.sockets.emit("bulkmessage",[{message:msg_md,type:'fireworks',topText:msg_md,bottomText:bottom_text,channel:sanitizeHtml(req.body.channel),timestamp:Date.now()}]);
+       fwcio.sockets.emit("bulkmessage",[{message:msg_md,type:'fireworks',topText:msg_md,bottomText:bottom_text,channel:sanitizeHtml('Playlistbot9k'),timestamp:Date.now()}]);
 
        res.send( 'Created fireworks' );
       }else{
@@ -1102,6 +1102,8 @@ function genTrollId(){
     return `<blockquote>${quote.replace('<p>', '<p>>')}</blockquote>`;
   };
 
+
+
   function do_md(msg_in) {
     msg_in = msg_in.trim();
     var msg_out = sanitizeHtml(marked(msg_in,{renderer:renderer,smartLists:true,tables:false}));
@@ -1189,10 +1191,24 @@ function genTrollId(){
     
     const msg_md = do_md(msg.message);
     //bulkmessages.push();
+
+    let chat_badge = false;
+    if(msg.showBadge){
+      if(msg.showBadge === true){
+        chat_badge = true;
+      }
+    }
+
+    let msg_global = false;
+    if(msg.global){
+      if(msg.global === true){
+        msg_global = true;
+      }
+    }
     
     // now for testing this will spit out stuff and still needs a safety pass of filtering output
     // to whitelisted tag types 
-    fwcio.sockets.emit("bulkmessage",[{message:msg_md,username:sanitizeHtml(msg.username),channel:sanitizeHtml(msg.channel),color:sanitizeHtml(msg.color),timestamp:Date.now(),unum:msg.unum}]);
+    fwcio.sockets.emit("bulkmessage",[{message:msg_md,username:sanitizeHtml(msg.username),channel:sanitizeHtml(msg.channel),color:sanitizeHtml(msg.color),timestamp:Date.now(),unum:msg.unum,badge:chat_badge,global:msg_global}]);
   }
 
   function addUserToList(temp_username){
