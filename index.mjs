@@ -488,7 +488,14 @@ app.post('/v1/admin/fireworks',(req,res) => {
 
        const message = req.body.message;
         const subtext = req.body.subtext;
-        const sub_channel = req.body.channel;
+        let sub_channel = req.body.channel;
+
+        if(sub_channel){
+
+        }else{
+          sub_channel = 'Global';
+        }
+
         if(message && subtext & sub_channel){
           console.log("Sending fireworks on channel:",sub_channel);
         
