@@ -863,7 +863,7 @@ function addMessage(data){
 
 function help(){
     const msg_to_add_locally = {
-        message: "Hi here is some help info:<br>/h or /help for help<br>/w username message to whisper<br>/hit for the hit alert sounds<br>/notify to toggle notify<br>/afk to set an away message<br>/users Gets a current list of users<br>/mkuser username password to make a unique user<br>/mktroll makes a new random troll<br>/autooff turns off autocomplete<br>/autouser user @ complete<br>/autoemote emote only autocomplete<br>/autoall turns on both<br>/hit for a nice sound notification<br>/resetsend if you have garbage in your send<br>/textonly turns off images in chat<br>/usernum To toggle showing user numbers<br>/tts to toggle tts on and off<br>/cacheon to turn on local message caching for reloads<br>/cacheoff turns off and clears the local message cache.",
+        message: "Hi here is some help info:<br>/h or /help for help<br>/w username message to whisper<br>/hit for the hit alert sounds<br>/notify to toggle notify<br>/afk to set an away message<br>/users Gets a current list of users<br>/mkuser username password to make a unique user<br>/mktroll makes a new random troll<br>/autooff turns off autocomplete<br>/autouser user @ complete<br>/autoemote emote only autocomplete<br>/autoall turns on both<br>/hit for a nice sound notification<br>/resetsend if you have garbage in your send<br>/textonly turns off images in chat<br>/usernum To toggle showing user numbers<br>/tts to toggle tts on and off<br>/cacheon to turn on local message caching for reloads<br>/cacheoff turns off and clears the local message cache.<br>/resetsend clears your local send cache<br>",
         username: "Helper",
         channel: 'Help'
     
@@ -1053,6 +1053,19 @@ function split( val ) {
 let autocompletedata = [];
 
 function addv2msg(data){
+
+    if(data.type){
+        // delete
+        // firework
+        if ( data.type === 'fireworks') {
+            console.log("Should have shown fireworks...");
+            return;
+        }
+
+        if ( data.type === 'delete') {
+            console.log("Delete message...");
+        }
+    }
     let node = document.createElement("div");                 // Create a <li> node
         
         let hideID = Math.random().toString(36).replace('0.', ''); // hide based on the id string that is generated for the element
