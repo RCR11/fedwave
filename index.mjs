@@ -488,13 +488,14 @@ app.post('/v1/admin/fireworks',(req,res) => {
 
        const message = req.body.message;
         const subtext = req.body.subtext;
-        if(message && subtext){
+        const sub_channel = req.body.channel;
+        if(message && subtext & sub_channel){
 
         
 
-        const msg_md = do_md(message);
-        let bottom_text = do_md(subtext);
-       fwcio.sockets.emit("bulkmessage",[{message:msg_md,type:'fireworks',topText:msg_md,bottomText:bottom_text,channel:sanitizeHtml('Playlistbot9k'),timestamp:Date.now()}]);
+        const msg_md = sanitizeHtml(message);//do_md(message);
+        let bottom_text = sanitizeHtml(subtext);//do_md(subtext);
+       fwcio.sockets.emit("bulkmessage",[{message:msg_md,type:'fireworks',topText:msg_md,bottomText:bottom_text,channel:sanitizeHtml(sub_channel),timestamp:Date.now()}]);
 
        res.send( 'Created fireworks' );
       }else{
