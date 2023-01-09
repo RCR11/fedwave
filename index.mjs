@@ -490,7 +490,7 @@ app.post('/v1/admin/fireworks',(req,res) => {
         const subtext = req.body.subtext;
         const sub_channel = req.body.channel;
         if(message && subtext & sub_channel){
-
+          console.log("Sending fireworks on channel:",sub_channel);
         
 
         const msg_md = sanitizeHtml(message);//do_md(message);
