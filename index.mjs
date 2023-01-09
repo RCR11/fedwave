@@ -500,6 +500,7 @@ app.post('/v1/admin/fireworks',(req,res) => {
        res.send( 'Created fireworks' );
       }else{
         res.send("Error missing things to show and abuse fireworks...");
+        console.log("Didn't show fireworks:",sub_channel, message,subtext);
       }
 
 });
