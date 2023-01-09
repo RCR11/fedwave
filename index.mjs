@@ -1204,7 +1204,7 @@ function genTrollId(){
     let chat_badge = false;
     if(msg.showBadge){
       if(msg.showBadge === true){
-        chat_badge = true;
+        chat_badge = "";
       }
     }
 
@@ -1217,7 +1217,7 @@ function genTrollId(){
     
     // now for testing this will spit out stuff and still needs a safety pass of filtering output
     // to whitelisted tag types 
-    fwcio.sockets.emit("bulkmessage",[{message:msg_md,username:sanitizeHtml(msg.username),channel:sanitizeHtml(msg.channel),color:sanitizeHtml(msg.color),timestamp:Date.now(),unum:msg.unum,badge:chat_badge,global:msg_global}]);
+    fwcio.sockets.emit("bulkmessage",[{message:msg_md,username:sanitizeHtml(msg.username),channel:sanitizeHtml(msg.channel),color:sanitizeHtml(msg.color),timestamp:Date.now(),unum:msg.unum,global:msg_global}]);
   }
 
   function addUserToList(temp_username){
