@@ -496,7 +496,7 @@ app.post('/v1/admin/fireworks',(req,res) => {
           sub_channel = 'Global';
         }
 
-        if(message && subtext & sub_channel){
+        if(message && subtext && sub_channel){
           console.log("Sending fireworks on channel:",sub_channel);
         
 
