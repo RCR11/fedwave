@@ -465,12 +465,19 @@ function getApprovedStreamerInfo(byusername){
     console.log("Error loading approved streamers json file.");
   }
 
-  let matched_streamer = approved_streamers.filter(function(streamer){
+  //let found_streamer = -1;
+  for(let si = 0;si < approved_streamers.length;si++){
+    if(approved_streamers[si].username.tolower() == byusername.tolower()){
+      return approved_streamers[si];
+    }
+  }
+
+  /*let matched_streamer = approved_streamers.filter(function(streamer){
     if(streamer.username.tolower() == byusername.tolower()){
       return true;
     }
-  });
-  return matched_streamer;
+  });*/
+  return [];
 }
 
 // cname = data[user].page.watch;
