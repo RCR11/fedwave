@@ -1860,7 +1860,7 @@ socket.on("getlivestreams",(data) => {
 
   function set_streamer_offline(username){
     for(let streami = 0;streami < streamList.length;streami++){
-      if(streamList[streami].user == streamer){
+      if(streamList[streami].user == username){
         //console.log("Now:",streamList.length,' streamers:',streamList, ' splicing:',streami);
         //streamList.splice(streami,1);
         //console.log("Now:",streamList.length,' streamers:',streamList);
