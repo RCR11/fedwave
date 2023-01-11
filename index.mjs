@@ -696,13 +696,17 @@ username: user.username,
   app.post('/v1/admin/stream/kick',(req,res) => {
     // should find and update the streamer info 
     // this should also look through the streamer sockets and force a disconnect
+    // so there should be some get params or url params that need to be extracted out of this
+    // ?reset=name
     console.log("/v1/admin/stream/kick params:", req.params);
+    console.log("query params:",req.query);
   });
 
   app.post('/v1/admin/stream/',(req,res) => {
     // should find and update the streamer info 
     // should be able to modify and set nsfw status and offline status of a stream
     console.log("/v1/admin/stream/ params:", req.params);
+    console.log("query params:",req.query);
   });
 
   // adds the fat chat compatible api
