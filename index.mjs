@@ -1841,7 +1841,8 @@ socket.on("getlivestreams",(data) => {
 io_signal_server.on('connection', function(socket) {
     // so extend it and add the features to auth for stream creation
     RTCMultiConnectionServer.addSocket(socket);
-    console.log(RTCMultiConnectionServer);
+    //console.log(RTCMultiConnectionServer);
+    console.log("Sockets after new listener connected:",io_signal_server.sockets);
 });
 
 // offline or disconnect of the main streamer/room socket
