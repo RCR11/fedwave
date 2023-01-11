@@ -1824,9 +1824,16 @@ socket.on("getlivestreams",(data) => {
     // should do a check if the user is a streamer first
     if(check_if_is_streamer(username,usernum,color)){
       let found_streamer = false;
+      
+      //let streamer_sockets = io_signal_server.sockets;
+        // then loop through all of them and look at the userid for the streamer to disconnect
+        // maybe do a full disconnect ?
+        //streamer_sockets.forEach(vsocket => {
+      
       let streams_to_check = io_signal_server.sockets;
+
       streams_to_check.forEach(stream_user => {
-        if(stream_user.username){
+        if(stream_user.username === username){
           found_streamer = true;
         }
       });
