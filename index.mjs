@@ -466,9 +466,9 @@ function getApprovedStreamerInfo(byusername){
   }
 
   //let found_streamer = -1;
-  console.log("Trying to find",byusername, ' but match with :',byusername.tolower());
+  console.log("Trying to find",byusername, ' but match with :',byusername.toLowerCase());
   for(let si = 0;si < approved_streamers.length;si++){
-    if(approved_streamers[si].username.tolower() == byusername.tolower()){
+    if(approved_streamers[si].username.toLowerCase() == byusername.toLowerCase()){
       console.log("Got a match for the streamer, should return it based on teh name match");
       return approved_streamers[si];
     }
