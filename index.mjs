@@ -693,6 +693,18 @@ username: user.username,
     
   });
 
+  app.post('/v1/admin/stream/kick',(req,res) => {
+    // should find and update the streamer info 
+    // this should also look through the streamer sockets and force a disconnect
+    console.log("/v1/admin/stream/kick params:", req.params);
+  });
+
+  app.post('/v1/admin/stream/',(req,res) => {
+    // should find and update the streamer info 
+    // should be able to modify and set nsfw status and offline status of a stream
+    console.log("/v1/admin/stream/ params:", req.params);
+  });
+
   // adds the fat chat compatible api
   app.post('/v1/whispers/send', async (req,res) => {
     let from_token = req.body.chatToken;
@@ -1796,6 +1808,8 @@ io_signal_server.on('connection', function(socket) {
     // so extend it and add the features to auth for stream creation
     RTCMultiConnectionServer.addSocket(socket);
 });
+
+
 
 
 let signalServerPort = process.env.SIGPORT || 9002;//9002; // this is the internal local port
