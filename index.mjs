@@ -1882,7 +1882,7 @@ socket.on("getlivestreams",(data) => {
         //streamer_sockets.forEach(vsocket => {
       
       let streams_to_check = io_signal_server.sockets;
-      console.log("Should check sockets for disconnect, if we have them...",streams_to_check);
+      //console.log("Should check sockets for disconnect, if we have them...",streams_to_check);
       if(streams_to_check){
         for(let uid = 0;uid < streams_to_check.length;uid++){//(stream_user => {
           if(streams_to_check[uid].username === username){
