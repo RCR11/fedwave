@@ -456,6 +456,14 @@ function getApprovedStreamerInfo(byusername){
   /*approved_streamers.forEach(streamer => {
 
   })*/
+  try{
+    let data = fs.readFileSync('approved_streamers.json');
+    //console.log(data.toString());
+    approved_streamers = JSON.parse(data);
+    //console.log("approved streamers json obj:",approved_streamers.approvedstreamers);
+  }catch(error){
+    console.log("Error loading approved streamers json file.");
+  }
 
   let matched_streamer = approved_streamers.filter(function(streamer){
     if(streamer.username.tolower() == byusername.tolower()){
