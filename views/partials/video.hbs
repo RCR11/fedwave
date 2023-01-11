@@ -890,6 +890,8 @@
         // clear the streamer list
         $("#livestreams").empty();
         streams.forEach(stream => {
+
+            if(stream.live){
         let node = document.createElement("div"); 
             
             let textnodeAvatar = document.createElement("avatar");
@@ -947,6 +949,7 @@
                 //document.getElementById("thewatchers").appendChild(nodebr);
                 //document.getElementById("thewatchers").appendChild(nodebr);
                 document.getElementById("livestreams").appendChild(nodebr);
+             }// matches the live check, only adds them if they are live
         }); // end of for each stream/user
     }
 
