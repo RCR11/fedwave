@@ -1858,6 +1858,7 @@ io_signal_server.on('connection', function(socket) {
 // offline or disconnect of the main streamer/room socket
 io_signal_server.on('disconnect', function(socket){
     let channel_to_cleanup = socket.userid;
+    console.log("Should disconnect and remove stream:",socket.userid);
     cleanStreamerList(channel_to_cleanup);
     fwcio.sockets.emit("livestreams",{streams:streamList});
 });
