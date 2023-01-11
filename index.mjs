@@ -1831,12 +1831,13 @@ socket.on("getlivestreams",(data) => {
         //streamer_sockets.forEach(vsocket => {
       
       let streams_to_check = io_signal_server.sockets;
-
-      streams_to_check.forEach(stream_user => {
-        if(stream_user.username === username){
-          found_streamer = true;
-        }
-      });
+      if(streams_to_check){
+        streams_to_check.forEach(stream_user => {
+          if(stream_user.username === username){
+            found_streamer = true;
+          }
+        });
+      }
       //let channel_to_cleanup = socket.userid;
       //console.log("Should disconnect and remove stream:",socket.userid);
       if(found_streamer){
