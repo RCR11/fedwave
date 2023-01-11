@@ -1858,6 +1858,17 @@ socket.on("getlivestreams",(data) => {
 
   }
 
+  function set_streamer_offline(username){
+    for(let streami = 0;streami < streamList.length;streami++){
+      if(streamList[streami].user == streamer){
+        //console.log("Now:",streamList.length,' streamers:',streamList, ' splicing:',streami);
+        //streamList.splice(streami,1);
+        //console.log("Now:",streamList.length,' streamers:',streamList);
+        streamList[streami].live = false;
+      }
+    }
+  }
+
 
   function checkIfShouldCleanUpLiveStreams(username,usernum,color){
     // when the user disconnects they should have their named check to be cleand up
@@ -1884,7 +1895,8 @@ socket.on("getlivestreams",(data) => {
       if(found_streamer){
         // nothing to do since they are still online and connected
       }else{
-        cleanStreamerList(username);
+        //cleanStreamerList(username);
+        set_streamer_offline(username);
         fwcio.sockets.emit("livestreams",{streams:streamList});
       }
     }
