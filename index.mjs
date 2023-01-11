@@ -1792,6 +1792,56 @@ socket.on("getlivestreams",(data) => {
     fwcio.sockets.emit("watcherconnect",{sdp:data.sdp,user:socket.username});// this is what the streamer should connect back to
   })
 
+  function check_if_is_streamer(username,usernum,color){
+
+    try{
+      let data = fs.readFileSync('approved_streamers.json');
+      //console.log(data.toString());
+      approved_streamers = JSON.parse(data);
+      //console.log("approved streamers json obj:",approved_streamers.approvedstreamers);
+    }catch(error){
+      console.log("Error loading approved streamers json file.");
+    }
+
+  // then we should do a for loop and look for our streamer that matches
+  //for( const emote in emoteList.emotes){
+  for( const livestreamer in approved_streamers.approvedstreamers){
+      //console.log(approved_streamers.approvedstreamers[livestreamer]);
+      //{"title":"Stream Title","name":"User Display Name","avatar":"https://site.com/uploads/v2/avatar/displayimage.png","poster":"https://site.com/static/img/streamposter.png","thumbnail":"https://site.com/preview/user.jpg","to":"/user","live":true,"nsfw":false,"url":"https://site.com/hls/userrtmp/index.m3u8","owner":"ownerapikeyfirebase","banned":false}
+      if(username == approved_streamers.approvedstreamers[livestreamer].username && usernum == approved_streamers.approvedstreamers[livestreamer].num && color == approved_streamers.approvedstreamers[livestreamer].color){
+        return true; // user is a streamer
+      }
+    }
+
+    return false; // user is not a streamer
+
+
+  }
+
+
+  function checkIfShouldCleanUpLiveStreams(username,usernum,color){
+    // when the user disconnects they should have their named check to be cleand up
+    // should do a check if the user is a streamer first
+    if(check_if_is_streamer(username,usernum,color)){
+      let found_streamer = false;
+      let streams_to_check = io_signal_server.sockets;
+      streams_to_check.forEach(stream_user => {
+        if(stream_user.username){
+          found_streamer = true;
+        }
+      });
+      //let channel_to_cleanup = socket.userid;
+      //console.log("Should disconnect and remove stream:",socket.userid);
+      if(found_streamer){
+        // nothing to do since they are still online and connected
+      }else{
+        cleanStreamerList(username);
+        fwcio.sockets.emit("livestreams",{streams:streamList});
+      }
+    }
+    
+  }
+
 
   socket.on("disconnect", () => {
     // should clean up the socket of the user that was connected to the server
@@ -1799,6 +1849,7 @@ socket.on("getlivestreams",(data) => {
     
     console.log("Clean up socket:", socket.id);
     console.log("user diconnected...",socket.username + "#" + socket.unum);
+    checkIfShouldCleanUpLiveStreams(socket.username,socket.unum,socket.color);
     //if(socket.username == 'DeadPugner'){
      /// test_stream_sdp = '';//data.sdp;
       //socket.sdp = data.sdp;
@@ -1856,12 +1907,12 @@ io_signal_server.on('connection', function(socket) {
 });
 
 // offline or disconnect of the main streamer/room socket
-io_signal_server.on('disconnect', function(socket){
+/*io_signal_server.on('disconnect', function(socket){
     let channel_to_cleanup = socket.userid;
     console.log("Should disconnect and remove stream:",socket.userid);
     cleanStreamerList(channel_to_cleanup);
     fwcio.sockets.emit("livestreams",{streams:streamList});
-});
+});*/
 
 
 
