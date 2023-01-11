@@ -700,6 +700,7 @@ username: user.username,
     // ?reset=name
     console.log("/v1/admin/stream/kick params:", req.params);
     console.log("query params:",req.query);
+    // reset: 'true' 
   });
 
   app.post('/v1/admin/stream/',(req,res) => {
@@ -1361,6 +1362,18 @@ fwcio.sockets.on("connection", socket => {
         fwcfwcio.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
         return;
       }
+
+      if(data.message.substr(0,5) == '!kick'){
+        // should kick the stream of the channel it is in or take a param of the name to kick
+        console.log("Should kick stream on channel:", data.channel);
+        console.log("Should also look for the stream socket to kick as well.");
+      }
+
+      if(data.message.substr(0,5) == '!nsfw'){
+        // should mark the stream nsfw for the channel it was in
+      }
+
+
       // iprangeban
       // mkstreamer username
       if(data.message.substr(0,12) == '!mkstreamer '){
