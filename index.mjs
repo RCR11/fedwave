@@ -452,6 +452,19 @@ function genUsersList(page){
   });
 }
 
+function getApprovedStreamerInfo(byusername){
+  /*approved_streamers.forEach(streamer => {
+
+  })*/
+
+  let matched_streamer = approved_streamers.filter(function(streamer){
+    if(streamer.username.tolower() == byusername.tolower()){
+      return true;
+    }
+  });
+  return matched_streamer;
+}
+
 // cname = data[user].page.watch;
 // cname = data[user].page;
   app.get('/api/channel/:id',(req,res) => {
@@ -472,8 +485,16 @@ function genUsersList(page){
     if(currStream.length == 1){
       res.json(currStream[0])
    } else {
-      res.status(404);//Set status to 404 as movie was not found
-      res.json({message: "Not Found"});
+
+      // then is the next phase where we check the approved user list...
+      const found_streamer = getApprovedStreamerInfo(req.params.id);
+      if(found_streamer.length){
+        res.json(found_streamer);
+      }else{
+
+        res.status(404);//Set status to 404 as movie was not found
+        res.json({message: "Not Found"});
+      }
    }
     //res.send({success:true,streamers:streamList[0],live:true});
     
@@ -1020,6 +1041,7 @@ function genTrollId(){
 
   import { marked } from 'marked';
   import sanitizeHtml from 'sanitize-html';
+import { match } from 'assert';
 
   const emotes_obj = { emotes:
     [
