@@ -1367,10 +1367,25 @@ fwcio.sockets.on("connection", socket => {
         // should kick the stream of the channel it is in or take a param of the name to kick
         console.log("Should kick stream on channel:", data.channel);
         console.log("Should also look for the stream socket to kick as well.");
+          cleanStreamerList(data.channel);
+            //streamList.push(streaminfo);
+            console.log("Matched our streamer!");
+            console.log("Now:",streamList.length,' streamers:',streamList);
+            //fwcio.sockets.emit("livestreams",{streams:Array.from(streamListSet)}); // let everyone know there is a new live stream
+            
+          
+    
+
+        fwcio.sockets.emit("livestreams",{streams:streamList});
+
+        return;
       }
 
       if(data.message.substr(0,5) == '!nsfw'){
         // should mark the stream nsfw for the channel it was in
+        console.log("Should toggle the user stream's nsfw state:",data.channel);
+
+        return;
       }
 
 
