@@ -468,6 +468,7 @@ function getApprovedStreamerInfo(byusername){
   //let found_streamer = -1;
   for(let si = 0;si < approved_streamers.length;si++){
     if(approved_streamers[si].username.tolower() == byusername.tolower()){
+      console.log("Got a match for the streamer, should return it based on teh name match");
       return approved_streamers[si];
     }
   }
@@ -503,6 +504,7 @@ function getApprovedStreamerInfo(byusername){
 
       // then is the next phase where we check the approved user list...
       const found_streamer = getApprovedStreamerInfo(req.params.id);
+      console.log("Found streamer:",found_streamer);
       if(found_streamer.length){
         res.json(found_streamer);
       }else{
