@@ -1351,7 +1351,7 @@ fwcio.sockets.on("connection", socket => {
       if(data.message.substr(0,7) == '!ipban '){
         //socket.emit("error",{message:"Error sending message",channel:"error",username:"servererror"});
         const msg_md = do_md('Should ipban user: ');
-        fwcfwcio.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
+        fwcio.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
         return;
       }
 
@@ -1359,7 +1359,7 @@ fwcio.sockets.on("connection", socket => {
         //socket.emit("error",{message:"Error sending message",channel:"error",username:"servererror"});
         const msg_md = do_md('Should reload emotes');
         getEmotes();
-        fwcfwcio.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
+        fwcio.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
         return;
       }
 
@@ -1374,7 +1374,7 @@ fwcio.sockets.on("connection", socket => {
             //fwcio.sockets.emit("livestreams",{streams:Array.from(streamListSet)}); // let everyone know there is a new live stream
             
           
-    
+        fwcio.sockets.emit("bulkmessage",{message:do_md("Kicked stream for: " + data.channel),username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
 
         fwcio.sockets.emit("livestreams",{streams:streamList});
 
