@@ -110,6 +110,8 @@ import fs from "fs";
 
 import * as jose from 'jose'
 
+import RTCMultiConnectionServer from 'rtcmulticonnection-server'; // need to look at what is stored in the server object and log the outputs so we can look for and disconnect users/streamers
+
 const saltRounds = process.env.SALTROUNDS || 10; // this should be configured from the .env
 
 let rsaPriKey = "";
@@ -1475,7 +1477,7 @@ fwcio.sockets.on("connection", socket => {
         return;
       }
 
-    }
+    } // end of special socket admin command checks
 
     try{
     proccessNewMessage(data);
@@ -1833,13 +1835,16 @@ socket.on("getlivestreams",(data) => {
   This should more than likely work as expected as long as the nginx ports are setup and forwarded correctly
 
 */
-import RTCMultiConnectionServer from 'rtcmulticonnection-server'
+
 //const RTCMultiConnectionServer = require('rtcmulticonnection-server');
 
 io_signal_server.on('connection', function(socket) {
     // so extend it and add the features to auth for stream creation
     RTCMultiConnectionServer.addSocket(socket);
+    console.log(RTCMultiConnectionServer);
 });
+
+// offline or disconnect of the main streamer/room socket
 
 
 
