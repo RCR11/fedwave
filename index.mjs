@@ -1374,6 +1374,15 @@ fwcio.sockets.on("connection", socket => {
             console.log("Matched our streamer!");
             console.log("Now:",streamList.length,' streamers:',streamList);
             //fwcio.sockets.emit("livestreams",{streams:Array.from(streamListSet)}); // let everyone know there is a new live stream
+
+        let streamer_sockets = io_signal_server.sockets;
+        // then loop through all of them and look at the userid for the streamer to disconnect
+        // maybe do a full disconnect ?
+        streamer_sockets.forEach(vsocket => {
+            if(vsocket.userid == data.channel){
+              vsocket.disconnect();
+            }
+        });
             
           
         fwcio.sockets.emit("bulkmessage",{message:do_md("Kicked stream for: " + data.channel),username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
@@ -1842,7 +1851,8 @@ io_signal_server.on('connection', function(socket) {
     // so extend it and add the features to auth for stream creation
     RTCMultiConnectionServer.addSocket(socket);
     //console.log(RTCMultiConnectionServer);
-    console.log("Sockets after new listener connected:",io_signal_server.sockets);
+    //console.log("Sockets after new listener connected:",io_signal_server.sockets);
+    // userid is what we want to look at
 });
 
 // offline or disconnect of the main streamer/room socket
