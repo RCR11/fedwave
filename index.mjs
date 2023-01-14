@@ -314,7 +314,9 @@ function getRandomColor() {
   app.get('/v1/chat/channels',(req,res) => {
     
     //"livestreams",{streams:streamList}
-    res.send({streams:streamList});
+    // so this should also have user data in it as well... in .data
+    // should have channel viewCount in it
+    res.send({success:true,data:streamList});
     
   });
 
@@ -1407,6 +1409,7 @@ fwcio.sockets.on("connection", socket => {
 
       if(data.message.substr(0,5) == '!kick'){
         // should kick the stream of the channel it is in or take a param of the name to kick
+        // https://github.com/muaz-khan/RTCMultiConnection/issues/907 
         console.log("Should kick stream on channel:", data.channel);
         console.log("Should also look for the stream socket to kick as well.");
           cleanStreamerList(data.channel);
