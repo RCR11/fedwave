@@ -64,6 +64,9 @@ let whisperSocketServer = null; // this is how we can whipser since someone can'
 
 let chatConfig = {};
 
+let global_chat = true; // defaults to global chat mode, needs toggled off to only see messages in channel
+
+
 function getChatConfig(){
     const chatconfigurl="/v1/chatconfig";
     try{
@@ -1384,7 +1387,11 @@ function litechat(){
         }
         // should check if we have a troll token and if we are set to troll or not
         // if it fails we get called troll:dickhead on our unauthenticated socket connection
-        this.socket.emit('new user', {jwt:usertoken});
+        let temp_channel = 'Global';
+        if(channel){
+            temp_channel = channel;
+        }
+        this.socket.emit('new user', {jwt:usertoken,page:temp_channel});
         if(whisperSocketServer){
             whisperSocketServer.emit('hi',username_global);
         }else{
