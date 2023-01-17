@@ -121,6 +121,8 @@ let sockets = {};
 let users = [];
 let userList = new Set(); // this should be a map or a set to not have dupes in it (ideally)
 
+let fatchatUserSet = new Set();
+
 let streamList = [];
 
 let listOfBroadcasts = {};
@@ -677,6 +679,37 @@ username: user.username,
         };
       })*/
 
+      let lsockets = fwcio.sockets.sockets; // skip manually tracking, just look through the socket set
+      
+      lsockets.forEach(usocket => {
+        // loop through all of the sockets and build user objects to throw 
+        let user_obj = {};
+        if(usocket.page){
+          user_obj.page = usocket.page;
+        }else{
+          user_obj.page = 'Global';
+        }
+        if(usocket.username){
+          user_obj.username = usocket.username;
+        }else{
+          user_obj.username = "UnAuthenticatedUser"
+        }
+        if(usocket.unum){
+          user_obj.unum = usocket.unum;
+        }else{
+          // gen a user number since it is missing one
+          user_obj.unum = getRandomUserId();
+        }
+        if(usocket.color){
+          user_obj.color = usocket.color;
+        }else{
+          user_obj.color = "#FFFFFF";
+        }
+
+        fatchatUserList.push(user_obj);
+
+      });
+
       let fatchatUserList = [];
       let viewersList = [];
       // do a for loop over userList and build new users to add based on that and then emit that 
@@ -689,7 +722,7 @@ username: user.username,
         //fatchatUserList.push([{[user]:{channel:'Playlistbot9k',viewers:viewersList,viewCount:tempnamelist.length}}]);  
         // the other model similar to this is in plb
         // should be able to go through the user list and pull out the page, avatar, color if they exist
-        fatchatUserList.push({username:user,page:'Playlistbot9k',avatar:null,color:null}); //page.watch 
+        //fatchatUserList.push({username:user,page:'Playlistbot9k',avatar:null,color:null}); //page.watch 
         // that should be the format that gets used
       });
       //fatchatUserList.push([{'Playlistbot9k':{username:"Test username",channel:'Playlistbot9k',viewers:viewersList,viewCount:tempnamelist.length}}]);
@@ -1283,8 +1316,17 @@ import { match } from 'assert';
     fwcio.sockets.emit("bulkmessage",[{message:msg_md,username:sanitizeHtml(msg.username),channel:sanitizeHtml(msg.channel),color:sanitizeHtml(msg.color),timestamp:Date.now(),unum:msg.unum,global:msg_global}]);
   }
 
+  // maybe not do this and leave it for when the list is requested to do it
+  function addUserToFatChatList(user_obj){
+    // rebuild it based on the connected sockets?
+    //fatchatUserSet.add(user_obj);
+    // or go through all of the connected sockets and use them to build the list...
+
+  }
+
   function addUserToList(temp_username){
     userList.add(sanitizeHtml(temp_username));
+    // make this into a more complicated 
     // then fire an event to push the updated user list?
     fwcio.sockets.emit("update usernames",{users:Array.from(userList)});
   }
@@ -1575,6 +1617,11 @@ fwcio.sockets.on("connection", socket => {
         // should check if it's a troll and copy in the color info or just tag everything with some color
         socket.color = userinfo.color;
 
+        if(data.page){
+          socket.page = sanitizeHtml(data.page); // page should be escaped and cleaned so it is only alphanums with no spaces in them
+          // this also needs to be escaped if it gets used elsewhere (like if it is updated on a message send event)
+        }
+
         // part 2 of connection is to see if they have any special permissions, admin, moderator, janitor, etc
         // admin can make/add a new mod/janitor, give out stream access
         // mod can ban people via global ip, name, etc
@@ -1619,6 +1666,9 @@ fwcio.sockets.on("connection", socket => {
       users.push(socket);
       let temp_username = socket.username + "#" + socket.unum;
       addUserToList(temp_username);
+      let user_obj = {};
+
+      addUserToFatChatList(user_obj);
     //}
     //socket.emit('hyrate',[{message:do_md('This is test hydration for chat'),username:sanitizeHtml('SERVER'),channel:sanitizeHtml('test data.channel'),color:sanitizeHtml(socket.color),unum:socket.unum}]);
   });
