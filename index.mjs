@@ -678,7 +678,7 @@ username: user.username,
           watching: data[key].watching,
         };
       })*/
-
+      let fatchatUserList = [];
       let lsockets = fwcio.sockets.sockets; // skip manually tracking, just look through the socket set
       
       lsockets.forEach(usocket => {
@@ -710,7 +710,7 @@ username: user.username,
 
       });
 
-      let fatchatUserList = [];
+      
       let viewersList = [];
       // do a for loop over userList and build new users to add based on that and then emit that 
       let tempnamelist = Array.from(userList);
