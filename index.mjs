@@ -678,11 +678,25 @@ username: user.username,
           watching: data[key].watching,
         };
       })*/
+
+      /* so via doing it as an object it would be data = {
+        'username':{
+          data:{
+            username:"name",
+            page:"page",
+            color:"color"
+          },
+          watching: ["channel",channel2]
+        }
+      }
+      */
+
       let fatchatUserList = [];
       let lsockets = fwcio.sockets.sockets; // skip manually tracking, just look through the socket set
       let viewers = {};
       lsockets.forEach(usocket => {
         // loop through all of the sockets and build user objects to throw 
+        let watching = [];
         let user_obj = {};
         if(usocket.page){
           user_obj.page = usocket.page;
@@ -690,9 +704,11 @@ username: user.username,
           user_obj.page = 'Global';
         }
         if(usocket.page){
-          user_obj.watching = {page:usocket.page};
+          //user_obj.watching = [usocket.page];
+          watching.push(usocket.page);
         }else{
-          user_obj.watching = {page:'Global'};
+          //user_obj.watching = ['Global'];
+          watching.push("Global");
         }
         if(usocket.username){
           user_obj.username = usocket.username;
@@ -711,8 +727,8 @@ username: user.username,
           user_obj.color = "#FFFFFF";
         }
 
-        fatchatUserList.push({data:user_obj});
-        //viewers[usocket.username] = user_obj;
+        //fatchatUserList.push({data:user_obj});
+        viewers[usocket.username] = {data:user_obj,watching:watching};
 
       });
 
@@ -734,13 +750,13 @@ username: user.username,
       //fatchatUserList.push([{'Playlistbot9k':{username:"Test username",channel:'Playlistbot9k',viewers:viewersList,viewCount:tempnamelist.length}}]);
       //fatchatUserList.push([{'NoAgenda':{username:"Test username",channel:'NoAgenda',viewers:viewersList,viewCount:tempnamelist.length}}]);
 
-      console.log("V1 Chat User list:",fatchatUserList);
+      console.log("V1 Chat User list:",viewers);
 
       //fatchatUserList.push({channel:"Playlistbot9k",viewCount:viewersList.length,viewers:viewersList});
       //fatchatUserList.push({channel:"NoAgenda",viewCount:viewersList.length,viewers:viewersList});
 
 
-    res.json({success:true,data:fatchatUserList});
+    res.json({success:true,data:viewers});
     
   });
 
