@@ -827,6 +827,11 @@ username: user.username,
     let from_user_unum = '';//userinfo.num;
     let from_user_color = '';//userinfo.color;
     let parsed_user = false;
+
+    receiver = receiver.replace( '@', '' );
+      // strip out the @
+    
+
     console.log("Should try and send a whisper to:",receiver);
     try{
       const { payload, protectedHeader } = await jose.jwtVerify(from_token, rsaPubKey, {
