@@ -743,7 +743,7 @@ username: user.username,
     console.log("Should feed the client hydration messages");
     //"livestreams",{streams:streamList}
     // fwcio.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
-    res.send({success:true,data:[{message:"Test message on the server", username:"Test User",channel:'Test Server channel'}]});
+    res.send({success:true,data:[{message:"Test message on the server", username:"Test User",channel:'Playlistbot9k'},{message:"Test message 2", username:"Test User 2",channel:'Playlistbot9k'}]});
     
   });
 
