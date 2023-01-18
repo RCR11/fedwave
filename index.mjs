@@ -680,7 +680,7 @@ username: user.username,
       })*/
       let fatchatUserList = [];
       let lsockets = fwcio.sockets.sockets; // skip manually tracking, just look through the socket set
-      
+      let viewers = {};
       lsockets.forEach(usocket => {
         // loop through all of the sockets and build user objects to throw 
         let user_obj = {};
@@ -706,7 +706,8 @@ username: user.username,
           user_obj.color = "#FFFFFF";
         }
 
-        fatchatUserList.push({[user_obj.username]:user_obj});
+        //fatchatUserList.push({[user_obj.username]:user_obj});
+        viewers[usocket.username] = user_obj;
 
       });
 
@@ -734,7 +735,7 @@ username: user.username,
       //fatchatUserList.push({channel:"NoAgenda",viewCount:viewersList.length,viewers:viewersList});
 
 
-    res.json({success:true,data:fatchatUserList});
+    res.json({success:true,data:viewers});
     
   });
 
