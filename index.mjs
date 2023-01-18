@@ -690,9 +690,9 @@ username: user.username,
           user_obj.page = 'Global';
         }
         if(usocket.page){
-          user_obj.watching = usocket.page;
+          user_obj.watching = {page:usocket.page};
         }else{
-          user_obj.watching = 'Global';
+          user_obj.watching = {page:'Global'};
         }
         if(usocket.username){
           user_obj.username = usocket.username;
