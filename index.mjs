@@ -719,6 +719,8 @@ username: user.username,
         }
         if(usocket.unum){
           user_obj.unum = usocket.unum;
+          // then update the username to show the num 
+          user_obj.username += '#' + user_obj.unum;
         }else{
           // gen a user number since it is missing one
           user_obj.unum = getRandomUserId();
