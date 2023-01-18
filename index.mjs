@@ -689,6 +689,11 @@ username: user.username,
         }else{
           user_obj.page = 'Global';
         }
+        if(usocket.page){
+          user_obj.watching = usocket.page;
+        }else{
+          user_obj.watching = 'Global';
+        }
         if(usocket.username){
           user_obj.username = usocket.username;
         }else{
