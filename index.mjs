@@ -706,7 +706,7 @@ username: user.username,
           user_obj.color = "#FFFFFF";
         }
 
-        fatchatUserList.push(user_obj);
+        fatchatUserList.push({data:user_obj});
         //viewers[usocket.username] = user_obj;
 
       });
@@ -729,7 +729,7 @@ username: user.username,
       //fatchatUserList.push([{'Playlistbot9k':{username:"Test username",channel:'Playlistbot9k',viewers:viewersList,viewCount:tempnamelist.length}}]);
       //fatchatUserList.push([{'NoAgenda':{username:"Test username",channel:'NoAgenda',viewers:viewersList,viewCount:tempnamelist.length}}]);
 
-      console.log("V1 Chat User list:",viewers);
+      console.log("V1 Chat User list:",fatchatUserList);
 
       //fatchatUserList.push({channel:"Playlistbot9k",viewCount:viewersList.length,viewers:viewersList});
       //fatchatUserList.push({channel:"NoAgenda",viewCount:viewersList.length,viewers:viewersList});
