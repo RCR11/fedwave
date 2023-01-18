@@ -706,8 +706,8 @@ username: user.username,
           user_obj.color = "#FFFFFF";
         }
 
-        //fatchatUserList.push({[user_obj.username]:user_obj});
-        viewers[usocket.username] = user_obj;
+        fatchatUserList.push(user_obj);
+        //viewers[usocket.username] = user_obj;
 
       });
 
@@ -735,7 +735,7 @@ username: user.username,
       //fatchatUserList.push({channel:"NoAgenda",viewCount:viewersList.length,viewers:viewersList});
 
 
-    res.json({success:true,data:viewers});
+    res.json({success:true,data:fatchatUserList});
     
   });
 
