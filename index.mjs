@@ -706,7 +706,7 @@ username: user.username,
           user_obj.color = "#FFFFFF";
         }
 
-        fatchatUserList.push(user_obj);
+        fatchatUserList.push({[user]:user_obj});
 
       });
 
