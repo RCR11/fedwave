@@ -679,6 +679,8 @@ username: user.username,
         };
       })*/
 
+      // This is mostly working, the watching probably needs some counts added to it or something or page info
+      // but it does show the user list so it can be turned back on.
       /* so via doing it as an object it would be data = {
         'username':{
           data:{
