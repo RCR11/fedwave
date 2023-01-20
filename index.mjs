@@ -110,7 +110,7 @@ import fs from "fs";
 
 import * as jose from 'jose'
 
-const os = require('node:os');
+import os from 'node:os' ;
 
 import RTCMultiConnectionServer from 'rtcmulticonnection-server'; // need to look at what is stored in the server object and log the outputs so we can look for and disconnect users/streamers
 
