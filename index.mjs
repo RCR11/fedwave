@@ -1830,6 +1830,18 @@ fwcio.sockets.on("connection", socket => {
   }
 
 
+
+  // streamer related stuff: "live", "update", "offline", "error"
+  // this is the intial socket tracker used for viewer stats
+  socket.on('user.streamer.connect',(data)=>{
+      // { streamer: this.streamer.toLowerCase() } 
+      // this would be the other way to count users
+      if(data.streamer){
+        console.log("Got someone connecting to watch streamer:", data.streamer);
+        // this should be used for doing viewer counts and used for debugging, might need another socket to keep this clean or it should ride on the chat socket.
+      }
+  });
+
   socket.on("announcestream",(data) => {
     // need to set a global stream descripter as a test
     console.log("Stream announce:",socket.username);
@@ -1905,7 +1917,7 @@ fwcio.sockets.on("connection", socket => {
             console.log("Matched our streamer!");
             console.log("Now:",streamList.length,' streamers:',streamList);
             //fwcio.sockets.emit("livestreams",{streams:Array.from(streamListSet)}); // let everyone know there is a new live stream
-            
+            fwcio.sockets.emit('live', {live:true,streamer:socket.username,server:'federationmaybe'}); // emit that stream is live
           }
     }
 
@@ -2035,6 +2047,7 @@ socket.on("getlivestreams",(data) => {
       }else{
         //cleanStreamerList(username);
         set_streamer_offline(username);
+        fwcio.sockets.emit('offline', {live:false,streamer:username,server:'federationmaybe'});
         fwcio.sockets.emit("livestreams",{streams:streamList});
       }
     }
@@ -2048,7 +2061,9 @@ socket.on("getlivestreams",(data) => {
     
     console.log("Clean up socket:", socket.id);
     console.log("user diconnected...",socket.username + "#" + socket.unum);
-    checkIfShouldCleanUpLiveStreams(socket.username,socket.unum,socket.color);
+    if(socket.username && socket.unum && socket.color){
+      checkIfShouldCleanUpLiveStreams(socket.username,socket.unum,socket.color);
+    }
     //if(socket.username == 'DeadPugner'){
      /// test_stream_sdp = '';//data.sdp;
       //socket.sdp = data.sdp;
