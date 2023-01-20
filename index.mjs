@@ -1486,7 +1486,17 @@ fwcio.sockets.on("connection", socket => {
 
       if(data.message.substr(0,7) == '!status'){
         //socket.emit("error",{message:"Error sending message",channel:"error",username:"servererror"});
-        let systemInfo = "System usage: " + os.cpus() + os.freemem() + " of " + os.totalmem();
+        let systemInfo = "System usage: " + os.uptime() + " Freemem " + os.freemem() + " of " + os.totalmem();
+        const msg_md = do_md(systemInfo);
+        console.log("Status:",systemInfo);
+        //getEmotes();
+        socket.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
+        return;
+      }
+
+      if(data.message.substr(0,3) == '!fw'){
+        //socket.emit("error",{message:"Error sending message",channel:"error",username:"servererror"});
+        let systemInfo = "Should fire fireworks in channel: ";
         const msg_md = do_md(systemInfo);
         console.log("Status:",systemInfo);
         //getEmotes();
