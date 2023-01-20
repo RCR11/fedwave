@@ -144,6 +144,10 @@ let altemoteList = [];
 let federation_clients = []; // these should be servers that we can connect to and listen to via the socket io client io
 let federation_sockets = []; // these are the connections that should be tracked and used for federation
 
+let globalMessageHydrationCache = []; // default this is empty and not persistent between restarts, should hold a list of messages and use a filter based on the channel to return them
+
+let maxHydrationSize = process.env.HYDRATIONCACHESIZE || 100;
+
 async function securityChecks(){
     // does startup checks for jwt and other security info that we need to run securely 
     //https://github.com/panva/jose/blob/main/docs/functions/key_generate_key_pair.generateKeyPair.md#readme
@@ -769,8 +773,11 @@ username: user.username,
   app.get('/v1/messages',(req,res) => {
     console.log("Should feed the client hydration messages");
     //"livestreams",{streams:streamList}
+
+    
+    // if enabled store the last 100 messages
     // fwcio.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
-    res.send({success:true,size:2,data:[{message:"Test message on the server", username:"Test User",channel:'Playlistbot9k'},{message:"Test message 2", username:"Test User 2",channel:'Playlistbot9k'}]});
+    res.send({success:true,size:globalMessageHydrationCache.length,data:globalMessageHydrationCache});
     
   });
 
@@ -778,8 +785,15 @@ username: user.username,
     let streamName = req.params.id;
     console.log("Should build and filter messages to send back to the user. Channel:",streamName);
     //"livestreams",{streams:streamList}
+
+    let filteredMessages = globalMessageHydrationCache.filter(function(message){
+      if(message.channel.toLowerCase() == streamName.toLowerCase()){
+         return true;
+      }
+   });//globalMessageHydrationCache.filter();
+    // filters the global message cache for a specific channel and returns it with the count of filtered messages
     // fwcio.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
-    res.send({success:true,size:1,data:[{message:"Test message on the server", username:"Test User",channel:streamName}]});
+    res.send({success:true,size:filteredMessages.length,data:filteredMessages});
     
   });
 
@@ -1343,10 +1357,17 @@ import { match } from 'assert';
         msg_global = true;
       }
     }
-    
+
+    let msg_obj = {message:msg_md,username:sanitizeHtml(msg.username),channel:sanitizeHtml(msg.channel),color:sanitizeHtml(msg.color),timestamp:Date.now(),unum:msg.unum,global:msg_global};
+
+    globalMessageHydrationCache.push(msg_obj);
+
+    if(globalMessageHydrationCache.length > maxHydrationSize){
+      globalMessageHydrationCache.splice(0,globalMessageHydrationCache.length - maxHydrationSize); // should truncate the thinger down
+    }
     // now for testing this will spit out stuff and still needs a safety pass of filtering output
     // to whitelisted tag types 
-    fwcio.sockets.emit("bulkmessage",[{message:msg_md,username:sanitizeHtml(msg.username),channel:sanitizeHtml(msg.channel),color:sanitizeHtml(msg.color),timestamp:Date.now(),unum:msg.unum,global:msg_global}]);
+    fwcio.sockets.emit("bulkmessage",[msg_obj]);
   }
 
   // maybe not do this and leave it for when the list is requested to do it
