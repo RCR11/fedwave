@@ -139,6 +139,8 @@ MENU2_S='/menu2.wav'
 MENU3_S='/menu3.wav'
 MENU4_S='/menu4.wav'
 DEFAULT_S='https://www.myinstants.com/media/sounds/kitty-blabla.mp3'
+CHAT_HYDRATION_SIZE=100
+CHAT_HYDRATION=true
 ```
 
 ### Setup PM2
@@ -220,6 +222,7 @@ https://gist.github.com/yetithefoot/7592580 A long list of public stun servers
 https://github.com/coturn/coturn
 
 coturn can be used via authentication/user connections that could be authed with chat
+
 
 ## Testing webrtc
 

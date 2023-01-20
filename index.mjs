@@ -146,9 +146,9 @@ let federation_sockets = []; // these are the connections that should be tracked
 
 let globalMessageHydrationCache = []; // default this is empty and not persistent between restarts, should hold a list of messages and use a filter based on the channel to return them
 
-let maxHydrationSize = process.env.HYDRATIONCACHESIZE || 100;
+let maxHydrationSize = process.env.CHAT_HYDRATION_SIZE || 100;
 
-let hydrationEnabled = process.env.ENABLE_CHAT_HYRATION || false; // you have to turn it on in the config
+let hydrationEnabled = process.env.CHAT_HYDRATION || false; // you have to turn it on in the config
 
 async function securityChecks(){
     // does startup checks for jwt and other security info that we need to run securely 
