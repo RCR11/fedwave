@@ -770,7 +770,7 @@ username: user.username,
     console.log("Should feed the client hydration messages");
     //"livestreams",{streams:streamList}
     // fwcio.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
-    res.send({success:true,data:[{message:"Test message on the server", username:"Test User",channel:'Playlistbot9k'},{message:"Test message 2", username:"Test User 2",channel:'Playlistbot9k'}]});
+    res.send({data:[{message:"Test message on the server", username:"Test User",channel:'Playlistbot9k'},{message:"Test message 2", username:"Test User 2",channel:'Playlistbot9k'}]});
     
   });
 
@@ -779,7 +779,7 @@ username: user.username,
     console.log("Should build and filter messages to send back to the user. Channel:",streamName);
     //"livestreams",{streams:streamList}
     // fwcio.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
-    res.send({success:true,data:[{message:"Test message on the server", username:"Test User",channel:streamName}]});
+    res.send({data:[{message:"Test message on the server", username:"Test User",channel:streamName}]});
     
   });
 
@@ -1458,7 +1458,7 @@ fwcio.sockets.on("connection", socket => {
         //socket.emit("error",{message:"Error sending message",channel:"error",username:"servererror"});
         const msg_md = do_md('You need to specify a username to ban. IE: `!ban username`');
         socket.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
-        return;
+        //return;
       }
       
       // unban
@@ -1466,14 +1466,14 @@ fwcio.sockets.on("connection", socket => {
         //socket.emit("error",{message:"Error sending message",channel:"error",username:"servererror"});
         const msg_md = do_md('Should unban user: ');
         socket.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
-        return;
+        //return;
       }
       // ipban
       if(data.message.substr(0,7) == '!ipban '){
         //socket.emit("error",{message:"Error sending message",channel:"error",username:"servererror"});
         const msg_md = do_md('Should ipban user: ');
         socket.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
-        return;
+        //return;
       }
 
       if(data.message.substr(0,7) == '!emotes'){
@@ -1481,7 +1481,7 @@ fwcio.sockets.on("connection", socket => {
         const msg_md = do_md('Should reload emotes');
         getEmotes();
         socket.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
-        return;
+        //return;
       }
 
       if(data.message.substr(0,7) == '!status'){
@@ -1491,7 +1491,7 @@ fwcio.sockets.on("connection", socket => {
         console.log("Status:",systemInfo);
         //getEmotes();
         socket.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
-        return;
+        //return;
       }
 
       if(data.message.substr(0,3) == '!fw'){
@@ -1501,7 +1501,7 @@ fwcio.sockets.on("connection", socket => {
         console.log("Status:",systemInfo);
         //getEmotes();
         socket.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
-        return;
+        //return;
       }
 
       if(data.message.substr(0,5) == '!kick'){
