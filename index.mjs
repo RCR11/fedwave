@@ -144,7 +144,7 @@ let altemoteList = [];
 let federation_clients = []; // these should be servers that we can connect to and listen to via the socket io client io
 let federation_sockets = []; // these are the connections that should be tracked and used for federation
 
-let globalMessageHydrationCache = [{message:do_md("Nothing to see here since this is the default message because there is nothing stored..."),username:"SERVER",channel:"SYSTEM"}]; // default this is empty and not persistent between restarts, should hold a list of messages and use a filter based on the channel to return them
+let globalMessageHydrationCache = []; // default this is empty and not persistent between restarts, should hold a list of messages and use a filter based on the channel to return them
 
 let maxHydrationSize = process.env.CHAT_HYDRATION_SIZE || 100;
 
@@ -1318,6 +1318,8 @@ import { match } from 'assert';
     msg_out = msg_out.replace(/\\n/g,"<br>");
     return msg_out;
   }
+
+  globalMessageHydrationCache = [{message:do_md("Nothing to see here since this is the default message because there is nothing stored..."),username:"SERVER",channel:"SYSTEM"}];
 
   const bulkmessages = [];
 
