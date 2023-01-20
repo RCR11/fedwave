@@ -148,6 +148,8 @@ let globalMessageHydrationCache = []; // default this is empty and not persisten
 
 let maxHydrationSize = process.env.HYDRATIONCACHESIZE || 100;
 
+let hydrationEnabled = process.env.ENABLE_CHAT_HYRATION || false; // you have to turn it on in the config
+
 async function securityChecks(){
     // does startup checks for jwt and other security info that we need to run securely 
     //https://github.com/panva/jose/blob/main/docs/functions/key_generate_key_pair.generateKeyPair.md#readme
@@ -1360,10 +1362,13 @@ import { match } from 'assert';
 
     let msg_obj = {message:msg_md,username:sanitizeHtml(msg.username),channel:sanitizeHtml(msg.channel),color:sanitizeHtml(msg.color),timestamp:Date.now(),unum:msg.unum,global:msg_global};
 
-    globalMessageHydrationCache.push(msg_obj);
+    // configured in the .env so it can be turned on, is off by default
+    if(hydrationEnabled){
+      globalMessageHydrationCache.push(msg_obj);
 
-    if(globalMessageHydrationCache.length > maxHydrationSize){
-      globalMessageHydrationCache.splice(0,globalMessageHydrationCache.length - maxHydrationSize); // should truncate the thinger down
+      if(globalMessageHydrationCache.length > maxHydrationSize){
+        globalMessageHydrationCache.splice(0,globalMessageHydrationCache.length - maxHydrationSize); // should truncate the thinger down
+      }
     }
     // now for testing this will spit out stuff and still needs a safety pass of filtering output
     // to whitelisted tag types 
@@ -1523,6 +1528,10 @@ fwcio.sockets.on("connection", socket => {
         //getEmotes();
         socket.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
         //return;
+      }
+
+      if(data.message.substr(0,5) == '!wipe'){
+        globalMessageHydrationCache = []; // clears the cache
       }
 
       if(data.message.substr(0,5) == '!kick'){
