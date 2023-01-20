@@ -110,6 +110,8 @@ import fs from "fs";
 
 import * as jose from 'jose'
 
+const os = require('node:os');
+
 import RTCMultiConnectionServer from 'rtcmulticonnection-server'; // need to look at what is stored in the server object and log the outputs so we can look for and disconnect users/streamers
 
 const saltRounds = process.env.SALTROUNDS || 10; // this should be configured from the .env
@@ -1478,6 +1480,15 @@ fwcio.sockets.on("connection", socket => {
         //socket.emit("error",{message:"Error sending message",channel:"error",username:"servererror"});
         const msg_md = do_md('Should reload emotes');
         getEmotes();
+        fwcio.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
+        return;
+      }
+
+      if(data.message.substr(0,7) == '!status'){
+        //socket.emit("error",{message:"Error sending message",channel:"error",username:"servererror"});
+        let systemInfo = "System usage: " + os.cpus() + os.freemem() + " of " + os.totalmem();
+        const msg_md = do_md(systemInfo);
+        //getEmotes();
         fwcio.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
         return;
       }
