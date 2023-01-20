@@ -315,8 +315,8 @@ function getRandomColor() {
     
     //"livestreams",{streams:streamList}
     console.log("Is this the one that gets called for the user list?");
-    
-    res.send({success:true,streamers:streamList,live:true});
+      // return the live streamers list ordered maybe?
+    res.send({success:true,streamers:streamList,live:streamList});
     
   });
 
