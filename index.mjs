@@ -770,7 +770,7 @@ username: user.username,
     console.log("Should feed the client hydration messages");
     //"livestreams",{streams:streamList}
     // fwcio.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
-    res.send({data:[{message:"Test message on the server", username:"Test User",channel:'Playlistbot9k'},{message:"Test message 2", username:"Test User 2",channel:'Playlistbot9k'}]});
+    res.send({success:true,size:2,data:[{message:"Test message on the server", username:"Test User",channel:'Playlistbot9k'},{message:"Test message 2", username:"Test User 2",channel:'Playlistbot9k'}]});
     
   });
 
@@ -779,7 +779,7 @@ username: user.username,
     console.log("Should build and filter messages to send back to the user. Channel:",streamName);
     //"livestreams",{streams:streamList}
     // fwcio.sockets.emit("bulkmessage",{message:msg_md,username:sanitizeHtml('SERVER'),channel:sanitizeHtml(data.channel),color:sanitizeHtml(socket.color),unum:socket.unum});
-    res.send({data:[{message:"Test message on the server", username:"Test User",channel:streamName}]});
+    res.send({success:true,size:1,data:[{message:"Test message on the server", username:"Test User",channel:streamName}]});
     
   });
 
