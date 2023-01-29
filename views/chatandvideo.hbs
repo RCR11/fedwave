@@ -2,24 +2,42 @@
 <style>
 
 /* Container for flexboxes */
-vid {
-  float: left;
-  background-color:#2f2f2f;
-}
 
-chat {
-    float: right;
-    background-color:#2f2f2f;
-}
+.dual-container {
+    display: flex;
+    height: 100vh;
+  }
 
-/* Clear floats after the columns */
-section::after {
-  content: "";
-  display: table;
-  clear: both;
-}
+  .video-window {
+    
+    height: 0;
+    padding-bottom: 56.25%;
+    position: relative;
+    width: 100%;
+  }
+  
+  .video-window video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 80%;
+  }
+  
+  .chat-window {
+    width: 475px;
+    height: 80%;
+  }
+  .container {
+    height: 80%;
+  }
+  .containment {
+    height: 80%;
+  }
 
-
+  #chatcontainer {
+    height: 80%;
+  }
 
 /* Responsive layout - makes the menu and the content (inside the section) sit on top of each other instead of next to each other */
 @media (max-width: 100%) {
@@ -33,17 +51,20 @@ section::after {
 
 /* Should have the streamer list on the left, show icons,etc */
 
+/* So the chat needs to be in a container that is 100% height */
+
 </style>
 
+
 <section>
-
-<vid>
-
-{{>video}}
-
-</vid>
-<chat>
-{{>chat}}
-
-</chat>
+<div class="dual-container">
+  <div class="video-window">
+    <!-- insert video here -->
+    {{>video}}
+  </div>
+  <div class="chat-window">
+    <!-- insert chat content here -->
+    {{>chat}}
+  </div>
+</div>
 </section>
