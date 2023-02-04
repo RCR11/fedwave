@@ -950,6 +950,7 @@ username: user.username,
       console.log("Sending user validated:",from_user);
     }catch(error){
       error_message = "Could not parse the user token! \n";
+      console.log("Sending user could not be validated:");
     }
 
     if(parsed_user && receiver && message){
