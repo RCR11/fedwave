@@ -757,6 +757,13 @@ username: user.username,
       }
       */
 
+      
+
+
+
+      let fatchatUserList = [];
+      let lsockets = fwcio.sockets.sockets; // skip manually tracking, just look through the socket set
+
       // could also build a map/object to store channel counts in so it would be viewcounts:{'channel':num,}
       let tempViews = {};
       lsockets.forEach(usocket => {
@@ -775,10 +782,8 @@ username: user.username,
           
       });
 
-
-
-      let fatchatUserList = [];
-      let lsockets = fwcio.sockets.sockets; // skip manually tracking, just look through the socket set
+      chatBasedViewCounter = tempViews;
+      
       let viewers = {};
       lsockets.forEach(usocket => {
         // loop through all of the sockets and build user objects to throw 
