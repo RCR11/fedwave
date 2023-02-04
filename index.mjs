@@ -828,7 +828,7 @@ username: user.username,
       
       let viewersList = [];
       // do a for loop over userList and build new users to add based on that and then emit that 
-      let tempnamelist = Array.from(userList);
+      /*let tempnamelist = Array.from(userList);
       tempnamelist.forEach(user => {
         //fatchatUserList.push({username:user,avatar:'',color:'',watching:'Playlistbot9k'});
         //fatchatUserList.push({username:user,watching:'Playlistbot9k',data:'something'});
@@ -839,11 +839,12 @@ username: user.username,
         // should be able to go through the user list and pull out the page, avatar, color if they exist
         //fatchatUserList.push({username:user,page:'Playlistbot9k',avatar:null,color:null}); //page.watch 
         // that should be the format that gets used
-      });
+      });*/
       //fatchatUserList.push([{'Playlistbot9k':{username:"Test username",channel:'Playlistbot9k',viewers:viewersList,viewCount:tempnamelist.length}}]);
       //fatchatUserList.push([{'NoAgenda':{username:"Test username",channel:'NoAgenda',viewers:viewersList,viewCount:tempnamelist.length}}]);
 
-      console.log("V1 Chat User list:",viewers);
+      //console.log("V1 Chat User list:",viewers);
+      console.log("V1 Chat User list sent");
 
       //fatchatUserList.push({channel:"Playlistbot9k",viewCount:viewersList.length,viewers:viewersList});
       //fatchatUserList.push({channel:"NoAgenda",viewCount:viewersList.length,viewers:viewersList});
