@@ -770,7 +770,7 @@ username: user.username,
         if(usocket.page){
           
         }else{
-          user_obj.page = 'Global';
+          usocket.page = 'Global';
         }
 
         let channelname = usocket.page;
@@ -783,7 +783,7 @@ username: user.username,
       });
 
       chatBasedViewCounter = tempViews;
-      
+
       let viewers = {};
       lsockets.forEach(usocket => {
         // loop through all of the sockets and build user objects to throw 
