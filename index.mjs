@@ -931,7 +931,12 @@ username: user.username,
     receiver = receiver.replace( '@', '' );
       // strip out the @
     
-    console.log("what is my user token?:", from_token);
+    //console.log("what is my user token?:", from_token);
+    // so fat chat is retarded and passes in a message of {success:true,message:'made you an account!',chatToken}
+    if(from_token.chatToken){
+      from_token = from_token.chatToken;
+    }
+
     console.log("Should try and send a whisper to:",receiver);
     try{
       const { payload, protectedHeader } = await jose.jwtVerify(from_token, rsaPubKey, {
