@@ -931,7 +931,7 @@ username: user.username,
     receiver = receiver.replace( '@', '' );
       // strip out the @
     
-
+    console.log("what is my user token?:", from_token);
     console.log("Should try and send a whisper to:",receiver);
     try{
       const { payload, protectedHeader } = await jose.jwtVerify(from_token, rsaPubKey, {
