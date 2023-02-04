@@ -5,6 +5,10 @@ import express from 'express';
 import bodyParser from 'body-parser';
 //import exphbs from 'express-handlebars';
 import {create} from 'express-handlebars';
+
+
+//import { WhipEndpoint } from "@eyevinn/whip-endpoint";
+
 // Implements basic server stuff
 const app = express();
 
@@ -40,6 +44,19 @@ const app = express();
 
 import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
 dotenv.config();
+
+// https://www.npmjs.com/package/@eyevinn/whip-endpoint
+/*
+const endpoint = new WhipEndpoint({ 
+  port: 8000, 
+  hostname: "<whiphost>",
+  https: false,
+  iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+  enabledWrtcPlugins: [ "sfu-broadcaster" ], 
+});*/
+
+
+
 
 // use the dotenv to pass config info into our templates
 // so socket servers, signaling servers, federation options, branding can all be passed in for rendering
@@ -114,6 +131,11 @@ import os from 'node:os' ;
 
 import RTCMultiConnectionServer from 'rtcmulticonnection-server'; // need to look at what is stored in the server object and log the outputs so we can look for and disconnect users/streamers
 
+// maybe add some live kit streaming support? https://docs.livekit.io/concepts/authentication/
+//import { AccessToken } from 'livekit-server-sdk';
+
+// expose live kit via express /public
+
 const saltRounds = process.env.SALTROUNDS || 10; // this should be configured from the .env
 
 let rsaPriKey = "";
@@ -149,6 +171,8 @@ let globalMessageHydrationCache = []; // default this is empty and not persisten
 let maxHydrationSize = process.env.CHAT_HYDRATION_SIZE || 100;
 
 let hydrationEnabled = process.env.CHAT_HYDRATION || false; // you have to turn it on in the config
+
+let chatBasedViewCounter = {};//tempViews
 
 async function securityChecks(){
     // does startup checks for jwt and other security info that we need to run securely 
@@ -232,7 +256,7 @@ async function securityChecks(){
   
   app.use(express.static("./public"));
 
-
+  app.use('/', express.static('./node_modules/livekit-client/dist/')); // redirect bootstrap JS
 
 function getRandomColor() {
     var letters = '0123456789ABCDEF';
@@ -335,6 +359,31 @@ function getRandomColor() {
     
   });
 
+  app.get('/v1/livekit/mktoken',(req,res) => {
+    // so as of 2023 jan https://github.com/livekit/server-sdk-js
+    // https://github.com/livekit/server-sdk-js/pull/48/commits
+    /* jsonwebtoken  <=8.5.1
+        Severity: high
+        jsonwebtoken's insecure implementation of key retrieval function could lead to Forgeable Public/Private Tokens from RSA to HMAC - https://github.com/advisories/GHSA-hjrf-2m68-5959
+        jsonwebtoken unrestricted key type could lead to legacy keys usage  - https://github.com/advisories/GHSA-8cf7-32gw-wr33
+        jsonwebtoken vulnerable to signature validation bypass due to insecure default algorithm in jwt.verify() - https://github.com/advisories/GHSA-qwph-4952-7xr6
+        jsonwebtoken has insecure input validation in jwt.verify function - https://github.com/advisories/GHSA-27h2-hvpr-p74q
+
+        Look at forking and patching to use jose or something similar as per jwt.io
+    */
+    const roomName = 'name-of-room';
+    const participantName = 'user-name';
+    
+    /*const at = new AccessToken('api-key', 'secret-key', {
+      identity: participantName,
+    });
+    at.addGrant({ roomJoin: true, room: roomName, canPublish: true, canSubscribe: true });
+    
+    const token = at.toJwt();
+    */
+    let token = "no livekit token support removed";
+    console.log('access token', token);
+  });
 
   // const endpoint = `https://fw.rnih.org/v1/coins/${this.username}/alerts/${this.offset}`;
 
@@ -675,6 +724,8 @@ username: user.username,
 
 
 // This is where we build our user list
+// This is the OFFICIAL SOURCE OF USERS endpoint for lists etc
+// this is also the method that should be user for channel viewer counts updating
   app.get('/v1/chat/users',(req,res) => {
 
     // should return success,data
@@ -705,6 +756,26 @@ username: user.username,
         }
       }
       */
+
+      // could also build a map/object to store channel counts in so it would be viewcounts:{'channel':num,}
+      let tempViews = {};
+      lsockets.forEach(usocket => {
+        if(usocket.page){
+          
+        }else{
+          user_obj.page = 'Global';
+        }
+
+        let channelname = usocket.page;
+          if(tempViews[channelname]){
+              tempViews[channelname] +=1;
+          }else{
+              tempViews[channelname] = 1;
+          }
+          
+      });
+
+
 
       let fatchatUserList = [];
       let lsockets = fwcio.sockets.sockets; // skip manually tracking, just look through the socket set
@@ -1675,6 +1746,80 @@ fwcio.sockets.on("connection", socket => {
 
 
   });
+  socket.on('get live kit room token', async (data) => {
+    // this should pull out the user jwt stuff and then return a stream room access token, there should also be another version of this for watching
+    
+    if(data.jwt){
+      try{
+        const { payload, protectedHeader } = await jose.jwtVerify(data.jwt, rsaPubKey, {
+          issuer: template_config.TOKENISSUER,
+          audience: template_config.TOKENAUDIENCE
+        })
+        //console.log("stuff in the payload that has been verified:",payload);
+        const mysubinfo = payload.sub;
+        //console.log("My sub info:",mysubinfo);
+        let userinfo = mysubinfo;//JSON.parse(mysubinfo);
+        console.log("Authed:",userinfo);
+        //socket.username = userinfo.username;
+        //socket.unum = userinfo.num;
+        // should check if it's a troll and copy in the color info or just tag everything with some color
+        //socket.color = userinfo.color;
+
+        //if(data.page){
+          //socket.page = sanitizeHtml(data.page); // page should be escaped and cleaned so it is only alphanums with no spaces in them
+          // this also needs to be escaped if it gets used elsewhere (like if it is updated on a message send event)
+        //}
+
+        // if this room doesn't exist, it'll be automatically created when the first
+        // client joins
+        const roomName = userinfo.username;
+        // identifier to be used for participant.
+        // it's available as LocalParticipant.identity with livekit-client SDK
+        const participantName = userinfo.username;
+
+        const at = new AccessToken('api-key', 'secret-key', {
+          identity: participantName,
+        });
+        at.addGrant({ roomJoin: true, room: roomName });
+
+        const token = at.toJwt();
+        console.log('access token', token);
+
+        // part 2 of connection is to see if they have any special permissions, admin, moderator, janitor, etc
+        // admin can make/add a new mod/janitor, give out stream access
+        // mod can ban people via global ip, name, etc
+        // janitor can only mute/ban people in a specific channel
+        // now in the config file there should be a mod(moderator star),admin(special background color maybe overlay?),janny (wrench)
+        // need to be able to create config files if they do not exist aka read and dump the object data back out
+        try{
+          let data = fs.readFileSync('admin.json');
+          admins = JSON.parse(data);
+          
+        }catch(error){
+          console.log("Error loading admin json file.");
+        }
+
+        // checks if the user should be granted special permissions
+        for( const admini in admins.admin){
+          //console.log(approved_streamers.approvedstreamers[livestreamer]);
+          if(userinfo.username == admins.admin[admini].username && userinfo.num == admins.admin[admini].num && userinfo.color == admins.admin[admini].color){
+            //socket.admin = true;
+            console.log("Found user to allow in room");
+            socket.emit('room access token',{token:token}); // should send the streamer the token
+          }
+        }
+
+
+      }catch(ex){
+        console.log("Error processing Live kit stream request")
+        console.log(ex);
+        //const unum = getRandomUserId();
+        //socket.username = "troll:dickhead";
+        //socket.unum = unum;
+        // should send a message that they have a corrupt token, maybe disconnect them?
+      }
+    }
+  });
 
   socket.on("new user",async (data)=> {
     // need to get the user info and validate them
@@ -1896,6 +2041,11 @@ fwcio.sockets.on("connection", socket => {
               streaminfo.viewCount = data.viewers;
               streaminfo.to = socket.username;
               streaminfo.owner = socket.username;
+            }
+
+            // should enable live view counts based on people in chat
+            if(chatBasedViewCounter[socket.username]){
+              streaminfo.viewCount = chatBasedViewCounter[socket.username];
             }
 
             if(data.nsfw){
