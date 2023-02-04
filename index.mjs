@@ -947,6 +947,7 @@ username: user.username,
       from_user_unum = userinfo.num;
       from_user_color = userinfo.color;
       parsed_user = true;
+      console.log("Sending user validated:",from_user);
     }catch(error){
       error_message = "Could not parse the user token! \n";
     }
