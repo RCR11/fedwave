@@ -2066,7 +2066,7 @@ fwcio.sockets.on("connection", socket => {
                   .filter( key => predicate(obj[key]) )
                   .reduce( (res, key) => (res[key] = obj[key], res), {} );
 
-            let filtered_viewers = Object.filter(fatchatUserSet, viewer => viewer.watching.includes(channel));
+            let filtered_viewers = Object.filter(fatchatUserSet, viewer => viewer.watching.includes(socket.username));
             if(filtered_viewers){
 
               streaminfo.viewers = filtered_viewers;
