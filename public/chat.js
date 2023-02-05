@@ -1367,6 +1367,201 @@ function addIgnore(ignoreme){
     
 }
 
+
+function handleNewViewerInfo(){
+    $.get('/v1/chat/channels', function(data, status){
+        //console.log('Getting viewer info for channel...')
+        //hydrate(data.data);
+        /*if viewlist['success'] == True:
+            for channel in viewlist['data']:
+                if chatname == channel['channel']:
+                    for viewer in channel.viewers:
+                        unique_users.add(viewer)
+                    viewer_count_for_channel = channel['viewCount']
+        */
+        
+        //var channel_selected = $( "#channelselect option:selected" ).text();
+
+        //let total_watchers = data.users.length;
+        //let watchers = 0;
+        //$("#thewatchers").empty();
+        console.log("did we get to even call the user list update:",data);
+    let channel_selected = 'Playlistbot9k';
+    var watchers = 0;
+    var watchSetSize = new Set();
+    var totalWatchersSetSize = new Set();
+        //console.log(data);
+        for( var user in data){
+            var watcher = 'none';
+            //console.log(user);
+            //watchSetSize.add(watcher);
+            try{
+                watcher =  data[user].username.toLowerCase() //user.username
+                //console.log('username:' + watcher);
+                totalWatchersSetSize.add(watcher);
+            }catch(err){
+                //console.log('failed to get username...');
+            }
+            var cname = 'none';
+            // try and get the user's channel name
+            try{
+                cname = data[user].page;
+                //console.log('page name:'+cname);
+                if( channel_selected.toLowerCase() == cname.toLowerCase()){
+                    // try to add it
+                    //console.log('watching: '+cname);
+                    watchSetSize.add(watcher);
+                }
+            }catch(err){
+            //console.log(err);
+            }
+            // check if it matches and try to add it to the set 
+            
+            try{
+                cname = data[user].page.watch;
+                //console.log('page watch name:'+cname);
+                // do the check again and try to add again if it matches 
+                if( channel_selected.toLowerCase() == cname.toLowerCase()){
+                    // try to add it
+                    //console.log('watching: '+cname);
+                    watchSetSize.add(watcher);
+                    //console.log('page watch name:'+cname);
+                }
+            }catch(err){
+                //console.log(err);
+            }
+            
+        }
+        
+        
+        channel_watchers = watchSetSize;
+        var total_watchers = 0;
+    //watchers = watchSetSize.size;
+    for( var ch in data.data){
+        if(channel_selected.toLowerCase() == data.data[ch].channel){
+            watchers = data.data[ch].viewCount
+            // add the viewers 
+            for(var viewer in data.data[ch].viewers){
+                channel_watchers.add(data.data[ch].viewers[viewer]) 
+            }
+        }
+        total_watchers += data.data[ch].viewCount
+    }
+    //console.log('set size for watch:' + watchers)
+    //const total_watchers = totalWatchersSetSize.size;
+    // update the displayed watch counter
+    if(watchers >= 0){
+        $("#watchcount").text("On Channel: " + watchers + " total: " + total_watchers);
+    }else{
+        $("#watchcount").text("On Channel: 0");
+    }
+    
+    // update the list of displayed watchers
+    // empty the list of users
+    // document.getElementById("messageListContainer").appendChild(node);
+    //var node = document.createElement("div"); 
+    //textnodeUserName.innerHTML = el.username; 
+    
+    // need to clear the list of users
+    //var watchers = document.getElementById("thewatchers");
+    $("#thewatchers").empty();
+    
+    // var ignore_list = Array.from(ignore_set);
+    var sorted_jerks = Array.from(channel_watchers);
+    sorted_jerks.sort();
+    for (var it = sorted_jerks.values(), val= null; val=it.next().value; ) {
+            //console.log(val);
+            var node = document.createElement("div"); 
+            
+            // create the avatar node
+            const usernamet = val;
+            
+            const avatarlink = null;
+            
+            if(avatarlink){
+        
+                var textnodeAvatar = document.createElement("avatar");
+                textnodeAvatar.innerHTML = "<img class=\"userav\" src=\"" + avatarlink + "\" >";
+                textnodeAvatar.addEventListener('click', function(e){
+                    // do something
+                    var atmessage = $("textarea#message").val()
+                        atmessage += "@" + usernamet + " ";
+                        $("textarea#message").val(atmessage)
+                        $("textarea#message").focus(); // send focus back to chat
+                    }
+                );
+                node.appendChild(textnodeAvatar); 
+            }else{
+                var textnodeAvatar = document.createElement("avatar");
+                
+                
+                textnodeAvatar.classList.add("avatar");
+                //<i aria-hidden="true" class="v-icon material-icons theme--dark" style="background: rgb(32, 99, 223);">person</i>
+                //textnodeAvatar.innerHTML = '<i aria-hidden="true" class="v-icon material-icons theme--dark userav" style="background: rgb(32, 99, 223);">person</i>';
+                //textnodeAvatar.innerHTML = "<img class=\"userav\" src=\"https://i.imgur.com/kdxSQI9.png\" style=\"background: " + ucolor+";\">";
+                textnodeAvatar.innerHTML = "<img class=\"userav\" src=\"https://bw.rnih.org/emotes/dead_sus_troll_standing.png\" style=\"background: rgb(32, 99, 223);\">";
+                
+                /*if(el.color){
+                    const ucolor = el.color;
+                    textnodeAvatar.innerHTML = '<i aria-hidden="true" class="v-icon material-icons theme--dark userav" style="background: '+ ucolor+';">person</i>';
+                }*/
+                textnodeAvatar.addEventListener('click', function(e){
+                    // do something
+                    var atmessage = $("textarea#message").val()
+                        atmessage += "@" + usernamet + " ";
+                        $("textarea#message").val(atmessage)
+                        $("textarea#message").focus();// send focus back to chat
+                    }
+                );
+                node.appendChild(textnodeAvatar); 
+            
+            }
+            
+            
+            
+            // create the name node
+            
+            var textnodeUserName = document.createElement("username"); // need to add a on click event for the attribute
+            // need to add a onclick for username_click(el.username)
+            textnodeUserName.addEventListener('click', function(e){
+                // do something
+                var atmessage = $("textarea#message").val()
+                    atmessage = "!w " + usernamet + " " + atmessage;
+                    $("textarea#message").val(atmessage)
+                    $("textarea#message").focus();// send focus back to chat
+                }
+            );
+            
+            textnodeUserName.innerHTML = '<span style=" color: white;">' + usernamet + '</span>'; 
+            
+            
+            
+            node.appendChild(textnodeUserName);  
+            
+            var textnode = document.createElement("message");
+            textnode.innerHTML = "<p>Ignore Toggle</p>"; 
+            
+            node.appendChild(textnode);  
+            // add them to the new node
+            
+
+            document.getElementById("thewatchers").appendChild(node);
+            
+            // shove in a br 
+            var nodebr = document.createElement("br"); 
+            //document.getElementById("thewatchers").appendChild(nodebr);
+            //document.getElementById("thewatchers").appendChild(nodebr);
+            document.getElementById("thewatchers").appendChild(nodebr);
+    }
+        
+        
+        
+        
+    });
+}
+
+handleNewViewerInfo();
+
 function litechat(){
     console.log("chat starting...");
     //this.io = io( 'wss://localhost:4000', { transports: ['websocket'] } );
@@ -1860,6 +2055,9 @@ function litechat(){
     }
 
     this.updateUserNames = function(data){
+
+        handleNewViewerInfo();
+        return;
         //console.log(data);
         //console.log("Should update our viewer list or at least people who are connected");
         let total_watchers = data.users.length;
