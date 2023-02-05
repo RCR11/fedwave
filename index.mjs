@@ -145,7 +145,7 @@ let sockets = {};
 let users = [];
 let userList = new Set(); // this should be a map or a set to not have dupes in it (ideally)
 
-let fatchatUserSet = [];// new Set();
+let fatchatUserSet = {};// new Set();
 
 let streamList = [];
 
@@ -2061,18 +2061,15 @@ fwcio.sockets.on("connection", socket => {
               streaminfo.owner = socket.username;
             }
 
-            if(fatchatUserSet.length){
-              // filter down the user list
-              // filtering is garbage for the most part since it's not done via a page with a global filter value
-              // ideally this would be a lambda and the socket.username would be used to filter
-              let filtered_users = fatchatUserSet.filter(function isOnPage(user){
-                  if(user.data.page == socket.username){
-                    return true;
-                  }
-              });
-              console.log("Since there is a global list this will be the filtered list:",filtered_users);
+            Object.filter = (obj, predicate) => 
+            Object.keys(obj)
+                  .filter( key => predicate(obj[key]) )
+                  .reduce( (res, key) => (res[key] = obj[key], res), {} );
 
-              streaminfo.viewers = filtered_users;
+            let filtered_viewers = Object.filter(fatchatUserSet, viewer => viewer.watching.includes(channel));
+            if(filtered_viewers){
+
+              streaminfo.viewers = filtered_viewers;
             }
 
             // should enable live view counts based on people in chat
