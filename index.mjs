@@ -145,7 +145,7 @@ let sockets = {};
 let users = [];
 let userList = new Set(); // this should be a map or a set to not have dupes in it (ideally)
 
-let fatchatUserSet = new Set();
+let fatchatUserSet = [];// new Set();
 
 let streamList = [];
 
@@ -825,6 +825,8 @@ username: user.username,
 
       });
 
+      // throw the viewer list into the global space so it can be filtered and used for the live list maybe?
+      fatchatUserSet = viewers;
       
       let viewersList = [];
       // do a for loop over userList and build new users to add based on that and then emit that 
@@ -848,7 +850,7 @@ username: user.username,
 
       //fatchatUserList.push({channel:"Playlistbot9k",viewCount:viewersList.length,viewers:viewersList});
       //fatchatUserList.push({channel:"NoAgenda",viewCount:viewersList.length,viewers:viewersList});
-
+      
 
     res.json({success:true,data:viewers});
     
@@ -2007,6 +2009,8 @@ fwcio.sockets.on("connection", socket => {
       }
   });
 
+
+
   socket.on("announcestream",(data) => {
     // need to set a global stream descripter as a test
     console.log("Stream announce:",socket.username);
@@ -2049,11 +2053,26 @@ fwcio.sockets.on("connection", socket => {
               streaminfo.type = "application/x-mpegURL";
             }
       
+
             if(data.viewers){
               streaminfo.viewers = data.viewers;
               streaminfo.viewCount = data.viewers;
               streaminfo.to = socket.username;
               streaminfo.owner = socket.username;
+            }
+
+            if(fatchatUserSet.length){
+              // filter down the user list
+              // filtering is garbage for the most part since it's not done via a page with a global filter value
+              // ideally this would be a lambda and the socket.username would be used to filter
+              let filtered_users = fatchatUserSet.filter(function isOnPage(user){
+                  if(user.data.page == socket.username){
+                    return true;
+                  }
+              });
+              console.log("Since there is a global list this will be the filtered list:",filtered_users);
+
+              streaminfo.viewers = filtered_users;
             }
 
             // should enable live view counts based on people in chat
