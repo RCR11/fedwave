@@ -1370,7 +1370,7 @@ function addIgnore(ignoreme){
 
 
 function handleNewViewerInfo(){
-    $.get('https://fw.rnih.org/v1/chat/users', function(data, status){
+    $.get('/v1/chat/users', function(data, status){
         //console.log('Getting viewer info for channel...')
         //hydrate(data.data);
         /*if viewlist['success'] == True:
