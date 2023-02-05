@@ -29,6 +29,7 @@ let channel = "default";
 let chatFeatureNotify = true;
 
 let users = [];
+let usersOnChannel = [];
 
 let username_global = "nobody";
 
@@ -1369,7 +1370,7 @@ function addIgnore(ignoreme){
 
 
 function handleNewViewerInfo(){
-    $.get('/v1/chat/channels', function(data, status){
+    $.get('https://fw.rnih.org/v1/chat/users', function(data, status){
         //console.log('Getting viewer info for channel...')
         //hydrate(data.data);
         /*if viewlist['success'] == True:
@@ -1385,19 +1386,25 @@ function handleNewViewerInfo(){
         //let total_watchers = data.users.length;
         //let watchers = 0;
         //$("#thewatchers").empty();
+        let channel_watchers = new Set(); // should be a global?
         console.log("did we get to even call the user list update:",data);
-    let channel_selected = 'Playlistbot9k';
+    let channel_selected = channel;//'Playlistbot9k';
+
+    // get selected channel from storage if it is set
+    // usersOnChannel and users (all)
     var watchers = 0;
     var watchSetSize = new Set();
     var totalWatchersSetSize = new Set();
         //console.log(data);
-        for( var user in data){
+        // this should be the channels
+        let total_watchers = 0;
+        for( var user in data.data){
             var watcher = 'none';
-            //console.log(user);
+            console.log("user:",data.data[user]);
             //watchSetSize.add(watcher);
             try{
-                watcher =  data[user].username.toLowerCase() //user.username
-                //console.log('username:' + watcher);
+                watcher =  data.data[user].data.username //user.username
+                console.log('username:' + watcher);
                 totalWatchersSetSize.add(watcher);
             }catch(err){
                 //console.log('failed to get username...');
@@ -1405,11 +1412,11 @@ function handleNewViewerInfo(){
             var cname = 'none';
             // try and get the user's channel name
             try{
-                cname = data[user].page;
+                cname = data.data[user].data.page;
                 //console.log('page name:'+cname);
                 if( channel_selected.toLowerCase() == cname.toLowerCase()){
                     // try to add it
-                    //console.log('watching: '+cname);
+                    console.log('watching: '+cname);
                     watchSetSize.add(watcher);
                 }
             }catch(err){
@@ -1430,31 +1437,29 @@ function handleNewViewerInfo(){
             }catch(err){
                 //console.log(err);
             }
-            
+            total_watchers += 1;
         }
         
         
         channel_watchers = watchSetSize;
-        var total_watchers = 0;
+        
     //watchers = watchSetSize.size;
-    for( var ch in data.data){
+    /*
+    for( let ch in data.data){
         if(channel_selected.toLowerCase() == data.data[ch].channel){
             watchers = data.data[ch].viewCount
             // add the viewers 
-            for(var viewer in data.data[ch].viewers){
-                channel_watchers.add(data.data[ch].viewers[viewer]) 
+            for(let viewer in data.data[ch].viewers){
+                channel_watchers.add(data.data[ch].viewers[viewer]) ;
             }
         }
-        total_watchers += data.data[ch].viewCount
-    }
+        total_watchers += data.data[ch].viewCount;
+        console.log("Total watchers:",total_watchers, 'viewcount:',data.data[ch].viewCount);
+    }*/
     //console.log('set size for watch:' + watchers)
     //const total_watchers = totalWatchersSetSize.size;
     // update the displayed watch counter
-    if(watchers >= 0){
-        $("#watchcount").text("On Channel: " + watchers + " total: " + total_watchers);
-    }else{
-        $("#watchcount").text("On Channel: 0");
-    }
+    
     
     // update the list of displayed watchers
     // empty the list of users
@@ -1467,8 +1472,35 @@ function handleNewViewerInfo(){
     $("#thewatchers").empty();
     
     // var ignore_list = Array.from(ignore_set);
+    users = Array.from(totalWatchersSetSize).sort();
     var sorted_jerks = Array.from(channel_watchers);
     sorted_jerks.sort();
+    usersOnChannel = sorted_jerks;
+    watchers = sorted_jerks.length;
+    if(watchers >= 0){
+        $("#watchcount").text("On Channel: " + watchers + " total: " + total_watchers);
+    }else{
+        $("#watchcount").text("On Channel: 0");
+    }
+
+    console.log("sorted users:",sorted_jerks);
+
+    let plb_found = false;
+    users.forEach(user => {
+            //autocompletedata.push("@" + user);
+            
+            if(user.includes("plb#")){
+                plb_found = true;
+            }
+        });
+
+        if(plb_found){
+            $("#plbspl").show();
+            $("#plbatp").show();
+        }else{
+            $("#plbspl").hide();
+            $("#plbatp").hide();
+        }
     for (var it = sorted_jerks.values(), val= null; val=it.next().value; ) {
             //console.log(val);
             var node = document.createElement("div"); 
