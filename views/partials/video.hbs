@@ -41,7 +41,7 @@
         <div id="ipinfo" onclick="getMyIp()">Click to check IP info...</div>
   </div>
     <section class="make-center">
-      <p style="margin: 0; padding: 0; padding-bottom: 20px;">
+      <p id="topinfovideo" style="margin: 0; padding: 0; padding-bottom: 20px;">
           <div class="make-center">
               <!-- This should be replaced by a user list of live streams -->
                     <input class="hide" type="text" id="broadcast-id" value="room-xyz" autocorrect=off autocapitalize=off size=20>
@@ -852,6 +852,9 @@
             document.getElementById('broadcast-id').focus();
             return;
         }*/
+
+        
+        document.getElementById("topinfovideo").hidden = true;
 
         connection.setHighBitrateModeAudio(true); // This should be used with a checkbox to configure if the stream should be high bitrate on the streamer side so it can be configured, automatically via config on the clients side
         disable_stream_connect = false;
