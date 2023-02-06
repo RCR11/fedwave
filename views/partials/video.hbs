@@ -582,6 +582,7 @@
         videoPreview.srcObject = event.stream;
         try{
             videoPreview.play();
+            document.getElementById("topinfovideo").hidden = true;
         }catch(error){
             console.log("There was an error auto playing, you probably need to manually click play");
         }
@@ -854,7 +855,7 @@
         }*/
 
         
-        document.getElementById("topinfovideo").hidden = true;
+        
         //document.getElementById("topinfovideo"). = true;
 
 
