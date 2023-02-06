@@ -41,34 +41,66 @@ body{background-color:#2f2f2f}
          overflow-y: scroll;
            
         }
+        .button-flex-container {
+            display: flex;
+            flex-wrap: wrap-reverse;
+        }
+
+        .bottom-flex-area{
+            display: flex;
+            flex-wrap: wrap;
+            flex: 0 0 50px;
+        }
+        .chatcontainer{
+           
+        }
+
+        #chatcontainer{
+            height:70%;
+            flex:1;
+        }
+
+        .chat-flex-top{
+            display: flex;
+            flex-direction: row;
+            flex: 0 0 2rem;
+        }
+
+        .chat-flex-container{
+            display: flex;
+            flex-direction: column;
+            /*height:100%;*/
+            height: 100vh;
+            
+        }
         
         .disconnected{
             background-color:#FF0000;
         }
         
         div.container{
-            height:100%;
+            /*height:100%;*/
         }
 
         div.containment{
-            height: 100vh;
+            
             
         }
 
         #chat-scroll {
-            height: 90%;
+            /*height: 90%;*/
         }
 
         .messagec {
-            height: 100%;
+            /*height: 100%;*/
         }
 
         chat {
-            height: 100%;
+            /*height: 100%;*/
         }
 
         #message {
-            height: 5%;
+            /*height: 2em;*/
         }
         
         .rainbow-text {
