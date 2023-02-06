@@ -2052,6 +2052,10 @@ fwcio.sockets.on("connection", socket => {
               streaminfo.src = data.src;
               streaminfo.type = "application/x-mpegURL";
             }
+
+            if(data.viewCountRTC){
+              streaminfo.viewCountRTC = data.viewCountRTC;
+            }
       
 
             if(data.viewers){

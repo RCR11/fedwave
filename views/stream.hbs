@@ -46,6 +46,7 @@
           <input type="text" id="broadcast-id" value="room-xyz" autocorrect=off autocapitalize=off size=20>
           <input type="text" id="broadcast-desc" value="Live stream!" autocorrect=off autocapitalize=off size=20>
           <button id="open-or-join">Start Broadcast</button>
+          <button id="livekitstart" onclick="doLiveKitStartup()">Start Broadcast LiveKit</button>
 
           <div  class="make-center labelhelper" id="broadcast-viewers-counter"></div>
           <input type="text" id="rtmp" value="RTMP" autocomplete="off" autocapitalize="off" size="20">
@@ -92,7 +93,34 @@
 
     <!--<script src="/RTCMultiConnection.js"></script>-->
     <script src="/RTCMultiConnection_2020_08_26.js"></script>
+    <script type="module" src="/livekit-client.esm.mjs"></script>
     <script>
+        
+        /*import {
+        connect,
+        Room,
+        RoomEvent,
+        RemoteParticipant,
+        RemoteTrackPublication,
+        RemoteTrack,
+        Participant,
+        } from 'livekit-client';*/ 
+
+        // creates a new room with options
+            /*const room = new Room({
+            // automatically manage subscribed video quality
+            adaptiveStream: true,
+
+            // optimize publishing bandwidth and CPU for published tracks
+            dynacast: true,
+
+            // default capture settings
+            videoCaptureDefaults: {
+                resolution: VideoPresets.h720.resolution,
+            },
+            });*/
+
+        //const livekit = require('livekit-client');
         // https://muazkhan.com:9001/demos/Scalable-Broadcast.html
         // https://github.com/muaz-khan/WebRTC-Scalable-Broadcast
         // https://github.com/muaz-khan/WebRTC-Scalable-Broadcast/blob/master/WebRTC-Scalable-Broadcast.js
@@ -139,6 +167,11 @@
     }
 
     // https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_Statistics_API
+
+    // look at setting up the livekit as a local streaming client for the server
+    // should be able to use the local chat socket to connect and get the auth for streaming to a specific room
+
+    
 
 
     var enableRecordings = false;
@@ -376,7 +409,7 @@
                     rtmpstream = document.getElementById('rtmp').value;
                     localStorage.setItem('rtmp',rtmpstream);
                     localStorage.setItem('broadcast-desc',broadcastDesc);
-                    socketlc.emit('announcestream',{desc:broadcastDesc,viewers:0,src:rtmpstream});
+                    socketlc.emit('announcestream',{desc:broadcastDesc,stream.viewCountRTC:0,src:rtmpstream});
                     was_live = true;
                 }
 
@@ -491,7 +524,7 @@
         document.getElementById('broadcast-viewers-counter').innerHTML = 'Number of broadcast viewers: <b>' + event.numberOfBroadcastViewers + '</b>';
         let broadcastDesc = document.getElementById('broadcast-desc').value;
         let rtmpstream = document.getElementById('rtmp').value;
-        socketlc.emit('announcestream',{desc:broadcastDesc,viewers:event.numberOfBroadcastViewers,src:rtmpstream});
+        socketlc.emit('announcestream',{desc:broadcastDesc,viewCountRTC:event.numberOfBroadcastViewers,src:rtmpstream});
     };
 
     // connect and get live stream list
@@ -502,7 +535,7 @@
     socketlc.on('connect', () => {
         load_chatToken();
         socketlc.emit('new user', {jwt:usertoken});
-        
+        socketlc.emit('get live kit room token', {jwt:usertoken});
         document.getElementById('broadcast-id').disabled = true;
         
         //socketlc.emit('getlivestreams');
@@ -510,12 +543,21 @@
           console.log("Said that we were streaming and that we can still be connected to.");
           //socketlc.emit('announcestream');
         }
+
+        doLiveKitStartup();
         
     });
 
     socketlc.on('livestreams', (data)=>{
         console.log("We should have a list stream list to update the UI:",data);
         //updateStreamList(data.streams);
+    });
+
+    socketlc.on('room access token',(data) => {
+        console.log("Should have got back a live kit token:",data);
+        // should then enable the start broadcast livekit button
+        liveKitToken = data.token;
+
     });
 
     
@@ -630,9 +672,10 @@
           }).join(''));
       }catch(ex){
           console.log("failed to parse the token")
-          return {user:{name:'failed'}}
+          return {user:{name:'failed'}};
       }
       return JSON.parse(jsonPayload);
+          
   };
 
     function load_chatToken(){
@@ -691,6 +734,19 @@
                     }
                 });
     }
+
+    let liveKitToken = null;
+    function doLiveKitStartup(){
+        console.log("After chat connection has been setup this can be called and ran to get streaming auth, and enable live kit stream button");
+        // https://github.com/livekit/client-sdk-js/blob/main/example/sample.ts
+        // and if we have a token we should be able to start a stream on the server?
+        if(liveKitToken){
+
+        }
+        
+    }
+
+    
     </script>
 
 </body>
