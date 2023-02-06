@@ -31,7 +31,7 @@
     body{background-color:#2f2f2f}
     </style>
 
-    <div class="labelhelper">
+    <div id="topinfovideo" class="labelhelper">
         Watch live streams happening right NOW!
         <p class="no-mobile">
         Use peer-to-peer protocol to broadcast your video over 20+ users.
@@ -41,7 +41,7 @@
         <div id="ipinfo" onclick="getMyIp()">Click to check IP info...</div>
   </div>
     <section class="make-center">
-      <p id="topinfovideo" style="margin: 0; padding: 0; padding-bottom: 20px;">
+      <p  style="margin: 0; padding: 0; padding-bottom: 20px;">
           <div class="make-center">
               <!-- This should be replaced by a user list of live streams -->
                     <input class="hide" type="text" id="broadcast-id" value="room-xyz" autocorrect=off autocapitalize=off size=20>
@@ -855,6 +855,8 @@
 
         
         document.getElementById("topinfovideo").hidden = true;
+        //document.getElementById("topinfovideo"). = true;
+
 
         connection.setHighBitrateModeAudio(true); // This should be used with a checkbox to configure if the stream should be high bitrate on the streamer side so it can be configured, automatically via config on the clients side
         disable_stream_connect = false;
