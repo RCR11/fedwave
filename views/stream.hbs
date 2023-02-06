@@ -409,7 +409,7 @@
                     rtmpstream = document.getElementById('rtmp').value;
                     localStorage.setItem('rtmp',rtmpstream);
                     localStorage.setItem('broadcast-desc',broadcastDesc);
-                    socketlc.emit('announcestream',{desc:broadcastDesc,stream.viewCountRTC:0,src:rtmpstream});
+                    socketlc.emit('announcestream',{desc:broadcastDesc,viewCountRTC:0,src:rtmpstream});
                     was_live = true;
                 }
 
@@ -544,7 +544,7 @@
           //socketlc.emit('announcestream');
         }
 
-        doLiveKitStartup();
+        //doLiveKitStartup();
         
     });
 
