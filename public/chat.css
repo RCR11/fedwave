@@ -38,9 +38,18 @@ body{background-color:#2f2f2f}
             width: 475px;
             /*height: 600px;*/
             overflow-x:hidden;
-         overflow-y: scroll;
+            overflow-y: scroll;
            
         }
+
+
+        .chat-flex-top{
+            display: flex;
+            flex-direction: row;
+            flex: 0 0 2rem;
+            flex-wrap: wrap;
+        }
+
         .button-flex-container {
             display: flex;
             flex-wrap: wrap-reverse;
@@ -51,6 +60,8 @@ body{background-color:#2f2f2f}
             flex-wrap: wrap;
             flex: 0 0 50px;
         }
+
+
         .chatcontainer{
            
         }
@@ -60,11 +71,7 @@ body{background-color:#2f2f2f}
             flex:1;
         }
 
-        .chat-flex-top{
-            display: flex;
-            flex-direction: row;
-            flex: 0 0 2rem;
-        }
+        
 
         .chat-flex-container{
             display: flex;
@@ -104,13 +111,13 @@ body{background-color:#2f2f2f}
         }
         
         .rainbow-text {
-        background-image: repeating-linear-gradient(45deg, violet, indigo, blue, green, yellow, orange, red, violet);
-        text-align: center;
-        background-size: 800% 800%;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        font-size: 24px;
-        animation: rainbow 8s ease infinite;
+            background-image: repeating-linear-gradient(45deg, violet, indigo, blue, green, yellow, orange, red, violet);
+            text-align: center;
+            background-size: 800% 800%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 24px;
+            animation: rainbow 8s ease infinite;
         }
 
         @keyframes rainbow { 
