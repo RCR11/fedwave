@@ -1792,6 +1792,8 @@ fwcio.sockets.on("connection", socket => {
         // it's available as LocalParticipant.identity with livekit-client SDK
         const participantName = userinfo.username;
 
+        // this is the live kit stuff that needs to be done yet...
+        /*
         const at = new AccessToken('api-key', 'secret-key', {
           identity: participantName,
         });
@@ -1799,6 +1801,7 @@ fwcio.sockets.on("connection", socket => {
 
         const token = at.toJwt();
         console.log('access token', token);
+        */
 
         // part 2 of connection is to see if they have any special permissions, admin, moderator, janitor, etc
         // admin can make/add a new mod/janitor, give out stream access
