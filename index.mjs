@@ -805,6 +805,8 @@ username: user.username,
           user_obj.username = usocket.username;
         }else{
           user_obj.username = "UnAuthenticatedUser"
+          usocket.disconnect();
+          // disconnect the unauthed user?
         }
         if(usocket.unum){
           user_obj.unum = usocket.unum;
@@ -813,6 +815,7 @@ username: user.username,
         }else{
           // gen a user number since it is missing one
           user_obj.unum = getRandomUserId();
+          user_obj.username += '#' + user_obj.unum;
         }
         if(usocket.color){
           user_obj.color = usocket.color;
