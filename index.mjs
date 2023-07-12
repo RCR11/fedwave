@@ -467,6 +467,7 @@ function getRandomColor() {
             let getKeyAPIEndpoint = process.env.LIVEGO_SERVER_API + 'control/get?room=' + streamer_name;
             fetch(getKeyAPIEndpoint).then(res => res.json())
             .then(json => {
+              console.log("livego api response:",json);
               live_go.key = json.data;
               live_go.success = true;
             }).catch(error => console.log(error))
