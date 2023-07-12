@@ -47,6 +47,10 @@
           <input type="text" id="broadcast-desc" value="Live stream!" autocorrect=off autocapitalize=off size=20>
           <button id="open-or-join">Start Broadcast</button>
           <button id="livekitstart" onclick="doLiveKitStartup()">Start Broadcast LiveKit</button>
+          <button id="livegogetkey" onclick="getLiveGoStreamKey()">Get LiveGo Key</button>
+          <p>LiveGo Stream Info:</p>
+          <p id="livegokey" hidden >Test key</p>
+          <p id="livegoserver" hidden >LiveGo Server</p>
 
           <div  class="make-center labelhelper" id="broadcast-viewers-counter"></div>
           <input type="text" id="rtmp" value="RTMP" autocomplete="off" autocapitalize="off" size="20">
@@ -93,7 +97,7 @@
 
     <!--<script src="/RTCMultiConnection.js"></script>-->
     <script src="/RTCMultiConnection_2020_08_26.js"></script>
-    <script type="module" src="/livekit-client.esm.mjs"></script>
+    <!--<script type="module" src="/livekit-client.esm.mjs"></script>-->
     <script>
         
         /*import {
@@ -535,7 +539,7 @@
     socketlc.on('connect', () => {
         load_chatToken();
         socketlc.emit('new user', {jwt:usertoken});
-        socketlc.emit('get live kit room token', {jwt:usertoken});
+        //socketlc.emit('get live kit room token', {jwt:usertoken});
         document.getElementById('broadcast-id').disabled = true;
         
         //socketlc.emit('getlivestreams');
@@ -553,12 +557,12 @@
         //updateStreamList(data.streams);
     });
 
-    socketlc.on('room access token',(data) => {
+    /*socketlc.on('room access token',(data) => {
         console.log("Should have got back a live kit token:",data);
         // should then enable the start broadcast livekit button
         liveKitToken = data.token;
 
-    });
+    });*/
 
     
 
@@ -744,6 +748,51 @@
 
         }
         
+    }
+
+    function getLiveGoStreamKey(){
+        // does a request to the backend api and returns a valid stream token until the stream server restarts
+        // will get a error if the user is not allowed to stream
+        //{{{config.LIVEGO_ENABLED}}}
+        
+        console.log("Should get and set all of the info for this...");
+        const endpoint = '/v1/livego/getkey';
+                load_chatToken();
+                // now it needs to do a post with it as a payload like how the whisper api works
+                let payload = {userToken:usertoken};
+                $.post( endpoint, payload, function(data, status){
+                //    console.log(status);
+                    
+                //    if(status == "success"){
+                //        console.log("data:",data);
+                //        window.localStorage.setItem('chatToken'  , data  );
+                 //       load_chatToken();
+                 //       window.location.reload();
+                 //   }
+                //});
+                //$.get( endpoint, function(data, status){
+                    
+                    if(status == "success"){
+                        console.log("data:",data);
+                        //window.localStorage.setItem('trollToken'  , data  );
+                        //load_chatToken();
+                        //load_trollToken();
+                        //window.location.reload();
+                        //live_go.rtmp = config.LIVEGO_SERVER_RTMP;//"rtmp";
+                        //live_go.hls = config.LIVEGO_SERVER_HLS + streamer_name + ".m3u8";//"hls";
+                        //live_go.key = "User key";
+                        //live_go.success = true;
+
+                        // set the streaming info for the livego backend
+                        localStorage.setItem('rtmp',data.rtmp);
+                        document.getElementById('rtmp').value = data.hls;
+
+                        // needs to set the livego stream info
+
+                        document.getElementById('livegokey').value = data.key;
+                        document.getElementById('livegoserver').value = data.rtmp;
+                    }
+                });
     }
 
     

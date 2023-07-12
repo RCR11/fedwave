@@ -6,6 +6,8 @@ import bodyParser from 'body-parser';
 //import exphbs from 'express-handlebars';
 import {create} from 'express-handlebars';
 
+import fetch from 'node-fetch';
+
 
 //import { WhipEndpoint } from "@eyevinn/whip-endpoint";
 
@@ -39,6 +41,14 @@ const app = express();
         First type of federation will be passive listen to another server, probably do it via gui
 
         optional message logging that can be configured per streamer
+
+        Add support for basic livego, need to hit the api and get the stream key for the user to use
+
+        Need to add config for livego to get keys
+
+        So you will have the base API for livego to work
+
+        Also needs setup directions for livego and adding https for hls/rtmp
 
 */
 
@@ -135,6 +145,35 @@ import RTCMultiConnectionServer from 'rtcmulticonnection-server'; // need to loo
 //import { AccessToken } from 'livekit-server-sdk';
 
 // expose live kit via express /public
+
+// https://github.com/livekit/ingress
+
+// https://github.com/livekit/server-sdk-js/blob/main/examples/webhooks-http/webhook.js
+// https://github.com/livekit/server-sdk-js
+//import { RoomServiceClient, Room } from 'livekit-server-sdk';
+//const livekitHost = process.env.LKSERVER || 'https://livekit.test.host' ;
+//const svc = new RoomServiceClient(livekitHost, process.env.LKAPIKEY, process.env.LKSECRET);
+
+// needs a request stream join method for people that want to watch
+// list rooms which can be added to the list of live streams
+/*svc.listRooms().then((rooms: Room[]) => {
+  console.log('existing rooms', rooms);
+});*/
+
+// add special LK slugs on the site to work with LK live streams and such?
+// create a new room
+/*const opts = {
+  name: 'myroom',
+  // timeout in seconds
+  emptyTimeout: 10 * 60,
+  maxParticipants: 20,
+};
+svc.createRoom(opts).then((room: Room) => {
+  console.log('room created', room);
+});
+
+*/
+
 
 const saltRounds = process.env.SALTROUNDS || 10; // this should be configured from the .env
 
@@ -357,6 +396,96 @@ function getRandomColor() {
     // should have channel viewCount in it
     res.send({success:true,data:streamList});
     
+  });
+
+  app.post('/v1/livego/getkey',async (req,res) => {
+      // checks the streamer permissions and does a request to get the stream key
+      console.log("User requestion stream token"); // or this needs to be handled via the chat socket the same way for simplicity
+      let rtoken = req.body.userToken;
+      //console.log("Token:",rtoken);
+      if(rtoken){
+        // then look as the streamer info and sees if they are allowed to stream
+        //console.log("user token:",rtoken);
+        try{
+          const { payload, protectedHeader } = await jose.jwtVerify(rtoken, rsaPubKey, {
+            issuer: template_config.TOKENISSUER,
+            audience: template_config.TOKENAUDIENCE
+          })
+          //console.log("stuff in the payload that has been verified:",payload);
+          const mysubinfo = payload.sub;
+          //console.log("My sub info:",mysubinfo);
+          let userinfo = mysubinfo;//JSON.parse(mysubinfo);
+          console.log("Authed:",userinfo);
+          //socket.username = userinfo.username;
+          //socket.unum = userinfo.num;
+          // should check if it's a troll and copy in the color info or just tag everything with some color
+          //socket.color = userinfo.color;
+
+        
+            try{
+              let data = fs.readFileSync('approved_streamers.json');
+              //console.log(data.toString());
+              approved_streamers = JSON.parse(data);
+              //console.log("approved streamers json obj:",approved_streamers.approvedstreamers);
+            }catch(error){
+              console.log("Error loading approved streamers json file.");
+            }
+      
+          // then we should do a for loop and look for our streamer that matches
+          let streamer_found = false;
+          //for( const emote in emoteList.emotes){
+          for( const livestreamer in approved_streamers.approvedstreamers){
+            // parse the user token and look for a match of the username, color, number
+            // jwt should be validated
+            // if matched set to true
+            //if(userinfo.username === livestreamer.username){
+            if(userinfo.username === approved_streamers.approvedstreamers[livestreamer].username && userinfo.num === approved_streamers.approvedstreamers[livestreamer].num && userinfo.color === approved_streamers.approvedstreamers[livestreamer].color){
+              streamer_found = true;
+            }
+          }
+
+          if(streamer_found){
+            // then do the api request to get the streamer key
+            // which should be a get request
+            let streamer_name = userinfo.username;
+            // the streamer name needs to be validated for url use
+            // and then do the request to the api endpoint
+            let letters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+            streamer_name = '';
+            for (var i = 0; i < 16; i++) {
+              streamer_name += letters[Math.floor(Math.random() * letters.length)];
+            }
+            // 
+            let live_go = {};
+            //config.LIVEGO_SERVER_API
+            live_go.rtmp = process.env.LIVEGO_SERVER_RTMP;//"rtmp";
+            // make it some random id to get around the streamer name issue
+            live_go.hls = process.env.LIVEGO_SERVER_HLS + streamer_name + ".m3u8";//"hls";
+            live_go.key = "User key";
+
+            // do the key request
+            let getKeyAPIEndpoint = process.env.LIVEGO_SERVER_API + 'control/get?room=' + streamer_name;
+            fetch(getKeyAPIEndpoint).then(res => res.json())
+            .then(json => {
+              live_go.key = json.data;
+              live_go.success = true;
+            }).catch(error => console.log(error))
+
+
+            
+            res.send(live_go);
+          }else{
+            res.send({success:false,message:"Not Authed to stream"});    
+          }
+        }catch(e){
+          console.log(e);
+          res.send({success:false,message:"Not Authed to stream"});    
+        }
+
+      }else{
+        // need to return the key for the user display area on the user stream page (this should also be used in the bitvvave stream page)
+        res.send({success:false,message:"Not Authed to stream"});
+      }
   });
 
   app.get('/v1/livekit/mktoken',(req,res) => {
@@ -1711,7 +1840,7 @@ fwcio.sockets.on("connection", socket => {
                       //console.log(approved_streamers.approvedstreamers[livestreamer]);
                       if(usocket.username == approved_streamers.approvedstreamers[livestreamer].username && usocket.unum == approved_streamers.approvedstreamers[livestreamer].num && usocket.color == approved_streamers.approvedstreamers[livestreamer].color){
                         streamer_found = true;
-                        }
+                      }
                     }
 
                     if(!streamer_found){
