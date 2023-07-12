@@ -48,12 +48,12 @@
           <button id="open-or-join">Start Broadcast</button>
           <button id="livekitstart" onclick="doLiveKitStartup()">Start Broadcast LiveKit</button>
           <button id="livegogetkey" onclick="getLiveGoStreamKey()">Get LiveGo Key</button>
-          <input type="text" >
-          <input type="text"  id="livegokey"  >
-          <input type="text"  id="livegoserver"  >
+          
+          <p class="labelhelper">Key:</p><input type="text"  id="livegokey"  >
+          <p class="labelhelper">Server:</p><input type="text"  id="livegoserver"  >
 
           <div  class="make-center labelhelper" id="broadcast-viewers-counter"></div>
-          <input type="text" id="rtmp" value="RTMP" autocomplete="off" autocapitalize="off" size="20">
+          <p class="labelhelper">Stream egress:</p><input type="text" id="rtmp" value="RTMP" autocomplete="off" autocapitalize="off" size="20">
       </p>
 
       <video id="video-preview" controls loop></video>
