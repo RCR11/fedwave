@@ -141,7 +141,27 @@ MENU4_S='/menu4.wav'
 DEFAULT_S='https://www.myinstants.com/media/sounds/kitty-blabla.mp3'
 CHAT_HYDRATION_SIZE=100
 CHAT_HYDRATION=true
+
+LIVEGO_ENABLED=true
+LIVEGO_SERVER_API='http://localhost:8090/'
+LIVEGO_SERVER_RTMP='rtmp://fedwave.tv:1935/live/'
+LIVEGO_SERVER_HLS='https://fedwave.tv/live/'
+
 ```
+
+### Setup RTMP backend
+You can now use livego as a rtmp backend and it is integrated into the /stream and backend with it's own endpoint
+https://github.com/gwuhaolin/livego
+You will need to run it on a server that can be accessed by the backend (or on the same server if you are on a budget)
+Another option would be to setup local port fowarding to the remote server and use something like autossh to maintain the connection
+Also if you run a https instance of fedwave, you will need to host the HLS/RTMP endpoints on a https port with valid cert.
+You can do this with a nginx proxy that fowards traffic from your https -> http port like 7003 would be the https of 7002 to help with
+CORS errors that will pop up because of unsecure content on a secure page
+To run livego you will need to get and install/setup GO lang from https://go.dev/dl/
+
+then the server will need to be manually started or have a hook tied into the index.mjs to help manage/start/restart it
+(this will be added in the future probably)
+
 
 ### Setup PM2
 ```npm i pm2@latest -g
