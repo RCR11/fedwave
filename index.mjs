@@ -470,11 +470,12 @@ function getRandomColor() {
               console.log("livego api response:",json);
               live_go.key = json.data;
               live_go.success = true;
+              res.send(live_go);
             }).catch(error => console.log(error))
 
 
             
-            res.send(live_go);
+            
           }else{
             res.send({success:false,message:"Not Authed to stream"});    
           }
