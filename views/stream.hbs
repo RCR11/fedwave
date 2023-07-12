@@ -49,8 +49,8 @@
           <button id="livekitstart" onclick="doLiveKitStartup()">Start Broadcast LiveKit</button>
           <button id="livegogetkey" onclick="getLiveGoStreamKey()">Get LiveGo Key</button>
           <p>LiveGo Stream Info:</p>
-          <p id="livegokey" hidden >Test key</p>
-          <p id="livegoserver" hidden >LiveGo Server</p>
+          <p id="livegokey"  >Test key</p>
+          <p id="livegoserver"  >LiveGo Server</p>
 
           <div  class="make-center labelhelper" id="broadcast-viewers-counter"></div>
           <input type="text" id="rtmp" value="RTMP" autocomplete="off" autocapitalize="off" size="20">
@@ -791,6 +791,9 @@
 
                         document.getElementById('livegokey').value = data.key;
                         document.getElementById('livegoserver').value = data.rtmp;
+
+                        // then show all of the hidden stuff
+
                     }
                 });
     }
