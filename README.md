@@ -250,6 +250,47 @@ https://meetrix.io/blog/webrtc/debugging-webrtc-applications.html
 https://webrtc.github.io/samples/src/content/peerconnection/trickle-ice/
 chrome://webrtc-internals/
 
+# Yet another scaling solution for streaming
+
+https://github.com/fastcast/fastcast
+https://github.com/pldubouilh/live-torrent
+https://github.com/Novage/p2p-media-loader
+https://github.com/leeroybrun/webtorrent-transcode?tab=readme-ov-file
+https://github.com/unifiedstreaming/live-demo/tree/master/ffmpeg
+
+https://github.com/qascade/yast
+
+https://github.com/LazyIce/p2p-video-streaming/blob/master/index.html
+
+https://github.com/valverde-marcelo/liveontorrent
+
+https://github.com/saitejach127/t-tube
+
+https://github.com/negu63/webtorrent-video/blob/master/src/App.tsx
+
+https://github.com/Sergeypro91/webtorrent_streaming_api/blob/feature/torrentInfoRouter/package.json
+
+
+https://github.com/Seedess/webtorrent-video-stream-optimized
+
+https://github.com/helios-h2020/h.extension-MediaStreaming-WebTorrent
+
+https://docs.joinpeertube.org/admin/configuration
+
+https://github.com/Novage/wt-tracker
+
+Also to make all of this stuff work, you need to add exceptions for video and chat to work with federation (if you want some security with who you share with)
+
+So running the tracker need to 
+`ufw allow 8000`
+`ufw allow 8443`
+`nginx reload`
+
+
+## This seems like the good one
+https://github.com/Novage/p2p-media-loader/tree/master/p2p-media-loader-hlsjs
+
+
 # Other Considerations
 
 Logging, you might want to turn this off to save disk space and reduce potential issues with long term hosting.

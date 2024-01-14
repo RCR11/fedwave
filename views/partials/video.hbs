@@ -11,6 +11,15 @@
     <!--<link href="css/bootstrap.css" rel="stylesheet">-->
     <!-- <link href="https://cdn.usebootstrap.com/bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet"> -->
     
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rickshaw/1.6.3/rickshaw.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rickshaw/1.6.3/rickshaw.min.css">
+
+    <script src="p2p-media-loader-core.js"></script>
+    <script src="p2p-media-loader-hlsjs.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/clappr@latest"></script>
+
     <link href="/bs.css" rel="stylesheet">
     <style>
       
@@ -54,6 +63,7 @@
           <div class="make-center" id="broadcast-viewers-counter"></div>
       </p>
         <div id="video-container">
+        <div id="player"></div>
         <video id="video-preview" controls ></video>
        
         <div id="video-controls">
@@ -76,7 +86,16 @@
             <input class="hide" type="text" id="broadcast-id-slug" value="room-xyz#1234" autocorrect=off autocapitalize=off size=20>
             <button class="hide" id="join">Join Broadcast</button>
         </div>
-
+        <div id="chart_container">
+                    <div id="legend"></div>
+                    <div id="legend-totals"></div>
+                    <div id="y_axis"></div>
+                    <div id="chart"></div>
+                </div>
+                
+                <h3>Trackers:</h3>
+                <div id="announce"></div>
+                <div id="graph"></div>
         
   </section>
     <style>
@@ -116,6 +135,497 @@
     </style>
 
     <script>
+
+        // so the graph is the peer graph, not the usage chart
+            // so from debugging it works with clappr, would be nice to get it to work with the other videojs player
+            let downloadStats = [];
+            let downloadTotals = { http: 0, p2p: 0 };
+            let uploadStats = [];
+            let uploadTotal = 0;
+            let loadSpeedTimespan = 10; // seconds
+            
+            let grapher = require('p2p-graph');
+            
+            let graph = new grapher("#graph");
+            
+            let active_channel = "none";
+            let blur_active = false;
+            let blur_active_last = false;
+            
+            let channel_blur_stat = false;
+            //let player = [];
+            
+            let channel_started_on = "not set";
+
+              function nsfwBlur(){
+                // toggles the nsfw blur for the video via a hot key hook in the browser or buton
+                //$('#my-player_html5_api').css("filter: blur(1.5rem);");
+                //$('#my-player_html5_api').addClass("blur");
+                $('#my-player_html5_api').toggleClass("blur");
+                blur_active_last = blur_active;
+                blur_active = !blur_active;
+            }
+            
+            function get(name){
+                    if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search))
+                        return decodeURIComponent(name[1]);
+                }
+                
+            function getStartInfo(){
+                    const chanval = get('channel');
+                    // use this to set and force the channel to be the selection
+                    if(chanval){
+                        console.log("Found channel to watch:", chanval);
+                    }
+            
+            }
+            
+            getStartInfo();
+
+            function showdescriptioninfo(){
+                // get the description text
+                const apichannels="/v1/api/channels/live"
+                $.get(apichannels, function(data, status){
+                    const channelinfo_str = JSON.stringify(data, null, 4)
+                    const channel_info_obj =  JSON.parse(channelinfo_str)
+                    for( channel in channel_info_obj.users){
+                        if(channel_info_obj.users[channel].name == channel_started_on){
+                            alert(channel_info_obj.users[channel].title)
+                        }
+                    }
+                })
+            }
+        
+            function getChannelInfo(){
+                    console.log("updating the channel list...")
+                    // update the channel list
+                    
+                    
+                    //const apichannels="https://api.bitwave.tv/api/channels/live"
+                    const apichannels="/v1/channels/live";
+                    $.get(apichannels, function(data, status){
+                        //alert("Data: " + data + "\nStatus: " + status);
+                        console.log(data);
+                        console.log(JSON.stringify(data, null, 4))
+                        const channelinfo_str = JSON.stringify(data, null, 4)
+                        const channel_info_obj =  JSON.parse(channelinfo_str)
+                        console.log("after data printed");
+                        //const channels = data;//JSON.parse(data);
+                        // get selection
+                        const selected_channel = $( "#channelselect option:selected" ).text();
+                        $('#channelselect').empty();// clear the list and add the new options back in
+                        $('#channelselectoffline').empty();
+                        
+                        //for( channel in channel_info_obj.users){
+                        for( channel in channel_info_obj.live){
+                            //console.log(channel[channel].name);
+                            //console.log(channel[channel].title);
+                            //console.log(channel[channel].url);
+                            const chname = channel_info_obj.live[channel].name;
+                            const churl = channel_info_obj.live[channel].url;
+                            const chlive = channel_info_obj.live[channel].live;
+                            const nsfw_blur_status = channel_info_obj.live[channel].nsfw;
+                            // need to get the stream info and put it in the selelction info
+                            //console.log(chname);
+                            //console.log(churl);
+                            
+                            if(chlive ){
+                                $('#channelselect').append('<option value="' + churl + '">' + chname + '</option>');
+                                
+                                // should check if this is our channel that we are watching and set nsfw blur active
+                                if( active_channel == chname ){
+                                    // get nsfw setting
+                                    if(nsfw_blur_status){
+                                        if( channel_blur_stat != nsfw_blur_status){
+                                            
+                                        }
+                                        // the idea is to flip to blur if we are changed to nsfw, but if we un blur that it doesn't auto flip back
+                                        // we are trying to catch when people go from regular -> nsfw, should make descisions based 
+                                        if ( blur_active != nsfw_blur_status){
+                                            //nsfwBlur();
+                                        }
+                                    }
+                                }
+                            }else{
+                            
+                                $('#channelselectoffline').append('<option value="' + chname + '">' + chname + '</option>');
+                            }
+                        }
+                        // restore the selection
+                        $( "#channelselect option[value="+selected_channel+"]" ).attr('selected','selected') //.text(selected_channel);
+                    });
+                    
+                    // should do a bunch of firebase shit instead
+                }
+        
+        //getChannelInfo();
+
+        function updateChannelPlaying(){
+            console.log('get and update the playing item in the player and restart it when it is changed');
+            const selected_channel = $( "#channelselect option:selected" ).val();
+            console.log('new channel to play playing:',selected_channel);
+            // looks like this line needs to be updated to work, so it can find the main video element and select it's source 'my-player' + video_s needs to be part of the selector
+            //$("source").attr('src', selected_channel);
+
+        // this was the source setup for the video js setup
+    //        $("source:last").attr('src', selected_channel);
+
+            const protocol = "https://cdn.stream.";
+            const server_name = $( "#server option:selected" ).text();
+            const before_user = ".tv/hls/";
+            const after_user = "/index.m3u8";
+            const server_stream_url = protocol + server_name + before_user + selected_channel + after_user;
+            //$("source").attr('src', server_stream_url);
+            if( $( "#channelselect option:selected" ).text().length > 0){
+                active_channel = $( "#channelselect option:selected" ).text();
+            
+                channel_started_on = $( "#channelselect option:selected" ).text();
+            }
+            var options = {liveui: true,playbackRates: [ 0.25, 0.5, 1, 1.25, 1.5, 1.75, 2 ],};
+
+            // this is the clappr version of the player hookup https://github.com/Novage/p2p-media-loader/blob/master/p2p-media-loader-demo/index.html#L813
+            if (p2pml.hlsjs.Engine.isSupported()) {
+                    //var engine = new p2pml.hlsjs.Engine();
+
+                    var player = new Clappr.Player({
+                        parentId: "#player",
+                        source: selected_channel,
+                        mute: true,
+                        autoPlay: true,
+                        
+                        playback: {
+                            hlsjsConfig: {
+                                liveSyncDurationCount: 7,
+                                loader: engine.createLoaderClass()
+                            }
+                        }
+                    });
+
+                    p2pml.hlsjs.initClapprPlayer(player);
+                } else {
+                    document.write("Not supported :(");
+                }
+            
+
+
+                //data-setup='{&quot;aspectRatio&quot;:&quot;16:9&quot;}'
+                // https://www.watch2gether.com/
+            }
+
+        // so this is going to turn into something terrible HERE IS ALL OF THE STUFF FOR P2P START
+
+        if (p2pml.hlsjs.Engine.isSupported()) {
+        
+                
+        
+            var engine = new p2pml.hlsjs.Engine();
+            
+            function restartDemo(){
+                downloadStats = [];
+                downloadTotals = { http: 0, p2p: 0 };
+                uploadStats = [];
+                uploadTotal = 0;
+
+                loadSpeedTimespan = 10; // seconds
+
+                const config = {
+                    segments: {
+                        swarmId: this.swarmId
+                    },
+                    loader: {
+                        rtcConfig: {
+                            iceServers: [
+                                {
+                                    urls: ["stun:stun.l.google.com:19302", "stun:global.stun.twilio.com:3478"]
+                                }
+                            ],
+                            sdpSemantics: "unified-plan"
+                        }
+                    }
+                };
+            
+                if (trackers) {
+                    config.loader.trackerAnnounce = trackers;
+                }
+            
+            }
+    
+        function initChart() {
+            var chartConf = {
+                element: document.querySelector("#chart"),
+                renderer: 'multi',
+                interpolation: "basis",
+                stack: false,
+                min: 'auto',
+                strokeWidth: 1,
+                series: [
+                    {name: "Upload P2P", color: "#88eab9", data: [], renderer: 'area'},
+                    {name: " - P2P", color: "#88b9ea", data: [], renderer: 'area'},
+                    {name: " - HTTP", color: "#eae288", data: [], renderer: 'area'},
+                    {name: "Download", color: "#f64", data: [], renderer: 'line'}
+                ]
+            };
+
+            chart = new Rickshaw.Graph(chartConf);
+
+            new Rickshaw.Graph.Axis.X({
+                graph: chart,
+                tickFormat: () => ''
+            });
+
+            new Rickshaw.Graph.Axis.Y({
+                graph: chart,
+                orientation: 'left',
+                element: document.getElementById('y_axis')
+            });
+
+            legend = new Rickshaw.Graph.Legend({
+                graph: chart,
+                element: document.getElementById('legend')
+            });
+
+            legendTotals = new Rickshaw.Graph.Legend({
+                graph: chart,
+                element: document.getElementById("legend-totals")
+            });
+
+            chart.render();
+            setInterval(updateChartData.bind(this), 500);
+
+            var chartResize = () => {
+                chartConf.width = chart.element.clientWidth;
+                chart.configure(chartConf);
+                chart.render();
+            };
+
+            chartResize();
+            window.addEventListener("resize", chartResize);
+        }
+
+        function refreshChart() {
+            if (!chart) {
+                return;
+            }
+
+            var data0 = chart.series[0].data;
+            var data1 = chart.series[1].data;
+            var data2 = chart.series[2].data;
+            var data3 = chart.series[3].data;
+            var lastX = data0.length > 0 ? data0[data0.length - 1].x : -1;
+
+            var seriesDataMapper = (currentValue, index) => ({x: index + lastX + 1, y: 0});
+
+            data0.length = 0;
+            data1.length = 0;
+            data2.length = 0;
+            data3.length = 0;
+
+            var stubData = Array.apply(null, Array(200)).map(seriesDataMapper);
+            data0.push.apply(data0, stubData.slice(0));
+            data1.push.apply(data1, stubData.slice(0));
+            data2.push.apply(data2, stubData.slice(0));
+            data3.push.apply(data3, stubData.slice(0));
+
+            chart.update();
+        }
+        
+        function updateLegendTotals() {
+            if (!legendTotals) {
+                return;
+            }
+
+            var httpMb = downloadTotals.http / 1048576;
+            var p2pMb = downloadTotals.p2p / 1048576;
+            var totalMb = httpMb + p2pMb;
+            var uploadMb = uploadTotal / 1048576;
+
+            if (totalMb != 0) {
+                legendTotals.lines[0].element.childNodes[1].textContent
+                    = "Download - "
+                    + Number(totalMb).toFixed(1) + " MiB";
+
+                legendTotals.lines[1].element.childNodes[1].textContent
+                    = " - HTTP - "
+                    + Number(httpMb).toFixed(1) + " MiB - "
+                    + Number((httpMb * 100) / totalMb).toFixed(0) + "%";
+
+                legendTotals.lines[2].element.childNodes[1].textContent
+                    = " - P2P - "
+                    + Number(p2pMb).toFixed(1) + " MiB - "
+                    + Number((p2pMb * 100) / totalMb).toFixed(0) + "%";
+
+                legendTotals.lines[3].element.childNodes[1].textContent
+                    = "Upload P2P - "
+                    + Number(uploadMb).toFixed(1) + " MiB";
+            }
+        }
+        
+        function formatChartLegendLine(index, speed) {
+            if (legend) {
+                var line = legend.lines[index];
+                line.element.childNodes[1].textContent = line.series.name + ' - ' + speed + ' Mbit/s';
+            }
+        }
+
+        function updateChartData() {
+            var downloadSpeed = getDownloadSpeed();
+            var http = Number((downloadSpeed.http * 8 / 1000000).toFixed(2));
+            var p2p = Number((downloadSpeed.p2p * 8 / 1000000).toFixed(2));
+            var total = Number((http + p2p).toFixed(2));
+            var upload = Number(getUploadSpeed() * 8 / 1000000).toFixed(2);
+
+            var data0 = chart.series[0].data;
+            var data1 = chart.series[1].data;
+            var data2 = chart.series[2].data;
+            var data3 = chart.series[3].data;
+            var x = data0.length > 0 ? data0[data0.length - 1].x + 1 : 0;
+
+            data0.shift();
+            data1.shift();
+            data2.shift();
+            data3.shift();
+            data0.push({x: x, y: -upload});
+            data1.push({x: x, y: total});
+            data2.push({x: x, y: http});
+            data3.push({x: x, y: total});
+            chart.update();
+
+            formatChartLegendLine(0, total);
+            formatChartLegendLine(1, http);
+            formatChartLegendLine(2, p2p);
+            formatChartLegendLine(3, upload);
+
+            updateLegendTotals();
+        }
+        
+        function getDownloadSpeed() {
+            var startingPoint = performance.now() - (loadSpeedTimespan * 1000);
+            var httpSize = 0;
+            var p2pSize = 0;
+
+            var i = downloadStats.length;
+            while (i--) {
+                var stat = downloadStats[i];
+                if (stat.timestamp < startingPoint) {
+                    break;
+                }
+
+                if (stat.method === "p2p") {
+                    p2pSize += stat.size;
+                } else if (stat.method === "http") {
+                    httpSize += stat.size;
+                }
+            }
+
+            downloadStats.splice(0, i + 1);
+
+            return {p2p: p2pSize / loadSpeedTimespan, http: httpSize / loadSpeedTimespan};
+        }
+
+        function getUploadSpeed() {
+            var startingPoint = performance.now() - (loadSpeedTimespan * 1000);
+            var size = 0;
+
+            var i = uploadStats.length;
+            while (i--) {
+                var stat = uploadStats[i];
+                if (stat.timestamp < startingPoint) {
+                    break;
+                }
+
+                size += stat.size;
+            }
+
+            uploadStats.splice(0, i + 1);
+
+            return size / loadSpeedTimespan;
+        }
+        
+    function refreshGraph(p2pLoader) {
+            if (!graph) {
+                return;
+            }
+
+            var nodes = graph.list();
+            for (var i = 0; i < nodes.length; i++) {
+                if (nodes[i].id !== "me") {
+                    graph.disconnect("me", nodes[i].id);
+                    graph.remove(nodes[i].id);
+                }
+            }
+
+            if (p2pml.hlsjs.Engine.isSupported()) {
+                //engine.on(p2pml.core.Events.PeerConnect, onPeerConnect.bind(this));
+                //engine.on(p2pml.core.Events.PeerClose, onPeerClose.bind(this));
+            }
+        }
+        
+        function onPeerConnect(peer) {
+            if (!graph.hasPeer(peer.id)) {
+                graph.add({id: peer.id, name: peer.remoteAddress || 'Unknown'});
+                graph.connect("me", peer.id);
+            }
+        }
+
+        function onPeerClose(id) {
+            if (graph.hasPeer(id)) {
+                graph.disconnect("me", id);
+                graph.remove(id);
+            }
+        }
+    
+    // on bytes downloaded
+    function onBytesDownloaded(method, size){
+        //console.log("Fired download:",method, size);
+        downloadStats.push({method: method, size: size, timestamp: performance.now()});
+            downloadTotals[method] += size;
+    }
+    
+    // on bytes uploaded
+    function onBytesUploaded(method, size){
+        //console.log("Fired upload:",method, size);
+        uploadStats.push({size: size, timestamp: performance.now()});
+            uploadTotal += size;
+    }
+    
+    
+    initChart();
+    refreshGraph();
+    
+    
+    
+    
+        
+            
+            engine.on(p2pml.core.Events.PieceBytesDownloaded, onBytesDownloaded.bind(this));
+            engine.on(p2pml.core.Events.PieceBytesUploaded, onBytesUploaded.bind(this));
+
+            var trackerAnnounce = engine.getSettings().loader.trackerAnnounce;
+            if (Array.isArray(trackerAnnounce)) {
+                document.getElementById("announce").innerHTML = trackerAnnounce.join("<br />");
+            }
+
+            /*
+            var player = new Clappr.Player({
+                parentId: "#player",
+                source: "https://fw.rnih.org:7003/live/OELOxBlfXewzq7AV.m3u8",
+                mute: true,
+                autoPlay: true,
+                playback: {
+                    hlsjsConfig: {
+                        liveSyncDurationCount: 7,
+                        loader: engine.createLoaderClass()
+                    }
+                }
+            });
+
+            p2pml.hlsjs.initClapprPlayer(player);*/
+        } else {
+            document.write("Not supported :(");
+        }
+
+        // THIS IS THE END OF THE P2P END
+
         // https://www.reddit.com/r/WebRTC/comments/hlr5fc/is_it_possible_to_control_volume_per_audio_track/
         // Need a global gain control that all tracks get connected to, or at least the remote stream (being sent) gets connected to and set to -100 or -1 gain to mute it
         //const gainNode = audioContext.createGain();
@@ -847,6 +1357,40 @@
         updateStreamList(data.streams);
     });
 
+    function doHLSp2p(streaminfo){
+        console.log("Should connect to:",streaminfo);
+        // get the url/src/type
+        // streaminfo.src = data.src;
+        // streaminfo.type = "application/x-mpegURL";
+        if (p2pml.hlsjs.Engine.isSupported()) {
+                    //var engine = new p2pml.hlsjs.Engine();
+
+                    var player = new Clappr.Player({
+                        parentId: "#player",
+                        source: streaminfo.src,
+                        mute: false,
+                        autoPlay: true,
+                        
+                        playback: {
+                            hlsjsConfig: {
+                                liveSyncDurationCount: 7,
+                                loader: engine.createLoaderClass()
+                            }
+                        }
+                    });
+
+                    p2pml.hlsjs.initClapprPlayer(player);
+                } else {
+                    document.write("Not supported :(");
+                }
+            
+
+
+                //data-setup='{&quot;aspectRatio&quot;:&quot;16:9&quot;}'
+                // https://www.watch2gether.com/
+            }
+    }
+
     function doStreamConnect(streamid){
         /*var broadcastId = document.getElementById('broadcast-id').value;
         if (broadcastId.replace(/^\s+|\s+$/g, '').length <= 0) {
@@ -930,6 +1474,24 @@
                 });
                 node.appendChild(textnodeAvatar); 
 
+                let textnodep2p = document.createElement("p2p");
+                textnodep2p.addEventListener('click', function(e){
+                    // do something
+                    /*let atmessage = $("textarea#message").val()
+                        atmessage = "!w " + user + " " + atmessage;
+                        $("textarea#message").val(atmessage)
+                        $("textarea#message").focus();// send focus back to chat
+                    }*/
+                    document.getElementById("topinfovideo").hidden = true;
+                    console.log("Should attempt to connect to stream!",stream.user, stream.desc);
+                    if(disable_stream_connect){
+                        doHLSp2p(stream);
+                    }
+                });
+
+                textnodep2p.innerHTML = '<span style=" color: white;">HLSP2P</span>';
+
+
                 let textnodeUserName = document.createElement("username"); // need to add a on click event for the attribute
                 // need to add a onclick for username_click(el.username)
                 textnodeUserName.addEventListener('click', function(e){
@@ -951,6 +1513,8 @@
                 
                 
                 node.appendChild(textnodeUserName);  
+
+                node.appendChild(textnodep2p);  // add the p2p option
                 
                 //let textnode = document.createElement("message");
                 //textnode.innerHTML = "<p>Ignore Toggle</p>"; 
