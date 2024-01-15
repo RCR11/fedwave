@@ -48,6 +48,7 @@
           <button id="open-or-join">Start Broadcast</button>
           <button id="livekitstart" onclick="doLiveKitStartup()">Start Broadcast LiveKit</button>
           <button id="livegogetkey" onclick="getLiveGoStreamKey()">Get LiveGo Key</button>
+          <button id="golivertmp" onclick="startStreamRTMPonly()">Go Live RTMP only!</button>
           
           <p class="labelhelper">Key:</p><input type="text"  id="livegokey"  >
           <p class="labelhelper">Server:</p><input type="text"  id="livegoserver"  >
@@ -174,7 +175,7 @@
 
     // look at setting up the livekit as a local streaming client for the server
     // should be able to use the local chat socket to connect and get the auth for streaming to a specific room
-
+    // 
     
 
 
@@ -798,6 +799,23 @@
                 });
     }
 
+
+    function startStreamRTMPonly(){
+                    //connection.userid = broadcastId; // don't need this since we are skipping it...
+                    let broadcastDesc = document.getElementById('broadcast-desc').value;
+                    // LOCALSTORAGE ADD FEATURE
+                    /*if (localStorage.getItem('broadcast-desc')) {
+                        document.getElementById('broadcast-desc').value = localStorage.getItem('broadcast-desc');
+                    }*/ 
+
+                    // set it as the next defaut stream title
+                    let rtmpstream = 'https://hls.robotstreamer.com/tv/4126.m3u8';
+                    rtmpstream = document.getElementById('rtmp').value;
+                    localStorage.setItem('rtmp',rtmpstream);
+                    localStorage.setItem('broadcast-desc',broadcastDesc);
+                    socketlc.emit('announcestream',{desc:broadcastDesc,viewCountRTC:0,src:rtmpstream}); // remember this authenticates based on the token used to connect to the socketlc
+                    was_live = true;
+    }
     
     </script>
 
