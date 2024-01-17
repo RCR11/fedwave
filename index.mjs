@@ -370,7 +370,7 @@ function getRandomColor() {
     // thumbnailerinfo {user:"username",online:true,url:"rtmp url",hash:"the hash to use to make the thumbnailname.jpeg or png"}
     thumbnailerinfo.forEach((stn)=>{
       // if it's a match return the image data
-      if(stn.hash == thumb){
+      if(stn.thumbfilename == thumb){
         const imagePath = path.join('/tmp/', thumb);
         fs.readFile(imagePath, (err, data) => {
           if (err) {
@@ -2505,7 +2505,7 @@ function executeJobs() {
       // job(); // this is a neat idea using () => {console.log("Job")}; in the array aka using lambda functions to be jobs to exec
       let ffj = Ffmpeg();//.FfmpegCommand();
       // screenshotFFmpeg.renice( 5 )
-      const thumbfn = job.thumbfn;
+      const thumbfn = job.thumbfilename;
       const inputStream  = job.url;
       ffj.input(inputStream);
 
