@@ -2263,7 +2263,7 @@ fwcio.sockets.on("connection", socket => {
               let thumbstr = socket.username + "#" + socket.unum + socket.color;
               let thumbfn = sha1sum(thumbstr) + '.jpeg';
               thumbnailerinfo.push( {user:thumbstr,online:true,url:data.src,thumbfilename:thumbfn})
-              streaminfo.thumbnail = `https://fw.rnih.org/v1/thumbnail/${thumbfn}`;
+              streaminfo.thumbnail = `/v1/thumbnail/${thumbfn}`;
             }
 
             if(data.viewCountRTC){
