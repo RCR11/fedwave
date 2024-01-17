@@ -376,12 +376,14 @@ function getRandomColor() {
           if (err) {
             console.error(`Error reading image file: ${err.message}`);
             res.status(500).send('Internal Server Error');
+            return;
           } else {
             // Set the content type header based on the image file type
             res.setHeader('Content-Type', 'image/jpeg'); // Adjust based on your image type (jpeg, png, etc.)
             found = true;
             // Send the binary data as the response
             res.send(data);
+            return;
           }
         })
       }
