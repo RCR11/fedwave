@@ -392,7 +392,7 @@ function getRandomColor() {
     if(found == false){
       // return one of the default images
       // or offer a redirect to another image url...?
-      res.status(500).send('Internal Server Error');
+      //res.status(500).send('Internal Server Error');
     }
 
   });
