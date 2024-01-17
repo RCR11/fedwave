@@ -225,7 +225,7 @@ let globalMessageHydrationCache = []; // default this is empty and not persisten
 
 let thumbnailerinfo = []; // these are all of the jobs for making and update thumbnails, used by the /v1/api/thumbnail/thumbnailid interface to return a thumbnail to view
 // the jobs should be thumbnailerinfo {user:"username",online:true,url:"rtmp url",hash:"the hash to use to make the thumbnailname.jpeg or png"}
-let thumbnaildelay = 1000 * 30; // 30 seconds in ms
+let thumbnaildelay = 1000 * 60; // 30 seconds in ms
 
 let maxHydrationSize = process.env.CHAT_HYDRATION_SIZE || 100;
 
