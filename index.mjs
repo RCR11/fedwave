@@ -2539,9 +2539,9 @@ function executeJobs() {
           console.log( stderr );
 
           if ( error.message.includes('SIGKILL') ) {
-            relayLogger.error( `${job.user}: Stream thumbnail stopped!` );
+            console.log( `${job.user}: Stream thumbnail stopped!` );
           } else {
-            relayLogger.error(  `${job.user}: Stream thumbnail error!` ) ;
+            console.log(   `${job.user}: Stream thumbnail error!` ) ;
           }
         })
 
