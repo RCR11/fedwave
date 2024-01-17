@@ -135,6 +135,8 @@ import bcrypt from 'bcryptjs';
 
 import fs from "fs";
 
+import path from "path";
+
 import * as jose from 'jose'
 
 import os from 'node:os' ;
@@ -2501,7 +2503,7 @@ function executeJobs() {
     try {
       // Execute the job
       // job(); // this is a neat idea using () => {console.log("Job")}; in the array aka using lambda functions to be jobs to exec
-      let ffj = Ffmpeg.FfmpegCommand();
+      let ffj = Ffmpeg();//.FfmpegCommand();
       // screenshotFFmpeg.renice( 5 )
       const thumbfn = job.thumbfn;
       const inputStream  = job.url;
