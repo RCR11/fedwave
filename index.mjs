@@ -2517,7 +2517,7 @@ function executeJobs() {
         '-fflags nobuffer+genpts+igndts',
       ]);
 
-      ffj.output( `/tmp/${thumbfn}.jpg` );
+      ffj.output( `/tmp/${thumbfn}` );
       ffj.outputOptions([
           '-frames:v 1', // frames
           '-q:v 25', // image quality
@@ -2525,6 +2525,30 @@ function executeJobs() {
           '-y', // overwrite file
         ]
       );
+
+        ffj.on( 'start', commandLine => {
+          console.log(`Doing thumbnail for ${job.user}...`);
+        })
+
+        .on( 'end', () => {
+          console.log(`Finished doing thumbnail ${job.user}...`);
+        })
+        .on( 'error', ( error, stdout, stderr ) => {
+          console.log( error );
+          console.log( stdout );
+          console.log( stderr );
+
+          if ( error.message.includes('SIGKILL') ) {
+            relayLogger.error( `${job.user}: Stream thumbnail stopped!` );
+          } else {
+            relayLogger.error(  `${job.user}: Stream thumbnail error!` ) ;
+          }
+        })
+
+        .on( 'progress', progress => {
+          // progress
+        });
+
       ffj.run();
       // could set a flag that it's still running and use something live the event detection to set when it has finished running and updates it
       // https://github.com/bitwave-tv/bitwave-media-server/blob/dev/api-server/src/classes/Relay.ts#L76
