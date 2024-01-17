@@ -357,6 +357,43 @@ function getRandomColor() {
     res.render('watch',{session:authStatus,req:req,config:template_config});
   });
 
+  app.get('/v1/thumbnail/:thumb',(req,res) => {
+    const thumb = req.params.thumb;
+    // get the username or stream id.jpeg that we want
+    // use it to search the stream thumbnail list
+    // if a match
+    let found = false;
+    // check the server for the image
+    // if found, return it...
+    // thumbnailerinfo {user:"username",online:true,url:"rtmp url",hash:"the hash to use to make the thumbnailname.jpeg or png"}
+    thumbnailerinfo.forEach((stn)=>{
+      // if it's a match return the image data
+      if(stn.hash == thumb){
+        const imagePath = path.join('/tmp/', thumb);
+        fs.readFile(imagePath, (err, data) => {
+          if (err) {
+            console.error(`Error reading image file: ${err.message}`);
+            res.status(500).send('Internal Server Error');
+          } else {
+            // Set the content type header based on the image file type
+            res.setHeader('Content-Type', 'image/jpeg'); // Adjust based on your image type (jpeg, png, etc.)
+            found = true;
+            // Send the binary data as the response
+            res.send(data);
+          }
+        })
+      }
+    });
+
+    if(found == false){
+      // return one of the default images
+      // or offer a redirect to another image url...?
+      res.status(500).send('Internal Server Error');
+    }
+
+  });
+
+
   app.get('/v1/emotesfw',(req,res) => {
     let temp_emotes = emoteList;
     for( const emote in altemoteList.data){
@@ -366,6 +403,8 @@ function getRandomColor() {
     res.send(temp_emotes); // litechat standard
     
   });
+
+
 
   app.get('/v1/emotes',(req,res) => {
     //let temp_emotes = emoteList;
@@ -2220,6 +2259,7 @@ fwcio.sockets.on("connection", socket => {
               let thumbstr = socket.username + "#" + socket.unum + socket.color;
               let thumbfn = sha1sum(thumbstr) + '.jpeg';
               thumbnailerinfo.push( {user:thumbstr,online:true,url:data.src,thumbfilename:thumbfn})
+              streaminfo.thumbnail = `https://fw.rnih.org/v1/thumbnail/${thumbfn}`;
             }
 
             if(data.viewCountRTC){
@@ -2475,7 +2515,7 @@ function executeJobs() {
         '-fflags nobuffer+genpts+igndts',
       ]);
 
-      ffj.output( `/tmp/preview/${thumbfn}.jpg` );
+      ffj.output( `/tmp/${thumbfn}.jpg` );
       ffj.outputOptions([
           '-frames:v 1', // frames
           '-q:v 25', // image quality
