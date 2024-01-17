@@ -19,6 +19,9 @@ Techonologies used of note:
 -	nodejs (server side)
 -	markedjs (message formatting)
 -	htmlsanitizer (for message cleaning of html inputs)
+-   livego (for RTMP backend)
+-   P2P Media Loader (webtorrent based p2p hls streaming) https://github.com/Novage/p2p-media-loader
+-   fluent-ffmpeg (for processing streams into thumbnails) https://github.com/fluent-ffmpeg/node-fluent-ffmpeg
 	
 
 ## To get started
@@ -313,3 +316,6 @@ Markdown (but with some safe restrictions of use to prevent issues with scraping
 Another class of things that need to be check are all other data outputs, notice in messaging that the channel, username, and other details
 that come through are also sanatized for user input and that they also use specific access methods when content is displayed that is user
 generated to prevent html elements, images, sources from being injected.
+
+
+# Somtimes Worse IS Better

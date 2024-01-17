@@ -141,9 +141,18 @@ import os from 'node:os' ;
 
 import RTCMultiConnectionServer from 'rtcmulticonnection-server'; // need to look at what is stored in the server object and log the outputs so we can look for and disconnect users/streamers
 
+//const crypto = require('crypto');
+import crypto from 'crypto';
+
+function sha1sum(input) {
+  const sha1Hash = crypto.createHash('sha1');
+  sha1Hash.update(input, 'utf-8'); // Assuming the input string is in UTF-8 encoding
+  return sha1Hash.digest('hex');
+}
+
 // maybe add some live kit streaming support? https://docs.livekit.io/concepts/authentication/
 //import { AccessToken } from 'livekit-server-sdk';
-
+// streamList
 // expose live kit via express /public
 
 // https://github.com/livekit/ingress
@@ -173,6 +182,11 @@ svc.createRoom(opts).then((room: Room) => {
 });
 
 */
+
+import Ffmpeg from 'fluent-ffmpeg';
+
+// so we should have a table of images to return as thumbnails for streams
+// need to have a way to schedule ways to thumbnail and update the files for the streams
 
 
 const saltRounds = process.env.SALTROUNDS || 10; // this should be configured from the .env
@@ -206,6 +220,10 @@ let federation_clients = []; // these should be servers that we can connect to a
 let federation_sockets = []; // these are the connections that should be tracked and used for federation
 
 let globalMessageHydrationCache = []; // default this is empty and not persistent between restarts, should hold a list of messages and use a filter based on the channel to return them
+
+let thumbnailerinfo = []; // these are all of the jobs for making and update thumbnails, used by the /v1/api/thumbnail/thumbnailid interface to return a thumbnail to view
+// the jobs should be thumbnailerinfo {user:"username",online:true,url:"rtmp url",hash:"the hash to use to make the thumbnailname.jpeg or png"}
+let thumbnaildelay = 1000 * 30; // 30 seconds in ms
 
 let maxHydrationSize = process.env.CHAT_HYDRATION_SIZE || 100;
 
@@ -2180,14 +2198,28 @@ fwcio.sockets.on("connection", socket => {
               streaminfo.title = sanitizeHtml(data.desc);
             }
 
-            if(streaminfo.thumbnail){
-              streaminfo.cover = streaminfo.thumbnail;
+            
+
+            if(streaminfo.avatar){
+              streaminfo.cover = streaminfo.avatar;
             }
+
+            
+
 
             if(data.src){
               streaminfo.url = data.src;
               streaminfo.src = data.src;
               streaminfo.type = "application/x-mpegURL";
+
+              // should check and update the thumbnail if it exists... thumbnail, hash the user name for a file name to use
+              // check the global cache of thumbnails to include by value... maybe write these to ram? /tmp/user.jpeg
+              // check if the file exists...
+              // should throw this into the list of things to thumbnail, when this gets removed the thumbnailer request should go away as well
+              // should set the thumbnail url, we then need a way to spit back a valid thumbnail blob
+              let thumbstr = socket.username + "#" + socket.unum + socket.color;
+              let thumbfn = sha1sum(thumbstr) + '.jpeg';
+              thumbnailerinfo.push( {user:thumbstr,online:true,url:data.src,thumbfilename:thumbfn})
             }
 
             if(data.viewCountRTC){
@@ -2420,8 +2452,50 @@ socket.on("getlivestreams",(data) => {
   
 });
 
+// https://github.com/bitwave-tv/bitwave-media-server/blob/dev/api-server/src/webserver/api/index.ts
+// https://github.com/bitwave-tv/bitwave-media-server/blob/dev/api-server/src/webserver/server.ts#L96
+// https://github.com/bitwave-tv/bitwave-media-server/blob/dev/api-server/src/classes/Relay.ts#L53
+function executeJobs() {
+  // Iterate over the array of jobs and execute each job
+  thumbnailerinfo.forEach((job) => {
+    try {
+      // Execute the job
+      // job(); // this is a neat idea using () => {console.log("Job")}; in the array aka using lambda functions to be jobs to exec
+      let ffj = Ffmpeg.FfmpegCommand();
+      // screenshotFFmpeg.renice( 5 )
+      const thumbfn = job.thumbfn;
+      const inputStream  = job.url;
+      ffj.input(inputStream);
 
+      ffj.inputOptions([
+        '-hide_banner',
+        '-err_detect ignore_err',
+        '-ignore_unknown',
+        '-stats',
+        '-fflags nobuffer+genpts+igndts',
+      ]);
 
+      ffj.output( `/tmp/preview/${thumbfn}.jpg` );
+      ffj.outputOptions([
+          '-frames:v 1', // frames
+          '-q:v 25', // image quality
+          '-an', // no audio
+          '-y', // overwrite file
+        ]
+      );
+      ffj.run();
+      // could set a flag that it's still running and use something live the event detection to set when it has finished running and updates it
+      // https://github.com/bitwave-tv/bitwave-media-server/blob/dev/api-server/src/classes/Relay.ts#L76
+      // user:thumbstr,online:true,url:data.src,thumbfilename:thumbfn
+      // run the ffmpeg command, should probably test that it works...
+    } catch (error) {
+      console.error(`Error executing job: ${error.message}`);
+    }
+  });
+}
+
+// Set up the interval to execute jobs at the specified time interval
+const intervalId = setInterval(executeJobs, thumbnaildelay);
 
 // CORS https://socket.io/docs/v3/handling-cors/
 // https://socket.io/docs/v4/faq/
