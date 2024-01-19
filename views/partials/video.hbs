@@ -63,6 +63,7 @@
             </div>
           <div class="make-center" id="broadcast-viewers-counter"></div>
       </p>
+      <!-- Need to fix the CSS that the player uses or figure out how to bind it via the video JS instead -->
         <div id="video-container">
         <div id="player"></div>
         <video id="video-preview" controls ></video>
@@ -87,16 +88,16 @@
             <input class="hide" type="text" id="broadcast-id-slug" value="room-xyz#1234" autocorrect=off autocapitalize=off size=20>
             <button class="hide" id="join">Join Broadcast</button>
         </div>
-        <div id="chart_container">
+        <!--<div id="chart_container">
                     <div id="legend"></div>
                     <div id="legend-totals"></div>
                     <div id="y_axis"></div>
                     <div id="chart"></div>
-                </div>
+                </div>-->
                 
                 <h3>Trackers:</h3>
                 <div id="announce"></div>
-                <div id="graph"></div>
+                <!--<div id="graph"></div>-->
         
   </section>
     <style>
@@ -262,6 +263,7 @@
         //getChannelInfo();
 
         function updateChannelPlaying(){
+            // now this should change the channel that you are on for messaging
             console.log('get and update the playing item in the player and restart it when it is changed');
             const selected_channel = $( "#channelselect option:selected" ).val();
             console.log('new channel to play playing:',selected_channel);
@@ -589,10 +591,12 @@
             uploadTotal += size;
     }
     
-    
+
+    // so we are going to clean up the graphing as nice as it is and probably change it to just write p2p traffic info to a id which can be toggled   
+    /*
     initChart();
     refreshGraph();
-    
+    */
     
     
     
