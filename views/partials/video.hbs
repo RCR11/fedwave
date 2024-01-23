@@ -1371,11 +1371,13 @@
         // get the url/src/type
         // streaminfo.src = data.src;
         // streaminfo.type = "application/x-mpegURL";
+        // so one of the problems is the video doesn't fill the container and sets the height to 0
              if (p2pml.hlsjs.Engine.isSupported()) {
                     var engine = new p2pml.hlsjs.Engine();
 
                     var player = new Clappr.Player({
-                        parentId: "#player",
+                        //parentId: "#player",
+                        parentId: "#video-container",
                         source: streaminfo.src,
                         mute: false,
                         autoPlay: true,
