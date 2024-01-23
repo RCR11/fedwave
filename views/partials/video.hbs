@@ -69,6 +69,10 @@
         input, input:focus, input:active {
             background: white;    
         }
+
+        #video-preview{
+            display: none;
+        }
     
     body{background-color:#2f2f2f}
     </style>
@@ -1474,7 +1478,8 @@
                     document.getElementById("topinfovideo").hidden = true;
                     console.log("Should attempt to connect to stream!",stream.user, stream.desc);
                     if(disable_stream_connect){
-                        doStreamConnect(stream.user);
+                        //doStreamConnect(stream.user); // this has been disabled and the video player container has been removed...
+                        doHLSp2p(stream);
                     }
                 });
                 node.appendChild(textnodeAvatar); 
