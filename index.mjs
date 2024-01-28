@@ -11,6 +11,41 @@ import fetch from 'node-fetch';
 
 //import { WhipEndpoint } from "@eyevinn/whip-endpoint";
 
+// Don't mind these links
+// https://github.com/AngelThump/transcoder
+// https://github.com/abb128/LiveCaptions
+// https://www.youtube.com/watch?v=mhq0bsWJEOw Mesh Central/MeshCommander AMT
+// https://odysee.com/@fireship:6
+// https://docs.nestjs.com/modules
+
+// https://www.tesla-fire.com/
+// https://github.com/corellium/projectsandcastle/
+// https://projectsandcastle.org/status
+// https://the-eye.eu/public/AI/
+// https://github.com/fgsfdsfgs/perfect_dark
+// https://github.com/snesrev/zelda3
+// https://github.com/phoboslab/wipeout-rewrite
+// https://github.com/open-goal/jak-project#extract-assets
+// https://gitgud.io/fatchan/haproxy-protection/
+// https://basedflare.com/
+// https://github.com/dremin/RetroBar
+
+// well fuck lets keep going with this list of shit that doesn't work but could work this stuff is for whip support (which OBS 30.0.2+ supports)
+/* https://archive.fosdem.org/2022/schedule/event/rtc_whip/attachments/slides/5152/export/events/attachments/rtc_whip/slides/5152/fosdem2022_whip_broadcasting.pdf
+    https://github.com/agonza1/free-whip
+    https://github.com/meetecho/simple-whip-server
+    https://github.com/ggarber/whip-go/
+    https://github.com/ossrs/srs
+
+    https://github.com/AirenSoft/OvenMediaEngine this seems like it would work but would take a lot of effort to setup
+    https://github.com/x186k/deadsfu/ this one starts up but I can't get any of the ingest stuff to work
+
+    https://webrtchacks.com/webrtc-cracks-the-whip-on-obs/
+
+    sadly https://github.com/livekit/livekit still seems the most gooder of them all in one stuff
+    https://github.com/livekit-examples/livestream it might be easier to setup all of the livekit stuff and have it be configurable to have it run on another server
+*/
+
 // Implements basic server stuff
 const app = express();
 
@@ -49,6 +84,8 @@ const app = express();
         So you will have the base API for livego to work
 
         Also needs setup directions for livego and adding https for hls/rtmp
+
+        Would be nice to hook up livego with something like redis or shim layer
 
 */
 
@@ -2260,10 +2297,17 @@ fwcio.sockets.on("connection", socket => {
               // check if the file exists...
               // should throw this into the list of things to thumbnail, when this gets removed the thumbnailer request should go away as well
               // should set the thumbnail url, we then need a way to spit back a valid thumbnail blob
+
+              // add a thumbnailer check, to see if it is enabled or not, if not use the avatar
+
               let thumbstr = socket.username + "#" + socket.unum + socket.color;
               let thumbfn = sha1sum(thumbstr) + '.jpeg';
               thumbnailerinfo.push( {user:thumbstr,online:true,url:data.src,thumbfilename:thumbfn})
+
               streaminfo.thumbnail = `/v1/thumbnail/${thumbfn}`;
+              if(process.env.THUMBNAILSERVER){
+                streaminfo.thumbnail = `${process.env.THUMBNAILSERVER}/v1/thumbnail/${thumbfn}`;
+              }
             }
 
             if(data.viewCountRTC){

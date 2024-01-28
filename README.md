@@ -99,6 +99,7 @@ For reference these are configuration options that you will probably want to set
 SIGPORT=9004
 SIGSERVER="https://fedwave.tv:9005/"
 TOKENISSUER='urn:fedwave:issuer'
+THUMBNAILSERVER="https://fedwave.tv"
 TOKENAUDIENCE='urn:fedwave:audience'
 BRANDING="Fedwave"
 BRANDINGFAV=""
