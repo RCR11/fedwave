@@ -87,6 +87,9 @@ const app = express();
 
         Would be nice to hook up livego with something like redis or shim layer
 
+        Making a similar layer for livekit would also be good for testing, you will want to run live kit on another server and probably another subdomain
+        which will need a trigger layer on the server backend that authenticates and then can hit the rest api of something like livekit/livego
+
 */
 
 import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
@@ -412,15 +415,15 @@ function getRandomColor() {
         fs.readFile(imagePath, (err, data) => {
           if (err) {
             console.error(`Error reading image file: ${err.message}`);
-            res.status(500).send('Internal Server Error');
-            return;
+            return res.status(500).send('Internal Server Error');
+            
           } else {
             // Set the content type header based on the image file type
             res.setHeader('Content-Type', 'image/jpeg'); // Adjust based on your image type (jpeg, png, etc.)
             found = true;
             // Send the binary data as the response
-            res.send(data);
-            return;
+            return res.send(data);
+            
           }
         })
       }
