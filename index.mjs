@@ -419,10 +419,16 @@ function getRandomColor() {
             
           } else {
             // Set the content type header based on the image file type
-            res.setHeader('Content-Type', 'image/jpeg'); // Adjust based on your image type (jpeg, png, etc.)
-            found = true;
-            // Send the binary data as the response
-            return res.send(data);
+            try {
+              res.setHeader('Content-Type', 'image/jpeg'); // Adjust based on your image type (jpeg, png, etc.)
+              found = true;  
+              // Send the binary data as the response
+              return res.send(data);
+            } catch (error) {
+              console.log(`Error serving thumbnail:${thumb}`)
+            }
+            
+            
             
           }
         })
@@ -478,7 +484,7 @@ function getRandomColor() {
   app.get('/v1/channels/live',(req,res) => {
     
     //"livestreams",{streams:streamList}
-    console.log("Is this the one that gets called for the user list?");
+    // console.log("Is this the one that gets called for the user list?");
       // return the live streamers list ordered maybe?
       let liveList = streamList.filter(checkmestreamer => {
         if(checkmestreamer.live){
