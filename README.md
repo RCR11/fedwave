@@ -1,3 +1,6 @@
+# This branch of fedwave has rudimentary jdanks.armyd support baked in from the latest LiveStreamNorge fork.
+The idea is to eventually merge it with the array of local streamers and deliver the merged data set to an endpoint in a manner the bitvvave front end api is expecting. This should let us view local and off site streamers in a unified interface.
+
 # FedWave
 ## Federated streaming in a minimal box
 
