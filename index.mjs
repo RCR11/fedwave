@@ -1,3 +1,4 @@
+// Fedwave Dependencies
 //const process = require('process');
 import express from 'express';
 //const express = require("express");
@@ -8,7 +9,25 @@ import {create} from 'express-handlebars';
 
 import fetch from 'node-fetch';
 
+// Jdanks.Army Dependencies
+import https from 'https';
+import scrapers from './scrapers.js';
+import { rateLimit } from 'express-rate-limit'
+const idToData = new Map();
+//const http = require("http");
+//const fs = require("fs");
+//const nconf = require("nconf");
+//const nconf = require('nconf');
+//const crypto = require("crypto");
+//const scrapers = require("./scrapers");
 
+
+
+
+
+
+
+// Fedwave
 //import { WhipEndpoint } from "@eyevinn/whip-endpoint";
 
 // Don't mind these links
@@ -135,7 +154,9 @@ let template_config = {
     MENU2_S:process.env.MENU2_S,
     MENU3_S:process.env.MENU3_S,
     MENU4_S:process.env.MENU4_S,
-    
+    port:process.env.HTTP_PORT,
+    sslPort:process.env.HTTP_SSL_PORT,
+   
 }
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -419,16 +440,17 @@ function getRandomColor() {
             
           } else {
             // Set the content type header based on the image file type
-            try {
-              res.setHeader('Content-Type', 'image/jpeg'); // Adjust based on your image type (jpeg, png, etc.)
-              found = true;  
-              // Send the binary data as the response
-              return res.send(data);
-            } catch (error) {
+
+            // The issue we have here is the thumbnailer continues to run in the background after the stream terminates and then the entire program
+            // crashes when the same user streams again. Try is a bandaid to keep it from crashing but this causes thumbnail processes to stack in the bg eating resources.
+            try{
+            res.setHeader('Content-Type', 'image/jpeg'); // Adjust based on your image type (jpeg, png, etc.)
+            found = true;
+            // Send the binary data as the response
+            return res.send(data);}catch(error){
+              // so this crash only happens when running the bitvvave front end, interesting
               console.log(`Error serving thumbnail:${thumb}`)
             }
-            
-            
             
           }
         })
@@ -495,6 +517,16 @@ function getRandomColor() {
     
   });
 
+  // Legacy API endpoint used to send channel data to the front end. Need for jdanks.army scraper.
+  // Mocking this up with static data for now since its above my current knowladge level, maybe mark can figure it out.
+  // https://web.archive.org/web/20210303060004/https://api.bitwave.tv/v1/channels/saltycracker1
+  app.get('/v1/channels/saltycracker1',(req,res) => {
+
+    console.log("Returned /v1/channels/${this.username}");
+
+    res.send('{"success":true,"message":"success","data":{"_username":"saltycracker1","title":"Default Title","description":"Default Description.","timestamp":"2021-03-02T04:08:37.437Z","cover":"https://cdn.bitwave.tv/static/img/odysee-banner-live-mockup-2.jpg","poster":"https://web.archive.org/web/20210303060004/https://cdn.stream.bitrave.tv/preview/saltycracker1.jpg","thumbnail":"https://web.archive.org/web/20210303060004/https://cdn.stream.bitrave.tv/preview/saltycracker1.jpg","live":true,"nsfw":true,"archive":true,"url":"https://cdn.stream.bitrave.tv/hls/saltycracker1/index.m3u8","name":"saltycracker1","owner":"tp6icUHo0nUV1DGOFGT10HNJPtB2","avatar":"http://web.archive.org/web/20190130195832/https://user-image.creekcdn.com/mediasvc/v1/user/avatar/v/31/res/256x256/406f9188-3066-11e5-9aee-42010af0b4cf.jpg","to":"/saltycracker1","scheduled":"2021-03-02T01:30:00.000Z","banned":false,"viewCount":20271}}');
+    
+  });
 
   app.get('/v1/chat/channels',(req,res) => {
     
@@ -2660,3 +2692,141 @@ signalingServer.listen(signalServerPort), () => console.log('Signaling Server fo
   origin: "*"
 }*/ 
 server.listen(port, () => console.log(`Server is running on port ${port}`));
+
+
+
+// Jdanks.Army Body
+const limiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 50, // limit each IP to 100 requests per windowMs
+});
+
+app.use(cors());
+app.use(limiter);
+
+app.get("/streams", async (req, res) => {
+  let data = Array.from(idToData.values());
+  if (req.query.filter && typeof req.query.filter === "object") {
+    let filteredData = data;
+    Object.entries(req.query.filter).forEach((arg) => {
+      var index = arg[0];
+      var filter = arg[1];
+      filteredData = filteredData.filter((d) => {
+        if (filter === "true") filter = true;
+        if (filter === "false") filter = false;
+        if (filter && typeof filter === "string" && filter.indexOf(",") > -1) {
+          filters = filter.split(",");
+          for (f in filters) {
+            if (filters.hasOwnProperty(f)) {
+              if (d[index] === filters[f]) return true;
+            }
+          }
+          return false;
+        } else {
+          return d[index] === filter;
+        }
+      });
+    });
+    res.send(filteredData);
+  } else {
+    res.send(data);
+  }
+  console.info(`[${req.ip}] Requested /streams`);
+});
+
+app.get("/teams", (req, res) => {
+  let data = Array.from(idToData.values());
+  let teams = [];
+  data.forEach((d) => {
+    if (d.team && teams.indexOf(d.team) === -1) teams.push(d.team);
+  });
+  res.send(teams);
+});
+
+app.get("/platforms", (req, res) => {
+  res.send([...scrapers]?.map((s) => s[0]) ?? {});
+});
+
+const updatePeriod = 5 * 60 * 1000; // 5 minutes
+
+/**
+ * @return Boolean
+ * @returns Return true on successful scrape
+ */
+async function scrape({ platform, userId, customUsername, ...rest }) {
+  let data;
+
+  const scraper =
+    (scrapers.has(platform) && scrapers.get(platform)) ||
+    (async () => {
+      throw new Error(`Platform ${platform} not supported!`);
+    });
+
+  const id = crypto
+    .createHash("sha256")
+    .update(platform + userId + customUsername)
+    .digest("hex");
+
+  if (platform === "kick") {
+    // wait 2 sec before fetching
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+  }
+  try {
+    data = await scraper(userId, customUsername);
+  } catch (e) {
+    console.error(
+      `Couldn't scrape ${userId} ${customUsername ?? ""}: `,
+      e.message
+    );
+    // Add a placeholder user (in case the first API request for this user fails)
+    if (!idToData.get(id)) {
+      idToData.set(id, {
+        id,
+        userId,
+        platform,
+        name: customUsername ?? userId,
+        customUsername,
+        featuredRank: rest.featuredRank ?? null,
+        team: rest.team ?? null,
+      });
+    }
+    return false;
+  }
+
+  // Append `id' and `userId' fields before adding to the map
+  data = { id, userId, ...data };
+  if (rest.featuredRank) data.featuredRank = rest.featuredRank;
+  if (rest.team) data.team = rest.team;
+
+  idToData.set(id, data);
+
+  return true;
+}
+
+const timestamp = () => new Date().toTimeString().split(" ")[0];
+const loadPeople = async (people) => {
+  console.info("Populating scrape data...");
+
+  // multithread all initial scrapes, wait for them all to finish
+  await Promise.all(
+    people.map(async (person, i) => {
+      setTimeout(() => {
+        setInterval(async () => {
+          await scrape(person);
+          console.info(`[${timestamp()}] Rescraped ${person.userId}`);
+        }, updatePeriod);
+      }, (updatePeriod / people.length) * i);
+      // Split `updatePeriod` into equal periods, and then scrape every `updatePeriod`,
+      // so that the scrapes are evenly distributed over the `updatePeriod`.
+
+      (await scrape(person)) && console.info(`Scraped ${person.userId}!`);
+    })
+  );
+
+  console.info("Finished scraping everyone!");
+};
+
+//const people = require("./people.json");
+//import * as people from './people.json'
+import people from './people.json' assert { type: 'json' };
+await loadPeople(people);
